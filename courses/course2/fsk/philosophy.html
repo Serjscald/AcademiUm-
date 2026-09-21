@@ -49,7 +49,9 @@
                 <h1>${mode === 'learn' ? 'Обучение' : 'Контроль'}</h1>
                 <div class="subtitle">Выберите тему</div>
                 <div class="grid single-col" style="margin-top: 20px;">
+                    <div class="tile" onclick="startTopic('all')">За все время</div>
                     <div class="tile" onclick="startTopic('topic1')">Тема 1: Введение</div>
+                    <div class="tile" onclick="startTopic('topic2')">Тема 2: Мифология и Древний Восток</div>
                 </div>
                 <button class="btn btn-back" onclick="renderScreen('modes')">Назад</button>
             `;
@@ -130,7 +132,11 @@
         el.classList.add('success');
         playSound('success');
         
-        currentCards = [...philosophyDB[scope]];
+        if (scope === 'all') {
+            currentCards = [...philosophyDB.topic1, ...philosophyDB.topic2];
+        } else {
+            currentCards = [...philosophyDB[scope]];
+        }
         currentCards.sort(() => Math.random() - 0.5);
         
         if (currentMode === 'learn') {
