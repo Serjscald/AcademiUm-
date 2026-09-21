@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ФСК — АкадемиУм!</title>
+    <link rel="stylesheet" href="../../../css/style.css">
+</head>
+<body>
+
+<div id="start-screen">
+    <h2>🎓 ФСК</h2>
+    <p>Нажмите, чтобы выбрать предмет</p>
+</div>
+
+<canvas id="fireworks-canvas"></canvas>
+
+<div class="app-container" id="app">
+    <h1>Факультет социальных коммуникаций</h1>
+    <div class="subtitle">Выберите предмет</div>
+    <div class="grid single-col" style="margin-top: 20px;">
+        <div class="tile" onclick="handleTileClick(this, true, () => navigateTo('english.html'))">Английский язык</div>
+        <div class="tile" onclick="handleTileClick(this, true, () => navigateTo('philosophy.html'))">Философия</div>
+        <div class="tile" onclick="handleTileClick(this, false)">Психология</div>
+    </div>
+    <button class="btn btn-back" onclick="navigateTo('../index.html')">Назад</button>
+</div>
+
+<script src="../../../js/core.js"></script>
+<script>
+    const startScreen = document.getElementById('start-screen');
+    startScreen.addEventListener('click', () => {
+        initAudio();
+        startScreen.style.opacity = '0';
+        setTimeout(() => startScreen.style.display = 'none', 500);
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>АкадемиУм!</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="start-screen">
+    <h2>🎓 АкадемиУм!</h2>
+    <p>Нажмите, чтобы начать обучение</p>
+</div>
+
+<canvas id="fireworks-canvas"></canvas>
+
+<div class="app-container" id="app">
+    <h1>АкадемиУм!</h1>
+    <div class="version">Версия 3.0.0</div>
+    <div class="subtitle">Учебно-игровая платформа</div>
+    <img src="photo.jpg" class="hero-img" alt="Студенты" onerror="this.style.display='none'">
+    <div class="grid single-col" style="margin-top: 20px;">
+        <div class="tile" onclick="handleTileClick(this, true, () => navigateTo('courses/course2/index.html'))">2 курс</div>
+        <div class="tile" onclick="handleTileClick(this, false)">1 курс</div>
+        <div class="tile" onclick="handleTileClick(this, false)">3 курс</div>
+        <div class="tile" onclick="handleTileClick(this, false)">4 курс</div>
+        <div class="tile" onclick="handleTileClick(this, false)">5 курс</div>
+    </div>
+</div>
+
+<script src="js/core.js"></script>
+<script>
+    const startScreen = document.getElementById('start-screen');
+    startScreen.addEventListener('click', () => {
+        initAudio();
+        startScreen.style.opacity = '0';
+        setTimeout(() => startScreen.style.display = 'none', 500);
+    });
+</script>
+</body>
+</html>

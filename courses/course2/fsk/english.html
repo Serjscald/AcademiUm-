@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Английский язык — АкадемиУм!</title>
+    <link rel="stylesheet" href="../../../css/style.css">
+</head>
+<body>
+
+<div id="start-screen">
+    <h2>🎓 Английский язык</h2>
+    <p>Нажмите, чтобы начать обучение</p>
+</div>
+
+<canvas id="fireworks-canvas"></canvas>
+
+<div class="app-container" id="app"></div>
+
+<script src="../../../js/core.js"></script>
+<script src="../../../js/data-english.js"></script>
+<script>
+    const app = document.getElementById('app');
+    let currentCards = [];
+    let cardIndex = 0;
+    let quizIndex = 0;
+    let mistakes = 0;
+    let currentMode = 'learn';
+    let currentQuizDirection = 'en-to-ru';
+
+    function renderScreen(screenName, data = {}) {
+        app.innerHTML = '';
+        
+        if (screenName === 'modes') {
+            app.innerHTML = `
+                <h1>Английский язык</h1>
+                <div class="subtitle">Выберите режим</div>
+                <div class="grid" style="margin-top: 40px;">
+                    <div class="tile" onclick="handleMode('learn')">Обучение</div>
+                    <div class="tile" onclick="handleMode('quiz')">Контроль</div>
+                </div>
+                <button class="btn btn-back" onclick="navigateTo('index.html')">Назад</button>
+            `;
+        }
+        else if (screenName === 'topics') {
+            const mode = data.mode || 'learn';
+            currentMode = mode;
+            app.innerHTML = `
+                <h1>${mode === 'learn' ? 'Обучение' : 'Контроль'}</h1>
+                <div class="subtitle">Выберите тему</div>
+                <div class="grid single-col" style="margin-top: 20px;">
+                    <div class="tile" onclick="startTopic('all')">За все время</div>
+                    <div class="tile" onclick="startTopic('topic1')">1 Тема: Степени сравнения</div>
+                    <div class="tile" onclick="startTopic('topic2')">2 Тема: Описание внешности</div>
+                </div>
+                <button class="btn btn-back" onclick="renderScreen('modes')">Назад</button>
+            `;
+        }
+        else if (screenName === 'flashcard') {
+            const card = currentCards[cardIndex];
+            app.innerHTML = `
+                <h1>Карточка ${cardIndex + 1} / ${currentCards.length}</h1>
+                <div class="flashcard">
+                    <div class="fc-word">${card.word}</div>
+                    <div class="fc-trans">${card.trans}</div>
+                </div>
+                <button class="btn btn-orange" onclick="nextCard()">Следующая</button>
+                <button class="btn btn-stop" onclick="renderScreen('topics', {mode: 'learn'})">Прервать</button>
+            `;
+        }
+        else if (screenName === 'quiz') {
+            const card = currentCards[quizIndex];
+            
+            currentQuizDirection = Math.random() < 0.5 ? 'en-to-ru' : 'ru-to-en';
+            
+            let questionText, correctAnswer, optionsPool;
+            
+            if (currentQuizDirection === 'en-to-ru') {
+                questionText = card.word;
+                correctAnswer = card.trans;
+                optionsPool = currentCards.map(c => c.trans);
+            } else {
+                questionText = card.trans;
+                correctAnswer = card.word;
+                optionsPool = currentCards.map(c => c.word);
+            }
+            
+            let options = [correctAnswer];
+            while(options.length < 3) {
+                const randomOption = optionsPool[Math.floor(Math.random() * optionsPool.length)];
+                if(!options.includes(randomOption)) options.push(randomOption);
+            }
+            options.sort(() => Math.random() - 0.5);
+
+            app.innerHTML = `
+                <h1>Контроль ${quizIndex + 1} / ${currentCards.length}</h1>
+                <div class="flashcard" id="quiz-card">
+                    <div class="fc-word">${questionText}</div>
+                    <div class="fc-trans" style="font-size: 14px; color: var(--text-muted);">
+                        ${currentQuizDirection === 'en-to-ru' ? 'Выберите перевод:' : 'Выберите английское слово:'}
+                    </div>
+                </div>
+                <div class="quiz-options">
+                    ${options.map(opt => `<div class="quiz-opt" onclick="checkAnswer(this, '${opt.replace(/'/g, "\\'")}', '${correctAnswer.replace(/'/g, "\\'")}')">${opt}</div>`).join('')}
+                </div>
+                <button class="btn btn-stop" onclick="renderScreen('topics', {mode: 'quiz'})">Прервать</button>
+            `;
+        }
+        else if (screenName === 'result') {
+            const isWin = mistakes === 0;
+            app.innerHTML = `
+                <h1>Результат</h1>
+                <div class="result-msg ${isWin ? 'result-win' : 'result-lose'}">
+                    ${isWin ? '🎉 Отличная работа!' : 'Нужно заниматься усерднее, Данечка!'}
+                </div>
+                <button class="btn btn-orange" onclick="renderScreen('modes')">В меню</button>
+                <button class="btn btn-back" onclick="navigateTo('../../../index.html')">На главную</button>
+            `;
+            if (isWin) startFireworks();
+        }
+    }
+
+    function handleMode(mode) {
+        const el = event.target;
+        el.classList.add('success');
+        playSound('success');
+        setTimeout(() => renderScreen('topics', {mode: mode}), 400);
+    }
+
+    function startTopic(scope) {
+        const el = event.target;
+        el.classList.add('success');
+        playSound('success');
+        
+        if (scope === 'all') {
+            currentCards = [...englishDB.topic1, ...englishDB.topic2];
+        } else {
+            currentCards = [...englishDB[scope]];
+        }
+        currentCards.sort(() => Math.random() - 0.5);
+        
+        if (currentMode === 'learn') {
+            cardIndex = 0;
+            setTimeout(() => renderScreen('flashcard'), 400);
+        } else {
+            quizIndex = 0;
+            mistakes = 0;
+            setTimeout(() => renderScreen('quiz'), 400);
+        }
+    }
+
+    function nextCard() {
+        playSound('success');
+        cardIndex++;
+        if (cardIndex < currentCards.length) {
+            renderScreen('flashcard');
+        } else {
+            renderScreen('topics', {mode: 'learn'});
+        }
+    }
+
+    function checkAnswer(el, selected, correct) {
+        const card = document.getElementById('quiz-card');
+        
+        if (selected === correct) {
+            el.classList.add('correct');
+            card.classList.add('correct-flash');
+            playSound('success');
+        } else {
+            el.classList.add('wrong');
+            card.classList.add('wrong-flash');
+            playSound('error');
+            mistakes++;
+        }
+        
+        setTimeout(() => {
+            quizIndex++;
+            if (quizIndex < currentCards.length) {
+                renderScreen('quiz');
+            } else {
+                renderScreen('result');
+            }
+        }, 600);
+    }
+
+    const startScreen = document.getElementById('start-screen');
+    startScreen.addEventListener('click', () => {
+        initAudio();
+        startScreen.style.opacity = '0';
+        setTimeout(() => startScreen.style.display = 'none', 500);
+        renderScreen('modes');
+    });
+</script>
+</body>
+</html>
