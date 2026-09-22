@@ -19,20 +19,20 @@
     <h1>Факультет социальных коммуникаций</h1>
     <div class="subtitle">Выберите предмет</div>
     <div class="grid single-col" style="margin-top: 20px;">
-        <div class="tile" onclick="handleTileClick(this, true, () => navigateTo('english.html'))">Английский язык</div>
-        <div class="tile" onclick="handleTileClick(this, true, () => navigateTo('philosophy.html'))">Философия</div>
-        <div class="tile" onclick="handleTileClick(this, false)">Психология</div>
+        <div class="tile" onclick="handleTileClick(this, true, function(){ navigateTo('english.html'); })">Английский язык</div>
+        <div class="tile" onclick="handleTileClick(this, true, function(){ navigateTo('philosophy.html'); })">Философия</div>
+        <div class="tile" onclick="handleTileClick(this, true, function(){ navigateTo('psychology.html'); })">Психология</div>
     </div>
     <button class="btn btn-back" onclick="navigateTo('../index.html')">Назад</button>
 </div>
 
 <script src="../../../js/core.js"></script>
 <script>
-    const startScreen = document.getElementById('start-screen');
-    startScreen.addEventListener('click', () => {
+    var startScreen = document.getElementById('start-screen');
+    startScreen.addEventListener('click', function(){
         initAudio();
         startScreen.style.opacity = '0';
-        setTimeout(() => startScreen.style.display = 'none', 500);
+        setTimeout(function(){ startScreen.style.display = 'none'; }, 500);
     });
 </script>
 </body>
