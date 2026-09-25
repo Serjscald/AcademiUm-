@@ -27,9 +27,8 @@ var statisticsDB = {
                 "Индекс объёма I_q = Σ(p0×q1) / Σ(p0×q0)",
                 "ΔВыручка = Σ(p1×q1) - Σ(p0×q0)"
             ],
-            html: '<p>Театр продаёт билеты трёх типов. Оцените изменение выручки в апреле по сравнению с февралём.</p><table class="stat-table"><tr><th>Тип билета</th><th>Цена фев (p₀)</th><th>Кол-во фев (q₀)</th><th>Цена апр (p₁)</th><th>Кол-во апр (q₁)</th></tr><tr><td>Взрослый</td><td class="var" data-val="500">500</td><td class="var" data-val="1100">1100</td><td class="var" data-val="400">400</td><td class="var" data-val="1300">1300</td></tr><tr><td>Льготный</td><td class="var" data-val="250">250</td><td class="var" data-val="800">800</td><td class="var" data-val="200">200</td><td class="var" data-val="800">800</td></tr><tr><td>Детский</td><td class="var" data-val="100">100</td><td class="var" data-val="600">600</td><td class="var" data-val="150">150</td><td class="var" data-val="600">600</td></tr></table>',
-            requiredVars: ["p0_1","q0_1","p1_1","q1_1","p0_2","q0_2","p1_2","q1_2","p0_3","q0_3","p1_3","q1_3"],
-            varLabels: { p0: "p₀ (цена база)", q0: "q₀ (кол-во база)", p1: "p₁ (цена отч)", q1: "q₁ (кол-во отч)" },
+            html: '<p>Театр продаёт билеты трёх типов. Оцените изменение выручки в апреле по сравнению с февралём и разложите его на факторы.</p><table class="stat-table"><tr><th>Тип билета</th><th>Цена фев</th><th>Кол-во фев</th><th>Цена апр</th><th>Кол-во апр</th></tr><tr><td>Взрослый</td><td class="var" data-correct="p0" data-val="500">500</td><td class="var" data-correct="q0" data-val="1100">1100</td><td class="var" data-correct="p1" data-val="400">400</td><td class="var" data-correct="q1" data-val="1300">1300</td></tr><tr><td>Льготный</td><td class="var" data-correct="p0" data-val="250">250</td><td class="var" data-correct="q0" data-val="800">800</td><td class="var" data-correct="p1" data-val="200">200</td><td class="var" data-correct="q1" data-val="800">800</td></tr><tr><td>Детский</td><td class="var" data-correct="p0" data-val="100">100</td><td class="var" data-correct="q0" data-val="600">600</td><td class="var" data-correct="p1" data-val="150">150</td><td class="var" data-correct="q1" data-val="600">600</td></tr></table>',
+            varLabels: { p0: "p₀ (цена базисного периода)", q0: "q₀ (кол-во базисного периода)", p1: "p₁ (цена отчётного периода)", q1: "q₁ (кол-во отчётного периода)" },
             solve: function(v) {
                 var rev0 = v.p0_1*v.q0_1 + v.p0_2*v.q0_2 + v.p0_3*v.q0_3;
                 var rev1 = v.p1_1*v.q1_1 + v.p1_2*v.q1_2 + v.p1_3*v.q1_3;
@@ -40,7 +39,11 @@ var statisticsDB = {
                 var iRev = (rev1/rev0*100).toFixed(1);
                 var iP = (rev1/revQ*100).toFixed(1);
                 var iQ = (revQ/rev0*100).toFixed(1);
-                return '<b>Расчёт:</b><br>Σp₀q₀ = ' + rev0 + ' руб.<br>Σp₁q₁ = ' + rev1 + ' руб.<br>Σp₀q₁ = ' + revQ + ' руб.<br><br><b>Индексы:</b><br>I_pq = ' + iRev + '%<br>I_p = ' + iP + '%<br>I_q = ' + iQ + '%<br><br><b>Абсолютное изменение:</b><br>Общее: ' + dRev + ' руб.<br>За счёт цен: ' + dP + ' руб.<br>За счёт кол-ва: ' + dQ + ' руб.';
+                var calc = '<b>Шаг 1. Совокупные величины:</b><br>Σp₀q₀ = ' + rev0 + ' руб.<br>Σp₁q₁ = ' + rev1 + ' руб.<br>Σp₀q₁ = ' + revQ + ' руб.<br><br><b>Шаг 2. Индексы:</b><br>I_pq = ' + iRev + '%<br>I_p = ' + iP + '%<br>I_q = ' + iQ + '%<br><br><b>Шаг 3. Абсолютные изменения:</b><br>Общее: ' + dRev + ' руб.<br>За счёт цен: ' + dP + ' руб.<br>За счёт кол-ва: ' + dQ + ' руб.';
+                var dir = (dRev < 0) ? 'снизилась' : 'выросла';
+                var mainFactor = (Math.abs(dP) > Math.abs(dQ)) ? 'цен' : 'количества';
+                var conclusion = 'Выручка театра ' + dir + ' на ' + Math.abs(dRev) + ' руб. (индекс выручки ' + iRev + '%). Увеличение количества проданных билетов добавило ' + dQ + ' руб., однако изменение цен принесло ' + dP + ' руб. Преобладающим оказалось влияние фактора ' + mainFactor + ': именно оно и определило итоговую динамику выручки.';
+                return { calc: calc, conclusion: conclusion };
             }
         }
     ]
