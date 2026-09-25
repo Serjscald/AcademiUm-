@@ -30,13 +30,21 @@ var currentQuizDirection = 'term-to-def';
 
 function renderScreen(screenName, data) {
     app.innerHTML = '';
+    
     if (screenName === 'modes') {
         app.innerHTML = '<h1>Философия</h1><div class="subtitle">Выберите режим</div><div class="grid" style="margin-top:40px"><div class="tile" onclick="handleMode(\'learn\')">Обучение</div><div class="tile" onclick="handleMode(\'quiz\')">Контроль</div></div><button class="btn btn-back" onclick="navigateTo(\'index.html\')">Назад</button>';
     } else if (screenName === 'topics') {
         var mode = (data && data.mode) ? data.mode : 'learn';
         currentMode = mode;
         var title = (mode === 'learn') ? 'Обучение' : 'Контроль';
-        app.innerHTML = '<h1>' + title + '</h1><div class="subtitle">Выберите тему</div><div class="grid single-col" style="margin-top:20px"><div class="tile" onclick="startTopic(\'all\')">За все время</div><div class="tile" onclick="startTopic(\'topic1\')">Тема 1: Введение</div><div class="tile" onclick="startTopic(\'topic2\')">Тема 2: Мифология и Древний Восток</div><div class="tile" onclick="startTopic(\'topic3\')">Тема 3: Античная философия</div></div><button class="btn btn-back" onclick="renderScreen(\'modes\')">Назад</button>';
+        var topicsHTML = '';
+        if (mode === 'quiz') {
+            topicsHTML += '<div class="tile" onclick="startTopic(\'all\')">За все время</div>';
+        }
+        for (var key in philosophyDB.topicTitles) {
+            topicsHTML += '<div class="tile" onclick="startTopic(\'' + key + '\')">' + philosophyDB.topicTitles[key] + '</div>';
+        }
+        app.innerHTML = '<h1>' + title + '</h1><div class="subtitle">Выберите тему</div><div class="grid single-col" style="margin-top:20px">' + topicsHTML + '</div><button class="btn btn-back" onclick="renderScreen(\'modes\')">Назад</button>';
     } else if (screenName === 'flashcard') {
         var card = currentCards[cardIndex];
         app.innerHTML = '<h1>Карточка ' + (cardIndex + 1) + ' / ' + currentCards.length + '</h1><div class="flashcard"><div class="fc-word">' + card.word + '</div><div class="fc-trans">' + card.trans + '</div></div><button class="btn btn-orange" onclick="nextCard()">Следующая</button><button class="btn btn-stop" onclick="renderScreen(\'topics\',{mode:\'learn\'})">Прервать</button>';
@@ -45,12 +53,10 @@ function renderScreen(screenName, data) {
         currentQuizDirection = (Math.random() < 0.5) ? 'term-to-def' : 'def-to-term';
         var questionText, correctAnswer, optionsPool;
         if (currentQuizDirection === 'term-to-def') {
-            questionText = qcard.word;
-            correctAnswer = qcard.trans;
+            questionText = qcard.word; correctAnswer = qcard.trans;
             optionsPool = currentCards.map(function(c){ return c.trans; });
         } else {
-            questionText = qcard.trans;
-            correctAnswer = qcard.word;
+            questionText = qcard.trans; correctAnswer = qcard.word;
             optionsPool = currentCards.map(function(c){ return c.word; });
         }
         var options = [correctAnswer];
@@ -89,7 +95,10 @@ function startTopic(scope) {
     el.classList.add('success');
     playSound('success');
     if (scope === 'all') {
-        currentCards = philosophyDB.topic1.concat(philosophyDB.topic2).concat(philosophyDB.topic3);
+        currentCards = [];
+        for (var key in philosophyDB.topicTitles) {
+            currentCards = currentCards.concat(philosophyDB[key]);
+        }
     } else {
         currentCards = philosophyDB[scope].slice();
     }
@@ -98,8 +107,7 @@ function startTopic(scope) {
         cardIndex = 0;
         setTimeout(function(){ renderScreen('flashcard'); }, 400);
     } else {
-        quizIndex = 0;
-        mistakes = 0;
+        quizIndex = 0; mistakes = 0;
         setTimeout(function(){ renderScreen('quiz'); }, 400);
     }
 }
@@ -107,32 +115,21 @@ function startTopic(scope) {
 function nextCard() {
     playSound('success');
     cardIndex++;
-    if (cardIndex < currentCards.length) {
-        renderScreen('flashcard');
-    } else {
-        renderScreen('topics', {mode: 'learn'});
-    }
+    if (cardIndex < currentCards.length) renderScreen('flashcard');
+    else renderScreen('topics', {mode: 'learn'});
 }
 
 function checkAnswer(el, selected, correct) {
     var card = document.getElementById('quiz-card');
     if (selected === correct) {
-        el.classList.add('correct');
-        card.classList.add('correct-flash');
-        playSound('success');
+        el.classList.add('correct'); card.classList.add('correct-flash'); playSound('success');
     } else {
-        el.classList.add('wrong');
-        card.classList.add('wrong-flash');
-        playSound('error');
-        mistakes++;
+        el.classList.add('wrong'); card.classList.add('wrong-flash'); playSound('error'); mistakes++;
     }
     setTimeout(function(){
         quizIndex++;
-        if (quizIndex < currentCards.length) {
-            renderScreen('quiz');
-        } else {
-            renderScreen('result');
-        }
+        if (quizIndex < currentCards.length) renderScreen('quiz');
+        else renderScreen('result');
     }, 600);
 }
 
