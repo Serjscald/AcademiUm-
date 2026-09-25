@@ -11,10 +11,10 @@
         .stat-table th { background: #334155; color: var(--gold); }
         .var { color: #38bdf8; text-decoration: underline; cursor: pointer; font-weight: bold; transition: all 0.2s; }
         .var:hover { background: rgba(56, 189, 248, 0.2); }
-        .var.found { color: var(--accent-green); background: rgba(34, 197, 94, 0.2); text-decoration: none; }
-        .var.wrong-var { color: var(--accent-red); background: rgba(239, 68, 68, 0.25); text-decoration: none; animation: shake 0.4s; }
+        .var.found { text-decoration: none; }
+        .var.wrong-var { color: var(--accent-red) !important; background: rgba(239, 68, 68, 0.25); text-decoration: none; animation: shake 0.4s; }
         .var.locked { cursor: default; }
-        .solution-box { background: #0f172a; border: 2px solid var(--accent-green); border-radius: 12px; padding: 20px; margin-top: 20px; text-align: left; line-height: 1.6; animation: fadeIn 0.5s; }
+        .solution-box { background: #0f172a; border: 2px solid var(--accent-green); border-radius: 12px; padding: 20px; margin-top: 20px; text-align: left; line-height: 1.6; animation: fadeIn 0.5s; overflow-x: auto; }
         .conclusion-box { background: rgba(251, 191, 36, 0.1); border: 2px solid var(--gold); border-radius: 12px; padding: 20px; margin-top: 15px; text-align: left; line-height: 1.6; animation: fadeIn 0.5s; }
         .conclusion-box h3 { margin: 0 0 10px 0; color: var(--gold); font-size: 16px; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -22,13 +22,25 @@
         .formulas-box h3 { margin: 0 0 10px 0; font-size: 16px; color: var(--gold); }
         .formulas-box ul { margin: 0; padding-left: 20px; }
         .formulas-box li { margin-bottom: 5px; color: var(--text-main); }
-        .var-selector { position: fixed; z-index: 1000; background: #1e293b; border: 2px solid var(--gold); border-radius: 8px; padding: 5px; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.5); max-width: 260px; }
-        .var-selector button { display: block; width: 100%; padding: 8px 15px; margin: 2px 0; background: #334155; border: none; border-radius: 5px; color: white; font-size: 13px; cursor: pointer; text-align: left; }
+        .var-selector { position: fixed; z-index: 1000; background: #1e293b; border: 2px solid var(--gold); border-radius: 8px; padding: 5px; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.5); max-width: 280px; max-height: 300px; overflow-y: auto; }
+        .var-selector button { display: block; width: 100%; padding: 10px 15px; margin: 2px 0; background: #334155; border: none; border-radius: 5px; color: white; font-size: 14px; cursor: pointer; text-align: left; }
         .var-selector button:hover { background: var(--gold); color: #0f172a; }
         .btn-solve { background: var(--accent-green); color: white; margin-top: 15px; }
         .btn-solve:disabled { background: #475569; cursor: not-allowed; opacity: 0.6; }
         .task-msg { margin-top: 10px; font-size: 14px; font-weight: bold; min-height: 20px; }
         .task-msg.err { color: var(--accent-red); }
+        
+        /* Альбомная ориентация для задач на мобильных */
+        .rotate-overlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.98); z-index: 99999; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
+        .rotate-overlay h2 { color: var(--gold); font-size: 24px; margin-bottom: 15px; }
+        .rotate-overlay p { color: var(--text-muted); font-size: 16px; }
+        .rotate-icon { font-size: 60px; margin-bottom: 20px; animation: rotate 2s infinite; }
+        @keyframes rotate { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(90deg); } }
+        
+        @media (max-width: 768px) and (orientation: portrait) {
+            .task-mode .rotate-overlay { display: flex; }
+            .task-mode .app-container { display: none; }
+        }
     </style>
 </head>
 <body>
@@ -36,6 +48,12 @@
 <div id="start-screen">
     <h2>📊 Статистика</h2>
     <p>Нажмите, чтобы начать обучение</p>
+</div>
+
+<div id="rotate-overlay" class="rotate-overlay">
+    <div class="rotate-icon">📱</div>
+    <h2>Поверните телефон</h2>
+    <p>Для решения задач удобнее использовать альбомную ориентацию</p>
 </div>
 
 <canvas id="fireworks-canvas"></canvas>
@@ -65,8 +83,10 @@ document.addEventListener('click', function(){ selector.style.display = 'none'; 
 function renderScreen(screenName, data) {
     app.innerHTML = '';
     selector.style.display = 'none';
+    
     if (screenName === 'modes') {
-        app.innerHTML = '<h1>Статистика</h1><div class="subtitle">Выберите режим</div><div class="grid single-col" style="margin-top:30px"><div class="tile" onclick="handleMode(\'learn\')">Обучение</div><div class="tile" onclick="handleMode(\'quiz\')">Контроль</div><div class="tile" onclick="handleMode(\'tasks\')" style="border-color:#38bdf8;color:#38bdf8">Задачи</div></div><button class="btn btn-back" onclick="navigateTo(\'index.html\')">Назад</button>';
+        document.body.classList.remove('task-mode');
+        app.innerHTML = '<h1>Статистика</h1><div class="subtitle">Выберите режим</div><div class="grid single-col" style="margin-top:30px"><div class="tile" onclick="handleMode(\'learn\')">Обучение</div><div class="tile" onclick="handleMode(\'quiz\')">Контроль</div><div class="tile" onclick="handleMode(\'tasks\')">Задачи</div></div><button class="btn btn-back" onclick="navigateTo(\'index.html\')">Назад</button>';
     } else if (screenName === 'topics') {
         var mode = (data && data.mode) ? data.mode : 'learn';
         currentMode = mode;
@@ -109,6 +129,7 @@ function renderScreen(screenName, data) {
         var hint = (currentQuizDirection === 'term-to-def') ? 'Выберите определение:' : 'Выберите термин:';
         app.innerHTML = '<h1>Контроль ' + (quizIndex + 1) + ' / ' + currentCards.length + '</h1><div class="flashcard" id="quiz-card"><div class="fc-word" style="font-size:20px">' + questionText + '</div><div class="fc-trans" style="font-size:14px;color:var(--text-muted)">' + hint + '</div></div><div class="quiz-options">' + optsHTML + '</div><button class="btn btn-stop" onclick="renderScreen(\'topics\',{mode:\'quiz\'})">Прервать</button>';
     } else if (screenName === 'task') {
+        document.body.classList.add('task-mode');
         assignments = {};
         taskSolved = false;
         var formulasHTML = '<div class="formulas-box"><h3>📐 Формулы для решения:</h3><ul>';
@@ -120,6 +141,7 @@ function renderScreen(screenName, data) {
         app.innerHTML = '<h1>' + currentTask.title + '</h1>' + formulasHTML + '<div class="flashcard" style="border-color:#38bdf8;text-align:left;padding:20px">' + currentTask.html + '</div><div class="task-hint">Нажимайте на числа и выбирайте из списка, какой переменной они соответствуют. Назначение можно менять до нажатия кнопки «Решить».</div><div id="task-progress" style="margin-top:15px;font-size:14px;color:var(--text-muted)">Назначено переменных: 0 / ' + totalVars + '</div><div id="task-msg" class="task-msg"></div><button id="solve-btn" class="btn btn-solve" onclick="solveTask()" disabled>Решить задачу</button><div id="task-solution"></div><button class="btn btn-stop" onclick="renderScreen(\'topics\',{mode:\'tasks\'})">К списку задач</button>';
         attachVarListeners();
     } else if (screenName === 'result') {
+        document.body.classList.remove('task-mode');
         var isWin = (mistakes === 0);
         var msg = isWin ? '🎉 Отличная работа!' : 'Нужно заниматься усерднее, Данечка!';
         var cls = isWin ? 'result-win' : 'result-lose';
@@ -160,20 +182,35 @@ function startTask(idx) {
 
 function attachVarListeners() {
     var vars = document.querySelectorAll('.var');
+    var colors = currentTask.varColors;
+    
     for (var i = 0; i < vars.length; i++) {
         vars[i].addEventListener('click', function(e) {
             e.stopPropagation();
             if (taskSolved) return;
             selectedVarElement = this;
+            
             var rect = this.getBoundingClientRect();
-            selector.style.left = Math.min(rect.left, window.innerWidth - 270) + 'px';
-            selector.style.top = (rect.bottom + 5) + 'px';
+            var spaceBelow = window.innerHeight - rect.bottom;
+            var spaceAbove = rect.top;
+            
+            if (spaceBelow < 200 && spaceAbove > spaceBelow) {
+                selector.style.top = 'auto';
+                selector.style.bottom = (window.innerHeight - rect.top + 5) + 'px';
+            } else {
+                selector.style.top = (rect.bottom + 5) + 'px';
+                selector.style.bottom = 'auto';
+            }
+            
+            selector.style.left = Math.min(rect.left, window.innerWidth - 290) + 'px';
             selector.style.display = 'block';
             selector.innerHTML = '';
+            
             var labels = currentTask.varLabels;
             for (var key in labels) {
                 var btn = document.createElement('button');
                 btn.innerText = labels[key];
+                btn.style.borderLeft = '4px solid ' + colors[key];
                 btn.setAttribute('data-key', key);
                 btn.onclick = function(ev) { ev.stopPropagation(); assignVar(this.getAttribute('data-key')); };
                 selector.appendChild(btn);
@@ -188,9 +225,13 @@ function assignVar(varKey) {
     var row = selectedVarElement.parentElement.rowIndex;
     var col = selectedVarElement.cellIndex;
     var cellId = 'r' + row + 'c' + col;
+    var color = currentTask.varColors[varKey];
+    
     assignments[cellId] = { varKey: varKey, val: val, row: row };
     selectedVarElement.classList.add('found');
     selectedVarElement.classList.remove('wrong-var');
+    selectedVarElement.style.color = color;
+    selectedVarElement.style.background = color + '33';
     selectedVarElement.innerText = varKey + ' = ' + val;
     playSound('success');
     selector.style.display = 'none';
