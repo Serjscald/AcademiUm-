@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Статистика — АкадемиУм!</title>
+    <link rel="stylesheet" href="../../../css/style.css">
+    <style>
+        .stat-table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 14px; }
+        .stat-table th, .stat-table td { border: 1px solid #475569; padding: 8px; text-align: center; }
+        .stat-table th { background: #334155; color: var(--gold); }
+        .var { color: #38bdf8; text-decoration: underline; cursor: pointer; font-weight: bold; transition: all 0.2s; }
+        .var:hover { background: rgba(56, 189, 248, 0.2); }
+        .var.found { color: var(--accent-green); background: rgba(34, 197, 94, 0.2); text-decoration: none; cursor: default; }
+        .task-hint { font-size: 13px; color: var(--text-muted); margin-top: 10px; font-style: italic; }
+        .solution-box { background: #0f172a; border: 2px solid var(--accent-green); border-radius: 12px; padding: 20px; margin-top: 20px; text-align: left; line-height: 1.6; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div id="start-screen">
+    <h2>📊 Статистика</h2>
+    <p>Нажмите, чтобы начать обучение</p>
+</div>
+
+<canvas id="fireworks-canvas"></canvas>
+
+<div class="app-container" id="app"></div>
+
+<script src="../../../js/core.js"></script>
+<script src="../../../js/data-statistics.js"></script>
+<script>
+var app = document.getElementById('app');
+var currentCards = [];
+var cardIndex = 0;
+var quizIndex = 0;
+var mistakes = 0;
+var currentMode = 'learn';
+var currentTask = null;
+var foundVars = {};
+
+function renderScreen(screenName, data) {
+    app.innerHTML = '';
+    if (screenName === 'modes') {
+        app.innerHTML = '<h1>Статистика</h1><div class="subtitle">Выберите режим</div><div class="grid single-col" style="margin-top:30px"><div class="tile" onclick="handleMode(\'learn\')">Обучение</div><div class="tile" onclick="handleMode(\'quiz\')">Контроль</div><div class="tile" onclick="handleMode(\'tasks\')" style="border-color:#38bdf8;color:#38bdf8">Задачи</div></div><button class="btn btn-back" onclick="navigateTo(\'index.html\')">Назад</button>';
+    } else if (screenName === 'topics') {
+        var mode = (data && data.mode) ? data.mode : 'learn';
+        currentMode = mode;
+        var title = (mode === 'learn') ? 'Обучение' : (mode === 'quiz' ? 'Контроль' : 'Задачи');
+        var topicsHTML = '<div class="tile" onclick="startTopic(\'topic1\')">Тема 1: Индексы</div>';
+        if (mode === 'tasks') {
+            topicsHTML = '';
+            for (var i = 0; i < statisticsDB.tasks.length; i++) {
+                topicsHTML += '<div class="tile" onclick="startTask(' + i + ')">' + statisticsDB.tasks[i].title + '</div>';
+            }
+        }
+        app.innerHTML = '<h1>' + title + '</h1><div class="subtitle">Выберите тему</div><div class="grid single-col" style="margin-top:20px">' + topicsHTML + '</div><button class="btn btn-back" onclick="renderScreen(\'modes\')">Назад</button>';
+    } else if (screenName === 'flashcard') {
+        var card = currentCards[cardIndex];
+        app.innerHTML = '<h1>Карточка ' + (cardIndex + 1) + ' / ' + currentCards.length + '</h1><div class="flashcard"><div class="fc-word">' + card.word + '</div><div class="fc-trans">' + card.trans + '</div></div><button class="btn btn-orange" onclick="nextCard()">Следующая</button><button class="btn btn-stop" onclick="renderScreen(\'topics\',{mode:\'learn\'})">Прервать</button>';
+    } else if (screenName === 'quiz') {
+        var qcard = currentCards[quizIndex];
+        currentQuizDirection = (Math.random() < 0.5) ? 'term-to-def' : 'def-to-term';
+        var questionText, correctAnswer, optionsPool;
+        if (currentQuizDirection === 'term-to-def') {
+            questionText = qcard.word;
+            correctAnswer = qcard.trans;
+            optionsPool = currentCards.map(function(c){ return c.trans; });
+        } else {
+            questionText = qcard.trans;
+            correctAnswer = qcard.word;
+            optionsPool = currentCards.map(function(c){ return c.word; });
+        }
+        var options = [correctAnswer];
+        while (options.length < 3) {
+            var rnd = optionsPool[Math.floor(Math.random() * optionsPool.length)];
+            if (options.indexOf(rnd) === -1) options.push(rnd);
+        }
+        options.sort(function(){ return Math.random() - 0.5; });
+        var optsHTML = '';
+        for (var i = 0; i < options.length; i++) {
+            var o = options[i].replace(/'/g, "\\'");
+            var ca = correctAnswer.replace(/'/g, "\\'");
+            var disp = options[i].substring(0, 100) + (options[i].length > 100 ? '...' : '');
+            optsHTML += '<div class="quiz-opt" onclick="checkAnswer(this,\'' + o + '\',\'' + ca + '\')">' + disp + '</div>';
+        }
+        var hint = (currentQuizDirection === 'term-to-def') ? 'Выберите определение:' : 'Выберите термин:';
+        app.innerHTML = '<h1>Контроль ' + (quizIndex + 1) + ' / ' + currentCards.length + '</h1><div class="flashcard" id="quiz-card"><div class="fc-word" style="font-size:20px">' + questionText + '</div><div class="fc-trans" style="font-size:14px;color:var(--text-muted)">' + hint + '</div></div><div class="quiz-options">' + optsHTML + '</div><button class="btn btn-stop" onclick="renderScreen(\'topics\',{mode:\'quiz\'})">Прервать</button>';
+    } else if (screenName === 'task') {
+        foundVars = {};
+        app.innerHTML = '<h1>' + currentTask.title + '</h1><div class="flashcard" style="border-color:#38bdf8;text-align:left;padding:20px">' + currentTask.html + '</div><div id="task-progress" style="margin-top:15px;font-size:14px;color:var(--text-muted)">Найдено переменных: 0 / ' + currentTask.requiredVars.length + '</div><div id="task-solution"></div><button class="btn btn-stop" onclick="renderScreen(\'topics\',{mode:\'tasks\'})">К списку задач</button>';
+        attachVarListeners();
+    } else if (screenName === 'result') {
+        var isWin = (mistakes === 0);
+        var msg = isWin ? '🎉 Отличная работа!' : 'Нужно заниматься усерднее, Данечка!';
+        var cls = isWin ? 'result-win' : 'result-lose';
+        app.innerHTML = '<h1>Результат</h1><div class="result-msg ' + cls + '">' + msg + '</div><button class="btn btn-orange" onclick="renderScreen(\'modes\')">В меню</button><button class="btn btn-back" onclick="navigateTo(\'../../../index.html\')">На главную</button>';
+        if (isWin) startFireworks();
+    }
+}
+
+function handleMode(mode) {
+    var el = event.target;
+    el.classList.add('success');
+    playSound('success');
+    setTimeout(function(){ renderScreen('topics', {mode: mode}); }, 400);
+}
+
+function startTopic(scope) {
+    var el = event.target;
+    el.classList.add('success');
+    playSound('success');
+    currentCards = statisticsDB[scope].slice();
+    currentCards.sort(function(){ return Math.random() - 0.5; });
+    if (currentMode === 'learn') {
+        cardIndex = 0;
+        setTimeout(function(){ renderScreen('flashcard'); }, 400);
+    } else {
+        quizIndex = 0;
+        mistakes = 0;
+        setTimeout(function(){ renderScreen('quiz'); }, 400);
+    }
+}
+
+function startTask(idx) {
+    var el = event.target;
+    el.classList.add('success');
+    playSound('success');
+    currentTask = statisticsDB.tasks[idx];
+    setTimeout(function(){ renderScreen('task'); }, 400);
+}
+
+function attachVarListeners() {
+    var vars = document.querySelectorAll('.var');
+    for (var i = 0; i < vars.length; i++) {
+        vars[i].addEventListener('click', function() {
+            if (this.classList.contains('found')) return;
+            var id = this.getAttribute('data-id');
+            var val = parseFloat(this.getAttribute('data-val'));
+            foundVars[id] = val;
+            this.classList.add('found');
+            this.innerText = id + '=' + val;
+            playSound('success');
+            updateTaskProgress();
+        });
+    }
+}
+
+function updateTaskProgress() {
+    var count = Object.keys(foundVars).length;
+    var total = currentTask.requiredVars.length;
+    document.getElementById('task-progress').innerText = 'Найдено переменных: ' + count + ' / ' + total;
+    if (count === total) {
+        var sol = currentTask.solve(foundVars);
+        document.getElementById('task-solution').innerHTML = '<div class="solution-box">' + sol + '</div>';
+        playSound('success');
+        setTimeout(function(){ playSound('success'); }, 200);
+    }
+}
+
+function nextCard() {
+    playSound('success');
+    cardIndex++;
+    if (cardIndex < currentCards.length) {
+        renderScreen('flashcard');
+    } else {
+        renderScreen('topics', {mode: 'learn'});
+    }
+}
+
+function checkAnswer(el, selected, correct) {
+    var card = document.getElementById('quiz-card');
+    if (selected === correct) {
+        el.classList.add('correct');
+        card.classList.add('correct-flash');
+        playSound('success');
+    } else {
+        el.classList.add('wrong');
+        card.classList.add('wrong-flash');
+        playSound('error');
+        mistakes++;
+    }
+    setTimeout(function(){
+        quizIndex++;
+        if (quizIndex < currentCards.length) {
+            renderScreen('quiz');
+        } else {
+            renderScreen('result');
+        }
+    }, 600);
+}
+
+var startScreen = document.getElementById('start-screen');
+startScreen.addEventListener('click', function(){
+    initAudio();
+    startScreen.style.opacity = '0';
+    setTimeout(function(){ startScreen.style.display = 'none'; }, 500);
+    renderScreen('modes');
+});
+</script>
+</body>
+</html>
