@@ -9,12 +9,26 @@
         .stat-table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 14px; }
         .stat-table th, .stat-table td { border: 1px solid #475569; padding: 8px; text-align: center; }
         .stat-table th { background: #334155; color: var(--gold); }
-        .var { color: #38bdf8; text-decoration: underline; cursor: pointer; font-weight: bold; transition: all 0.2s; }
+        .var { color: #38bdf8; text-decoration: underline; cursor: pointer; font-weight: bold; transition: all 0.2s; position: relative; }
         .var:hover { background: rgba(56, 189, 248, 0.2); }
         .var.found { color: var(--accent-green); background: rgba(34, 197, 94, 0.2); text-decoration: none; cursor: default; }
         .task-hint { font-size: 13px; color: var(--text-muted); margin-top: 10px; font-style: italic; }
         .solution-box { background: #0f172a; border: 2px solid var(--accent-green); border-radius: 12px; padding: 20px; margin-top: 20px; text-align: left; line-height: 1.6; animation: fadeIn 0.5s; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Блок формул */
+        .formulas-box { background: rgba(251, 191, 36, 0.1); border: 1px solid var(--gold); border-radius: 10px; padding: 15px; margin-bottom: 20px; text-align: left; font-size: 14px; }
+        .formulas-box h3 { margin: 0 0 10px 0; font-size: 16px; color: var(--gold); }
+        .formulas-box ul { margin: 0; padding-left: 20px; }
+        .formulas-box li { margin-bottom: 5px; color: var(--text-main); }
+        
+        /* Выпадающее меню выбора переменной */
+        .var-selector { position: fixed; z-index: 1000; background: #1e293b; border: 2px solid var(--gold); border-radius: 8px; padding: 5px; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .var-selector button { display: block; width: 100%; padding: 8px 15px; margin: 2px 0; background: #334155; border: none; border-radius: 5px; color: white; font-size: 14px; cursor: pointer; text-align: left; }
+        .var-selector button:hover { background: var(--gold); color: #0f172a; }
+        
+        .btn-solve { background: var(--accent-green); color: white; margin-top: 15px; }
+        .btn-solve:disabled { background: #475569; cursor: not-allowed; opacity: 0.6; }
     </style>
 </head>
 <body>
@@ -25,6 +39,9 @@
 </div>
 
 <canvas id="fireworks-canvas"></canvas>
+
+<!-- Выпадающее меню для выбора переменной -->
+<div id="var-selector" class="var-selector"></div>
 
 <div class="app-container" id="app"></div>
 
@@ -39,6 +56,7 @@ var mistakes = 0;
 var currentMode = 'learn';
 var currentTask = null;
 var foundVars = {};
+var selectedVarElement = null;
 
 function renderScreen(screenName, data) {
     app.innerHTML = '';
@@ -64,12 +82,10 @@ function renderScreen(screenName, data) {
         currentQuizDirection = (Math.random() < 0.5) ? 'term-to-def' : 'def-to-term';
         var questionText, correctAnswer, optionsPool;
         if (currentQuizDirection === 'term-to-def') {
-            questionText = qcard.word;
-            correctAnswer = qcard.trans;
+            questionText = qcard.word; correctAnswer = qcard.trans;
             optionsPool = currentCards.map(function(c){ return c.trans; });
         } else {
-            questionText = qcard.trans;
-            correctAnswer = qcard.word;
+            questionText = qcard.trans; correctAnswer = qcard.word;
             optionsPool = currentCards.map(function(c){ return c.word; });
         }
         var options = [correctAnswer];
@@ -89,7 +105,14 @@ function renderScreen(screenName, data) {
         app.innerHTML = '<h1>Контроль ' + (quizIndex + 1) + ' / ' + currentCards.length + '</h1><div class="flashcard" id="quiz-card"><div class="fc-word" style="font-size:20px">' + questionText + '</div><div class="fc-trans" style="font-size:14px;color:var(--text-muted)">' + hint + '</div></div><div class="quiz-options">' + optsHTML + '</div><button class="btn btn-stop" onclick="renderScreen(\'topics\',{mode:\'quiz\'})">Прервать</button>';
     } else if (screenName === 'task') {
         foundVars = {};
-        app.innerHTML = '<h1>' + currentTask.title + '</h1><div class="flashcard" style="border-color:#38bdf8;text-align:left;padding:20px">' + currentTask.html + '</div><div id="task-progress" style="margin-top:15px;font-size:14px;color:var(--text-muted)">Найдено переменных: 0 / ' + currentTask.requiredVars.length + '</div><div id="task-solution"></div><button class="btn btn-stop" onclick="renderScreen(\'topics\',{mode:\'tasks\'})">К списку задач</button>';
+        // Формируем блок формул
+        var formulasHTML = '<div class="formulas-box"><h3>📐 Формулы для решения:</h3><ul>';
+        for (var f = 0; f < currentTask.formulas.length; f++) {
+            formulasHTML += '<li>' + currentTask.formulas[f] + '</li>';
+        }
+        formulasHTML += '</ul></div>';
+        
+        app.innerHTML = '<h1>' + currentTask.title + '</h1>' + formulasHTML + '<div class="flashcard" style="border-color:#38bdf8;text-align:left;padding:20px">' + currentTask.html + '</div><div id="task-progress" style="margin-top:15px;font-size:14px;color:var(--text-muted)">Назначено переменных: 0 / ' + currentTask.requiredVars.length + '</div><button id="solve-btn" class="btn btn-solve" onclick="solveTask()" disabled>Решить задачу</button><div id="task-solution"></div><button class="btn btn-stop" onclick="renderScreen(\'topics\',{mode:\'tasks\'})">К списку задач</button>';
         attachVarListeners();
     } else if (screenName === 'result') {
         var isWin = (mistakes === 0);
@@ -117,8 +140,7 @@ function startTopic(scope) {
         cardIndex = 0;
         setTimeout(function(){ renderScreen('flashcard'); }, 400);
     } else {
-        quizIndex = 0;
-        mistakes = 0;
+        quizIndex = 0; mistakes = 0;
         setTimeout(function(){ renderScreen('quiz'); }, 400);
     }
 }
@@ -133,61 +155,103 @@ function startTask(idx) {
 
 function attachVarListeners() {
     var vars = document.querySelectorAll('.var');
+    var selector = document.getElementById('var-selector');
+    
     for (var i = 0; i < vars.length; i++) {
-        vars[i].addEventListener('click', function() {
+        vars[i].addEventListener('click', function(e) {
             if (this.classList.contains('found')) return;
-            var id = this.getAttribute('data-id');
-            var val = parseFloat(this.getAttribute('data-val'));
-            foundVars[id] = val;
-            this.classList.add('found');
-            this.innerText = id + '=' + val;
-            playSound('success');
-            updateTaskProgress();
+            e.stopPropagation();
+            selectedVarElement = this;
+            
+            // Позиционируем меню рядом с кликнутой ячейкой
+            var rect = this.getBoundingClientRect();
+            selector.style.left = rect.left + 'px';
+            selector.style.top = (rect.bottom + 5) + 'px';
+            selector.style.display = 'block';
+            
+            // Генерируем кнопки выбора
+            selector.innerHTML = '';
+            var labels = currentTask.varLabels;
+            for (var key in labels) {
+                var btn = document.createElement('button');
+                btn.innerText = labels[key];
+                btn.setAttribute('data-key', key);
+                btn.onclick = function() { assignVar(this.getAttribute('data-key')); };
+                selector.appendChild(btn);
+            }
         });
     }
+    
+    // Закрыть меню при клике вне его
+    document.addEventListener('click', function() {
+        selector.style.display = 'none';
+    });
+}
+
+function assignVar(varKey) {
+    if (!selectedVarElement) return;
+    var val = parseFloat(selectedVarElement.getAttribute('data-val'));
+    
+    // Находим уникальный ID для этой ячейки (по позиции в таблице)
+    var row = selectedVarElement.parentElement.rowIndex;
+    var col = selectedVarElement.cellIndex;
+    var uniqueId = varKey + '_' + row + '_' + col;
+    
+    foundVars[uniqueId] = val;
+    selectedVarElement.classList.add('found');
+    selectedVarElement.innerText = varKey + '=' + val;
+    playSound('success');
+    
+    document.getElementById('var-selector').style.display = 'none';
+    updateTaskProgress();
 }
 
 function updateTaskProgress() {
     var count = Object.keys(foundVars).length;
     var total = currentTask.requiredVars.length;
-    document.getElementById('task-progress').innerText = 'Найдено переменных: ' + count + ' / ' + total;
-    if (count === total) {
-        var sol = currentTask.solve(foundVars);
-        document.getElementById('task-solution').innerHTML = '<div class="solution-box">' + sol + '</div>';
-        playSound('success');
-        setTimeout(function(){ playSound('success'); }, 200);
+    document.getElementById('task-progress').innerText = 'Назначено переменных: ' + count + ' / ' + total;
+    document.getElementById('solve-btn').disabled = (count < total);
+}
+
+function solveTask() {
+    // Преобразуем foundVars в формат, ожидаемый функцией solve
+    // Маппинг по порядку ячеек таблицы
+    var v = {};
+    var keys = Object.keys(foundVars);
+    var reqKeys = currentTask.requiredVars;
+    for (var i = 0; i < keys.length; i++) {
+        // Извлекаем базовый ключ (p0, q1 и т.д.) и номер строки
+        var parts = keys[i].split('_');
+        var baseKey = parts[0];
+        var rowNum = parseInt(parts[1]);
+        var mappedKey = baseKey + '_' + rowNum;
+        v[mappedKey] = foundVars[keys[i]];
     }
+    
+    var sol = currentTask.solve(v);
+    document.getElementById('task-solution').innerHTML = '<div class="solution-box">' + sol + '</div>';
+    playSound('success');
+    setTimeout(function(){ playSound('success'); }, 200);
 }
 
 function nextCard() {
     playSound('success');
     cardIndex++;
-    if (cardIndex < currentCards.length) {
-        renderScreen('flashcard');
-    } else {
-        renderScreen('topics', {mode: 'learn'});
-    }
+    if (cardIndex < currentCards.length) renderScreen('flashcard');
+    else renderScreen('topics', {mode: 'learn'});
 }
 
 function checkAnswer(el, selected, correct) {
     var card = document.getElementById('quiz-card');
     if (selected === correct) {
-        el.classList.add('correct');
-        card.classList.add('correct-flash');
-        playSound('success');
+        el.classList.add('correct'); card.classList.add('correct-flash'); playSound('success');
     } else {
-        el.classList.add('wrong');
-        card.classList.add('wrong-flash');
-        playSound('error');
-        mistakes++;
+        el.classList.add('wrong'); card.classList.add('wrong-flash'); playSound('error'); mistakes++;
     }
     setTimeout(function(){
         quizIndex++;
-        if (quizIndex < currentCards.length) {
-            renderScreen('quiz');
-        } else {
-            renderScreen('result');
-        }
+        if (quizIndex < currentCards.length) renderScreen('quiz');
+        else renderScreen('result');
     }, 600);
 }
 
