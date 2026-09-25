@@ -93,6 +93,11 @@ function renderScreen(screenName, data) {
             for (var i = 0; i < statisticsDB.tasks.length; i++) {
                 topicsHTML += '<div class="tile" onclick="startTask(' + i + ')">' + statisticsDB.tasks[i].title + '</div>';
             }
+        } else if (mode === 'quiz') {
+            topicsHTML += '<div class="tile" onclick="startTopic(\'all\')">За все время</div>';
+            for (var key in statisticsDB.topicTitles) {
+                topicsHTML += '<div class="tile" onclick="startTopic(\'' + key + '\')">' + statisticsDB.topicTitles[key] + '</div>';
+            }
         } else {
             for (var key in statisticsDB.topicTitles) {
                 topicsHTML += '<div class="tile" onclick="startTopic(\'' + key + '\')">' + statisticsDB.topicTitles[key] + '</div>';
@@ -161,7 +166,14 @@ function startTopic(scope) {
     var el = event.target;
     el.classList.add('success');
     playSound('success');
-    currentCards = statisticsDB[scope].slice();
+    if (scope === 'all') {
+        currentCards = [];
+        for (var key in statisticsDB.topicTitles) {
+            currentCards = currentCards.concat(statisticsDB[key]);
+        }
+    } else {
+        currentCards = statisticsDB[scope].slice();
+    }
     currentCards.sort(function(){ return Math.random() - 0.5; });
     if (currentMode === 'learn') {
         cardIndex = 0;
