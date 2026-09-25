@@ -29,14 +29,11 @@
         .btn-solve:disabled { background: #475569; cursor: not-allowed; opacity: 0.6; }
         .task-msg { margin-top: 10px; font-size: 14px; font-weight: bold; min-height: 20px; }
         .task-msg.err { color: var(--accent-red); }
-        
-        /* Альбомная ориентация для задач на мобильных */
         .rotate-overlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.98); z-index: 99999; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
         .rotate-overlay h2 { color: var(--gold); font-size: 24px; margin-bottom: 15px; }
         .rotate-overlay p { color: var(--text-muted); font-size: 16px; }
         .rotate-icon { font-size: 60px; margin-bottom: 20px; animation: rotate 2s infinite; }
         @keyframes rotate { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(90deg); } }
-        
         @media (max-width: 768px) and (orientation: portrait) {
             .task-mode .rotate-overlay { display: flex; }
             .task-mode .app-container { display: none; }
@@ -91,11 +88,14 @@ function renderScreen(screenName, data) {
         var mode = (data && data.mode) ? data.mode : 'learn';
         currentMode = mode;
         var title = (mode === 'learn') ? 'Обучение' : (mode === 'quiz' ? 'Контроль' : 'Задачи');
-        var topicsHTML = '<div class="tile" onclick="startTopic(\'topic1\')">Тема 1: Индексы</div>';
+        var topicsHTML = '';
         if (mode === 'tasks') {
-            topicsHTML = '';
             for (var i = 0; i < statisticsDB.tasks.length; i++) {
                 topicsHTML += '<div class="tile" onclick="startTask(' + i + ')">' + statisticsDB.tasks[i].title + '</div>';
+            }
+        } else {
+            for (var key in statisticsDB.topicTitles) {
+                topicsHTML += '<div class="tile" onclick="startTopic(\'' + key + '\')">' + statisticsDB.topicTitles[key] + '</div>';
             }
         }
         app.innerHTML = '<h1>' + title + '</h1><div class="subtitle">Выберите тему</div><div class="grid single-col" style="margin-top:20px">' + topicsHTML + '</div><button class="btn btn-back" onclick="renderScreen(\'modes\')">Назад</button>';
