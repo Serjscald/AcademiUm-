@@ -13,6 +13,7 @@ var statisticsDB = {
         { word: "p1", trans: "Цена (или себестоимость) в отчётном периоде." },
         { word: "q0", trans: "Количество (объём) в базисном периоде." },
         { word: "q1", trans: "Количество (объём) в отчётном периоде." },
+        { word: "p1q1", trans: "Выручка (товарооборот) в отчётном периоде." },
         { word: "Темп роста", trans: "Отношение текущего уровня к базисному, выраженное в процентах." },
         { word: "Темп прироста", trans: "Темп роста минус 100%. Показывает, на сколько процентов изменилось явление." }
     ],
@@ -22,24 +23,38 @@ var statisticsDB = {
             title: "Задача: Выручка театра",
             formulas: [
                 "Выручка = Σ(p × q)",
+                "Цена отчётного периода p₁ = (p₁q₁) / q₁",
                 "Индекс выручки I_pq = Σ(p1×q1) / Σ(p0×q0)",
                 "Индекс цен I_p = Σ(p1×q1) / Σ(p0×q1)",
                 "Индекс объёма I_q = Σ(p0×q1) / Σ(p0×q0)",
                 "ΔВыручка = Σ(p1×q1) - Σ(p0×q0)"
             ],
-            html: '<p>Театр продаёт билеты трёх типов. Оцените изменение выручки в апреле по сравнению с февралём и разложите его на факторы.</p><table class="stat-table"><tr><th>Тип билета</th><th>Цена фев</th><th>Кол-во фев</th><th>Цена апр</th><th>Кол-во апр</th></tr><tr><td>Взрослый</td><td class="var" data-correct="p0" data-val="500">500</td><td class="var" data-correct="q0" data-val="1100">1100</td><td class="var" data-correct="p1" data-val="400">400</td><td class="var" data-correct="q1" data-val="1300">1300</td></tr><tr><td>Льготный</td><td class="var" data-correct="p0" data-val="250">250</td><td class="var" data-correct="q0" data-val="800">800</td><td class="var" data-correct="p1" data-val="200">200</td><td class="var" data-correct="q1" data-val="800">800</td></tr><tr><td>Детский</td><td class="var" data-correct="p0" data-val="100">100</td><td class="var" data-correct="q0" data-val="600">600</td><td class="var" data-correct="p1" data-val="150">150</td><td class="var" data-correct="q1" data-val="600">600</td></tr></table>',
-            varLabels: { p0: "p₀ (цена базисного периода)", q0: "q₀ (кол-во базисного периода)", p1: "p₁ (цена отчётного периода)", q1: "q₁ (кол-во отчётного периода)" },
+            html: '<p>Театр продаёт билеты трёх типов. Оцените изменение выручки в апреле по сравнению с февралём и разложите его на факторы.</p><table class="stat-table"><tr><th>Тип билета</th><th>Цена фев (руб.)</th><th>Продано фев (шт.)</th><th>Продано апр (тыс. руб.)</th><th>Продано апр (шт.)</th></tr><tr><td>Взрослый</td><td class="var" data-correct="p0" data-val="500">500</td><td class="var" data-correct="q0" data-val="1100">1100</td><td class="var" data-correct="p1q1" data-val="520000">520</td><td class="var" data-correct="q1" data-val="1300">1300</td></tr><tr><td>Льготный</td><td class="var" data-correct="p0" data-val="250">250</td><td class="var" data-correct="q0" data-val="800">800</td><td class="var" data-correct="p1q1" data-val="160000">160</td><td class="var" data-correct="q1" data-val="800">800</td></tr><tr><td>Детский</td><td class="var" data-correct="p0" data-val="100">100</td><td class="var" data-correct="q0" data-val="600">600</td><td class="var" data-correct="p1q1" data-val="90000">90</td><td class="var" data-correct="q1" data-val="600">600</td></tr></table>',
+            varLabels: { 
+                p0: "p₀ (цена базисного периода)", 
+                q0: "q₀ (кол-во базисного периода)", 
+                p1q1: "p₁q₁ (выручка отчётного периода)", 
+                q1: "q₁ (кол-во отчётного периода)" 
+            },
             solve: function(v) {
+                // v.p1q1_1 = 520000, v.q1_1 = 1300 => p1_1 = 400
+                var p1_1 = v.p1q1_1 / v.q1_1;
+                var p1_2 = v.p1q1_2 / v.q1_2;
+                var p1_3 = v.p1q1_3 / v.q1_3;
+                
                 var rev0 = v.p0_1*v.q0_1 + v.p0_2*v.q0_2 + v.p0_3*v.q0_3;
-                var rev1 = v.p1_1*v.q1_1 + v.p1_2*v.q1_2 + v.p1_3*v.q1_3;
+                var rev1 = v.p1q1_1 + v.p1q1_2 + v.p1q1_3; // Уже дано в условии
                 var revQ = v.p0_1*v.q1_1 + v.p0_2*v.q1_2 + v.p0_3*v.q1_3;
+                
                 var dRev = rev1 - rev0;
                 var dP = rev1 - revQ;
                 var dQ = revQ - rev0;
                 var iRev = (rev1/rev0*100).toFixed(1);
                 var iP = (rev1/revQ*100).toFixed(1);
                 var iQ = (revQ/rev0*100).toFixed(1);
-                var calc = '<b>Шаг 1. Совокупные величины:</b><br>Σp₀q₀ = ' + rev0 + ' руб.<br>Σp₁q₁ = ' + rev1 + ' руб.<br>Σp₀q₁ = ' + revQ + ' руб.<br><br><b>Шаг 2. Индексы:</b><br>I_pq = ' + iRev + '%<br>I_p = ' + iP + '%<br>I_q = ' + iQ + '%<br><br><b>Шаг 3. Абсолютные изменения:</b><br>Общее: ' + dRev + ' руб.<br>За счёт цен: ' + dP + ' руб.<br>За счёт кол-ва: ' + dQ + ' руб.';
+                
+                var calc = '<b>Шаг 1. Определение цен апреля (p₁):</b><br>p₁ (взр) = 520000 / 1300 = ' + p1_1 + ' руб.<br>p₁ (льг) = 160000 / 800 = ' + p1_2 + ' руб.<br>p₁ (дет) = 90000 / 600 = ' + p1_3 + ' руб.<br><br><b>Шаг 2. Совокупные величины:</b><br>Σp₀q₀ = ' + rev0 + ' руб.<br>Σp₁q₁ = ' + rev1 + ' руб.<br>Σp₀q₁ = ' + revQ + ' руб.<br><br><b>Шаг 3. Индексы:</b><br>I_pq = ' + iRev + '%<br>I_p = ' + iP + '%<br>I_q = ' + iQ + '%<br><br><b>Шаг 4. Абсолютные изменения:</b><br>Общее: ' + dRev + ' руб.<br>За счёт цен: ' + dP + ' руб.<br>За счёт кол-ва: ' + dQ + ' руб.';
+                
                 var dir = (dRev < 0) ? 'снизилась' : 'выросла';
                 var mainFactor = (Math.abs(dP) > Math.abs(dQ)) ? 'цен' : 'количества';
                 var conclusion = 'Выручка театра ' + dir + ' на ' + Math.abs(dRev) + ' руб. (индекс выручки ' + iRev + '%). Увеличение количества проданных билетов добавило ' + dQ + ' руб., однако изменение цен принесло ' + dP + ' руб. Преобладающим оказалось влияние фактора ' + mainFactor + ': именно оно и определило итоговую динамику выручки.';
