@@ -36,6 +36,13 @@ var statisticsDB = {
                 p1q1: "p₁q₁ (выручка отчётного периода)", 
                 q1: "q₁ (кол-во отчётного периода)" 
             },
+            varColors: {
+                p0: "#fbbf24",
+                q0: "#22c55e",
+                p1: "#38bdf8",
+                q1: "#a78bfa",
+                p1q1: "#f97316"
+            },
             solve: function(v) {
                 var p1_1 = v.p1q1_1 / v.q1_1;
                 var p1_2 = v.p1q1_2 / v.q1_2;
@@ -52,48 +59,49 @@ var statisticsDB = {
                 var iP = (rev1/revQ*100).toFixed(1);
                 var iQ = (revQ/rev0*100).toFixed(1);
                 
+                var c = this.varColors;
                 var calc = '';
                 
                 // Шаг 1
                 calc += '<div style="margin-bottom:15px;padding-bottom:10px;border-bottom:1px solid #334155">';
                 calc += '<b style="color:var(--gold)">Шаг 1. Определение цен апреля (p₁)</b><br>';
-                calc += '<span style="color:#38bdf8;font-family:monospace">p₁ = (p₁q₁) / q₁</span><br>';
-                calc += 'p₁ (взр) = 520000 / 1300 = <b>' + p1_1 + ' руб.</b><br>';
-                calc += 'p₁ (льг) = 160000 / 800 = <b>' + p1_2 + ' руб.</b><br>';
-                calc += 'p₁ (дет) = 90000 / 600 = <b>' + p1_3 + ' руб.</b>';
+                calc += '<span style="color:' + c.p1 + ';font-family:monospace">p₁ = (p₁q₁) / q₁</span><br>';
+                calc += '<span style="color:' + c.p1 + '">p₁</span> (взр) = <span style="color:' + c.p1q1 + '">520000</span> / <span style="color:' + c.q1 + '">1300</span> = <b style="color:' + c.p1 + '">' + p1_1 + ' руб.</b><br>';
+                calc += '<span style="color:' + c.p1 + '">p₁</span> (льг) = <span style="color:' + c.p1q1 + '">160000</span> / <span style="color:' + c.q1 + '">800</span> = <b style="color:' + c.p1 + '">' + p1_2 + ' руб.</b><br>';
+                calc += '<span style="color:' + c.p1 + '">p₁</span> (дет) = <span style="color:' + c.p1q1 + '">90000</span> / <span style="color:' + c.q1 + '">600</span> = <b style="color:' + c.p1 + '">' + p1_3 + ' руб.</b>';
                 calc += '</div>';
                 
                 // Шаг 2
                 calc += '<div style="margin-bottom:15px;padding-bottom:10px;border-bottom:1px solid #334155">';
                 calc += '<b style="color:var(--gold)">Шаг 2. Совокупные величины</b><br>';
-                calc += '<span style="color:#38bdf8;font-family:monospace">Σp₀q₀ = Σ(p₀ × q₀)</span><br>';
-                calc += 'Σp₀q₀ = (500×1100) + (250×800) + (100×600) = <b>' + rev0 + ' руб.</b><br><br>';
-                calc += '<span style="color:#38bdf8;font-family:monospace">Σp₁q₁ = Σ(p₁q₁)</span><br>';
-                calc += 'Σp₁q₁ = 520000 + 160000 + 90000 = <b>' + rev1 + ' руб.</b><br><br>';
-                calc += '<span style="color:#38bdf8;font-family:monospace">Σp₀q₁ = Σ(p₀ × q₁)</span><br>';
-                calc += 'Σp₀q₁ = (500×1300) + (250×800) + (100×600) = <b>' + revQ + ' руб.</b>';
+                calc += '<span style="font-family:monospace">Σ<span style="color:' + c.p0 + '">p₀</span><span style="color:' + c.q0 + '">q₀</span> = Σ(<span style="color:' + c.p0 + '">p₀</span> × <span style="color:' + c.q0 + '">q₀</span>)</span><br>';
+                calc += 'Σ<span style="color:' + c.p0 + '">p₀</span><span style="color:' + c.q0 + '">q₀</span> = (<span style="color:' + c.p0 + '">500</span>×<span style="color:' + c.q0 + '">1100</span>) + (<span style="color:' + c.p0 + '">250</span>×<span style="color:' + c.q0 + '">800</span>) + (<span style="color:' + c.p0 + '">100</span>×<span style="color:' + c.q0 + '">600</span>) = <b>' + rev0 + ' руб.</b><br><br>';
+                calc += '<span style="font-family:monospace">Σ<span style="color:' + c.p1q1 + '">p₁q₁</span> = Σ(<span style="color:' + c.p1q1 + '">p₁q₁</span>)</span><br>';
+                calc += 'Σ<span style="color:' + c.p1q1 + '">p₁q₁</span> = <span style="color:' + c.p1q1 + '">520000</span> + <span style="color:' + c.p1q1 + '">160000</span> + <span style="color:' + c.p1q1 + '">90000</span> = <b>' + rev1 + ' руб.</b><br><br>';
+                calc += '<span style="font-family:monospace">Σ<span style="color:' + c.p0 + '">p₀</span><span style="color:' + c.q1 + '">q₁</span> = Σ(<span style="color:' + c.p0 + '">p₀</span> × <span style="color:' + c.q1 + '">q₁</span>)</span><br>';
+                calc += 'Σ<span style="color:' + c.p0 + '">p₀</span><span style="color:' + c.q1 + '">q₁</span> = (<span style="color:' + c.p0 + '">500</span>×<span style="color:' + c.q1 + '">1300</span>) + (<span style="color:' + c.p0 + '">250</span>×<span style="color:' + c.q1 + '">800</span>) + (<span style="color:' + c.p0 + '">100</span>×<span style="color:' + c.q1 + '">600</span>) = <b>' + revQ + ' руб.</b>';
                 calc += '</div>';
                 
                 // Шаг 3
                 calc += '<div style="margin-bottom:15px;padding-bottom:10px;border-bottom:1px solid #334155">';
                 calc += '<b style="color:var(--gold)">Шаг 3. Индексы</b><br>';
-                calc += '<span style="color:#38bdf8;font-family:monospace">I_pq = Σ(p₁q₁) / Σ(p₀q₀)</span><br>';
-                calc += 'I_pq = ' + rev1 + ' / ' + rev0 + ' = <b>' + iRev + '%</b><br><br>';
-                calc += '<span style="color:#38bdf8;font-family:monospace">I_p = Σ(p₁q₁) / Σ(p₀q₁)</span><br>';
-                calc += 'I_p = ' + rev1 + ' / ' + revQ + ' = <b>' + iP + '%</b><br><br>';
-                calc += '<span style="color:#38bdf8;font-family:monospace">I_q = Σ(p₀q₁) / Σ(p₀q₀)</span><br>';
-                calc += 'I_q = ' + revQ + ' / ' + rev0 + ' = <b>' + iQ + '%</b>';
+                calc += '<span style="font-family:monospace">I_pq = Σ(<span style="color:' + c.p1q1 + '">p₁q₁</span>) / Σ(<span style="color:' + c.p0 + '">p₀</span><span style="color:' + c.q0 + '">q₀</span>)</span><br>';
+                calc += 'I_pq = <span style="color:' + c.p1q1 + '">' + rev1 + '</span> / <span style="color:' + c.p0 + '">' + rev0 + '</span> = <b>' + iRev + '%</b><br><br>';
+                calc += '<span style="font-family:monospace">I_p = Σ(<span style="color:' + c.p1q1 + '">p₁q₁</span>) / Σ(<span style="color:' + c.p0 + '">p₀</span><span style="color:' + c.q1 + '">q₁</span>)</span><br>';
+                calc += 'I_p = <span style="color:' + c.p1q1 + '">' + rev1 + '</span> / <span style="color:' + c.p0 + '">' + revQ + '</span> = <b>' + iP + '%</b><br><br>';
+                calc += '<span style="font-family:monospace">I_q = Σ(<span style="color:' + c.p0 + '">p₀</span><span style="color:' + c.q1 + '">q₁</span>) / Σ(<span style="color:' + c.p0 + '">p₀</span><span style="color:' + c.q0 + '">q₀</span>)</span><br>';
+                calc += 'I_q = <span style="color:' + c.p0 + '">' + revQ + '</span> / <span style="color:' + c.p0 + '">' + rev0 + '</span> = <b>' + iQ + '%</b>';
                 calc += '</div>';
                 
                 // Шаг 4
                 calc += '<div>';
                 calc += '<b style="color:var(--gold)">Шаг 4. Абсолютные изменения</b><br>';
-                calc += '<span style="color:#38bdf8;font-family:monospace">ΔОбщее = Σ(p₁q₁) - Σ(p₀q₀)</span><br>';
-                calc += 'ΔОбщее = ' + rev1 + ' - ' + rev0 + ' = <b>' + dRev + ' руб.</b><br><br>';
-                calc += '<span style="color:#38bdf8;font-family:monospace">ΔЦен = Σ(p₁q₁) - Σ(p₀q₁)</span><br>';
-                calc += 'ΔЦен = ' + rev1 + ' - ' + revQ + ' = <b>' + dP + ' руб.</b><br><br>';
-                calc += '<span style="color:#38bdf8;font-family:monospace">ΔКол-ва = Σ(p₀q₁) - Σ(p₀q₀)</span><br>';
-                calc += 'ΔКол-ва = ' + revQ + ' - ' + rev0 + ' = <b>' + dQ + ' руб.</b>';
+                calc += '<span style="font-family:monospace">ΔОбщее = Σ(<span style="color:' + c.p1q1 + '">p₁q₁</span>) - Σ(<span style="color:' + c.p0 + '">p₀</span><span style="color:' + c.q0 + '">q₀</span>)</span><br>';
+                calc += 'ΔОбщее = <span style="color:' + c.p1q1 + '">' + rev1 + '</span> - <span style="color:' + c.p0 + '">' + rev0 + '</span> = <b>' + dRev + ' руб.</b><br><br>';
+                calc += '<span style="font-family:monospace">ΔЦен = Σ(<span style="color:' + c.p1q1 + '">p₁q₁</span>) - Σ(<span style="color:' + c.p0 + '">p₀</span><span style="color:' + c.q1 + '">q₁</span>)</span><br>';
+                calc += 'ΔЦен = <span style="color:' + c.p1q1 + '">' + rev1 + '</span> - <span style="color:' + c.p0 + '">' + revQ + '</span> = <b>' + dP + ' руб.</b><br><br>';
+                calc += '<span style="font-family:monospace">ΔКол-ва = Σ(<span style="color:' + c.p0 + '">p₀</span><span style="color:' + c.q1 + '">q₁</span>) - Σ(<span style="color:' + c.p0 + '">p₀</span><span style="color:' + c.q0 + '">q₀</span>)</span><br>';
+                calc += 'ΔКол-ва = <span style="color:' + c.p0 + '">' + revQ + '</span> - <span style="color:' + c.p0 + '">' + rev0 + '</span> = <b>' + dQ + ' руб.</b>';
                 calc += '</div>';
                 
                 var dir = (dRev < 0) ? 'снизилась' : 'выросла';
