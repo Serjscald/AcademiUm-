@@ -37,13 +37,12 @@ var statisticsDB = {
                 q1: "q₁ (кол-во отчётного периода)" 
             },
             solve: function(v) {
-                // v.p1q1_1 = 520000, v.q1_1 = 1300 => p1_1 = 400
                 var p1_1 = v.p1q1_1 / v.q1_1;
                 var p1_2 = v.p1q1_2 / v.q1_2;
                 var p1_3 = v.p1q1_3 / v.q1_3;
                 
                 var rev0 = v.p0_1*v.q0_1 + v.p0_2*v.q0_2 + v.p0_3*v.q0_3;
-                var rev1 = v.p1q1_1 + v.p1q1_2 + v.p1q1_3; // Уже дано в условии
+                var rev1 = v.p1q1_1 + v.p1q1_2 + v.p1q1_3;
                 var revQ = v.p0_1*v.q1_1 + v.p0_2*v.q1_2 + v.p0_3*v.q1_3;
                 
                 var dRev = rev1 - rev0;
@@ -53,11 +52,54 @@ var statisticsDB = {
                 var iP = (rev1/revQ*100).toFixed(1);
                 var iQ = (revQ/rev0*100).toFixed(1);
                 
-                var calc = '<b>Шаг 1. Определение цен апреля (p₁):</b><br>p₁ (взр) = 520000 / 1300 = ' + p1_1 + ' руб.<br>p₁ (льг) = 160000 / 800 = ' + p1_2 + ' руб.<br>p₁ (дет) = 90000 / 600 = ' + p1_3 + ' руб.<br><br><b>Шаг 2. Совокупные величины:</b><br>Σp₀q₀ = ' + rev0 + ' руб.<br>Σp₁q₁ = ' + rev1 + ' руб.<br>Σp₀q₁ = ' + revQ + ' руб.<br><br><b>Шаг 3. Индексы:</b><br>I_pq = ' + iRev + '%<br>I_p = ' + iP + '%<br>I_q = ' + iQ + '%<br><br><b>Шаг 4. Абсолютные изменения:</b><br>Общее: ' + dRev + ' руб.<br>За счёт цен: ' + dP + ' руб.<br>За счёт кол-ва: ' + dQ + ' руб.';
+                var calc = '';
+                
+                // Шаг 1
+                calc += '<div style="margin-bottom:15px;padding-bottom:10px;border-bottom:1px solid #334155">';
+                calc += '<b style="color:var(--gold)">Шаг 1. Определение цен апреля (p₁)</b><br>';
+                calc += '<span style="color:#38bdf8;font-family:monospace">p₁ = (p₁q₁) / q₁</span><br>';
+                calc += 'p₁ (взр) = 520000 / 1300 = <b>' + p1_1 + ' руб.</b><br>';
+                calc += 'p₁ (льг) = 160000 / 800 = <b>' + p1_2 + ' руб.</b><br>';
+                calc += 'p₁ (дет) = 90000 / 600 = <b>' + p1_3 + ' руб.</b>';
+                calc += '</div>';
+                
+                // Шаг 2
+                calc += '<div style="margin-bottom:15px;padding-bottom:10px;border-bottom:1px solid #334155">';
+                calc += '<b style="color:var(--gold)">Шаг 2. Совокупные величины</b><br>';
+                calc += '<span style="color:#38bdf8;font-family:monospace">Σp₀q₀ = Σ(p₀ × q₀)</span><br>';
+                calc += 'Σp₀q₀ = (500×1100) + (250×800) + (100×600) = <b>' + rev0 + ' руб.</b><br><br>';
+                calc += '<span style="color:#38bdf8;font-family:monospace">Σp₁q₁ = Σ(p₁q₁)</span><br>';
+                calc += 'Σp₁q₁ = 520000 + 160000 + 90000 = <b>' + rev1 + ' руб.</b><br><br>';
+                calc += '<span style="color:#38bdf8;font-family:monospace">Σp₀q₁ = Σ(p₀ × q₁)</span><br>';
+                calc += 'Σp₀q₁ = (500×1300) + (250×800) + (100×600) = <b>' + revQ + ' руб.</b>';
+                calc += '</div>';
+                
+                // Шаг 3
+                calc += '<div style="margin-bottom:15px;padding-bottom:10px;border-bottom:1px solid #334155">';
+                calc += '<b style="color:var(--gold)">Шаг 3. Индексы</b><br>';
+                calc += '<span style="color:#38bdf8;font-family:monospace">I_pq = Σ(p₁q₁) / Σ(p₀q₀)</span><br>';
+                calc += 'I_pq = ' + rev1 + ' / ' + rev0 + ' = <b>' + iRev + '%</b><br><br>';
+                calc += '<span style="color:#38bdf8;font-family:monospace">I_p = Σ(p₁q₁) / Σ(p₀q₁)</span><br>';
+                calc += 'I_p = ' + rev1 + ' / ' + revQ + ' = <b>' + iP + '%</b><br><br>';
+                calc += '<span style="color:#38bdf8;font-family:monospace">I_q = Σ(p₀q₁) / Σ(p₀q₀)</span><br>';
+                calc += 'I_q = ' + revQ + ' / ' + rev0 + ' = <b>' + iQ + '%</b>';
+                calc += '</div>';
+                
+                // Шаг 4
+                calc += '<div>';
+                calc += '<b style="color:var(--gold)">Шаг 4. Абсолютные изменения</b><br>';
+                calc += '<span style="color:#38bdf8;font-family:monospace">ΔОбщее = Σ(p₁q₁) - Σ(p₀q₀)</span><br>';
+                calc += 'ΔОбщее = ' + rev1 + ' - ' + rev0 + ' = <b>' + dRev + ' руб.</b><br><br>';
+                calc += '<span style="color:#38bdf8;font-family:monospace">ΔЦен = Σ(p₁q₁) - Σ(p₀q₁)</span><br>';
+                calc += 'ΔЦен = ' + rev1 + ' - ' + revQ + ' = <b>' + dP + ' руб.</b><br><br>';
+                calc += '<span style="color:#38bdf8;font-family:monospace">ΔКол-ва = Σ(p₀q₁) - Σ(p₀q₀)</span><br>';
+                calc += 'ΔКол-ва = ' + revQ + ' - ' + rev0 + ' = <b>' + dQ + ' руб.</b>';
+                calc += '</div>';
                 
                 var dir = (dRev < 0) ? 'снизилась' : 'выросла';
                 var mainFactor = (Math.abs(dP) > Math.abs(dQ)) ? 'цен' : 'количества';
                 var conclusion = 'Выручка театра ' + dir + ' на ' + Math.abs(dRev) + ' руб. (индекс выручки ' + iRev + '%). Увеличение количества проданных билетов добавило ' + dQ + ' руб., однако изменение цен принесло ' + dP + ' руб. Преобладающим оказалось влияние фактора ' + mainFactor + ': именно оно и определило итоговую динамику выручки.';
+                
                 return { calc: calc, conclusion: conclusion };
             }
         }
