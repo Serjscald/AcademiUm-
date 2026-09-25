@@ -9,26 +9,26 @@
         .stat-table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 14px; }
         .stat-table th, .stat-table td { border: 1px solid #475569; padding: 8px; text-align: center; }
         .stat-table th { background: #334155; color: var(--gold); }
-        .var { color: #38bdf8; text-decoration: underline; cursor: pointer; font-weight: bold; transition: all 0.2s; position: relative; }
+        .var { color: #38bdf8; text-decoration: underline; cursor: pointer; font-weight: bold; transition: all 0.2s; }
         .var:hover { background: rgba(56, 189, 248, 0.2); }
-        .var.found { color: var(--accent-green); background: rgba(34, 197, 94, 0.2); text-decoration: none; cursor: default; }
-        .task-hint { font-size: 13px; color: var(--text-muted); margin-top: 10px; font-style: italic; }
+        .var.found { color: var(--accent-green); background: rgba(34, 197, 94, 0.2); text-decoration: none; }
+        .var.wrong-var { color: var(--accent-red); background: rgba(239, 68, 68, 0.25); text-decoration: none; animation: shake 0.4s; }
+        .var.locked { cursor: default; }
         .solution-box { background: #0f172a; border: 2px solid var(--accent-green); border-radius: 12px; padding: 20px; margin-top: 20px; text-align: left; line-height: 1.6; animation: fadeIn 0.5s; }
+        .conclusion-box { background: rgba(251, 191, 36, 0.1); border: 2px solid var(--gold); border-radius: 12px; padding: 20px; margin-top: 15px; text-align: left; line-height: 1.6; animation: fadeIn 0.5s; }
+        .conclusion-box h3 { margin: 0 0 10px 0; color: var(--gold); font-size: 16px; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        /* Блок формул */
         .formulas-box { background: rgba(251, 191, 36, 0.1); border: 1px solid var(--gold); border-radius: 10px; padding: 15px; margin-bottom: 20px; text-align: left; font-size: 14px; }
         .formulas-box h3 { margin: 0 0 10px 0; font-size: 16px; color: var(--gold); }
         .formulas-box ul { margin: 0; padding-left: 20px; }
         .formulas-box li { margin-bottom: 5px; color: var(--text-main); }
-        
-        /* Выпадающее меню выбора переменной */
-        .var-selector { position: fixed; z-index: 1000; background: #1e293b; border: 2px solid var(--gold); border-radius: 8px; padding: 5px; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .var-selector button { display: block; width: 100%; padding: 8px 15px; margin: 2px 0; background: #334155; border: none; border-radius: 5px; color: white; font-size: 14px; cursor: pointer; text-align: left; }
+        .var-selector { position: fixed; z-index: 1000; background: #1e293b; border: 2px solid var(--gold); border-radius: 8px; padding: 5px; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.5); max-width: 260px; }
+        .var-selector button { display: block; width: 100%; padding: 8px 15px; margin: 2px 0; background: #334155; border: none; border-radius: 5px; color: white; font-size: 13px; cursor: pointer; text-align: left; }
         .var-selector button:hover { background: var(--gold); color: #0f172a; }
-        
         .btn-solve { background: var(--accent-green); color: white; margin-top: 15px; }
         .btn-solve:disabled { background: #475569; cursor: not-allowed; opacity: 0.6; }
+        .task-msg { margin-top: 10px; font-size: 14px; font-weight: bold; min-height: 20px; }
+        .task-msg.err { color: var(--accent-red); }
     </style>
 </head>
 <body>
@@ -40,7 +40,6 @@
 
 <canvas id="fireworks-canvas"></canvas>
 
-<!-- Выпадающее меню для выбора переменной -->
 <div id="var-selector" class="var-selector"></div>
 
 <div class="app-container" id="app"></div>
@@ -49,17 +48,23 @@
 <script src="../../../js/data-statistics.js"></script>
 <script>
 var app = document.getElementById('app');
+var selector = document.getElementById('var-selector');
 var currentCards = [];
 var cardIndex = 0;
 var quizIndex = 0;
 var mistakes = 0;
 var currentMode = 'learn';
+var currentQuizDirection = 'term-to-def';
 var currentTask = null;
-var foundVars = {};
+var assignments = {};
 var selectedVarElement = null;
+var taskSolved = false;
+
+document.addEventListener('click', function(){ selector.style.display = 'none'; });
 
 function renderScreen(screenName, data) {
     app.innerHTML = '';
+    selector.style.display = 'none';
     if (screenName === 'modes') {
         app.innerHTML = '<h1>Статистика</h1><div class="subtitle">Выберите режим</div><div class="grid single-col" style="margin-top:30px"><div class="tile" onclick="handleMode(\'learn\')">Обучение</div><div class="tile" onclick="handleMode(\'quiz\')">Контроль</div><div class="tile" onclick="handleMode(\'tasks\')" style="border-color:#38bdf8;color:#38bdf8">Задачи</div></div><button class="btn btn-back" onclick="navigateTo(\'index.html\')">Назад</button>';
     } else if (screenName === 'topics') {
@@ -104,15 +109,15 @@ function renderScreen(screenName, data) {
         var hint = (currentQuizDirection === 'term-to-def') ? 'Выберите определение:' : 'Выберите термин:';
         app.innerHTML = '<h1>Контроль ' + (quizIndex + 1) + ' / ' + currentCards.length + '</h1><div class="flashcard" id="quiz-card"><div class="fc-word" style="font-size:20px">' + questionText + '</div><div class="fc-trans" style="font-size:14px;color:var(--text-muted)">' + hint + '</div></div><div class="quiz-options">' + optsHTML + '</div><button class="btn btn-stop" onclick="renderScreen(\'topics\',{mode:\'quiz\'})">Прервать</button>';
     } else if (screenName === 'task') {
-        foundVars = {};
-        // Формируем блок формул
+        assignments = {};
+        taskSolved = false;
         var formulasHTML = '<div class="formulas-box"><h3>📐 Формулы для решения:</h3><ul>';
         for (var f = 0; f < currentTask.formulas.length; f++) {
             formulasHTML += '<li>' + currentTask.formulas[f] + '</li>';
         }
         formulasHTML += '</ul></div>';
-        
-        app.innerHTML = '<h1>' + currentTask.title + '</h1>' + formulasHTML + '<div class="flashcard" style="border-color:#38bdf8;text-align:left;padding:20px">' + currentTask.html + '</div><div id="task-progress" style="margin-top:15px;font-size:14px;color:var(--text-muted)">Назначено переменных: 0 / ' + currentTask.requiredVars.length + '</div><button id="solve-btn" class="btn btn-solve" onclick="solveTask()" disabled>Решить задачу</button><div id="task-solution"></div><button class="btn btn-stop" onclick="renderScreen(\'topics\',{mode:\'tasks\'})">К списку задач</button>';
+        var totalVars = (currentTask.html.match(/class="var"/g) || []).length;
+        app.innerHTML = '<h1>' + currentTask.title + '</h1>' + formulasHTML + '<div class="flashcard" style="border-color:#38bdf8;text-align:left;padding:20px">' + currentTask.html + '</div><div class="task-hint">Нажимайте на числа и выбирайте из списка, какой переменной они соответствуют. Назначение можно менять до нажатия кнопки «Решить».</div><div id="task-progress" style="margin-top:15px;font-size:14px;color:var(--text-muted)">Назначено переменных: 0 / ' + totalVars + '</div><div id="task-msg" class="task-msg"></div><button id="solve-btn" class="btn btn-solve" onclick="solveTask()" disabled>Решить задачу</button><div id="task-solution"></div><button class="btn btn-stop" onclick="renderScreen(\'topics\',{mode:\'tasks\'})">К списку задач</button>';
         attachVarListeners();
     } else if (screenName === 'result') {
         var isWin = (mistakes === 0);
@@ -155,81 +160,83 @@ function startTask(idx) {
 
 function attachVarListeners() {
     var vars = document.querySelectorAll('.var');
-    var selector = document.getElementById('var-selector');
-    
     for (var i = 0; i < vars.length; i++) {
         vars[i].addEventListener('click', function(e) {
-            if (this.classList.contains('found')) return;
             e.stopPropagation();
+            if (taskSolved) return;
             selectedVarElement = this;
-            
-            // Позиционируем меню рядом с кликнутой ячейкой
             var rect = this.getBoundingClientRect();
-            selector.style.left = rect.left + 'px';
+            selector.style.left = Math.min(rect.left, window.innerWidth - 270) + 'px';
             selector.style.top = (rect.bottom + 5) + 'px';
             selector.style.display = 'block';
-            
-            // Генерируем кнопки выбора
             selector.innerHTML = '';
             var labels = currentTask.varLabels;
             for (var key in labels) {
                 var btn = document.createElement('button');
                 btn.innerText = labels[key];
                 btn.setAttribute('data-key', key);
-                btn.onclick = function() { assignVar(this.getAttribute('data-key')); };
+                btn.onclick = function(ev) { ev.stopPropagation(); assignVar(this.getAttribute('data-key')); };
                 selector.appendChild(btn);
             }
         });
     }
-    
-    // Закрыть меню при клике вне его
-    document.addEventListener('click', function() {
-        selector.style.display = 'none';
-    });
 }
 
 function assignVar(varKey) {
     if (!selectedVarElement) return;
     var val = parseFloat(selectedVarElement.getAttribute('data-val'));
-    
-    // Находим уникальный ID для этой ячейки (по позиции в таблице)
     var row = selectedVarElement.parentElement.rowIndex;
     var col = selectedVarElement.cellIndex;
-    var uniqueId = varKey + '_' + row + '_' + col;
-    
-    foundVars[uniqueId] = val;
+    var cellId = 'r' + row + 'c' + col;
+    assignments[cellId] = { varKey: varKey, val: val, row: row };
     selectedVarElement.classList.add('found');
-    selectedVarElement.innerText = varKey + '=' + val;
+    selectedVarElement.classList.remove('wrong-var');
+    selectedVarElement.innerText = varKey + ' = ' + val;
     playSound('success');
-    
-    document.getElementById('var-selector').style.display = 'none';
+    selector.style.display = 'none';
+    document.getElementById('task-msg').innerText = '';
     updateTaskProgress();
 }
 
 function updateTaskProgress() {
-    var count = Object.keys(foundVars).length;
-    var total = currentTask.requiredVars.length;
+    var total = document.querySelectorAll('.var').length;
+    var count = Object.keys(assignments).length;
     document.getElementById('task-progress').innerText = 'Назначено переменных: ' + count + ' / ' + total;
     document.getElementById('solve-btn').disabled = (count < total);
 }
 
 function solveTask() {
-    // Преобразуем foundVars в формат, ожидаемый функцией solve
-    // Маппинг по порядку ячеек таблицы
+    if (taskSolved) return;
+    var vars = document.querySelectorAll('.var');
+    var wrongCount = 0;
     var v = {};
-    var keys = Object.keys(foundVars);
-    var reqKeys = currentTask.requiredVars;
-    for (var i = 0; i < keys.length; i++) {
-        // Извлекаем базовый ключ (p0, q1 и т.д.) и номер строки
-        var parts = keys[i].split('_');
-        var baseKey = parts[0];
-        var rowNum = parseInt(parts[1]);
-        var mappedKey = baseKey + '_' + rowNum;
-        v[mappedKey] = foundVars[keys[i]];
+    for (var i = 0; i < vars.length; i++) {
+        var row = vars[i].parentElement.rowIndex;
+        var col = vars[i].cellIndex;
+        var cellId = 'r' + row + 'c' + col;
+        var correct = vars[i].getAttribute('data-correct');
+        var assigned = assignments[cellId];
+        if (!assigned || assigned.varKey !== correct) {
+            vars[i].classList.add('wrong-var');
+            wrongCount++;
+        } else {
+            vars[i].classList.remove('wrong-var');
+            v[correct + '_' + row] = assigned.val;
+        }
     }
-    
+    var msgEl = document.getElementById('task-msg');
+    if (wrongCount > 0) {
+        msgEl.className = 'task-msg err';
+        msgEl.innerText = '⚠️ Неверно назначено ячеек: ' + wrongCount + '. Исправьте красные и нажмите «Решить» снова.';
+        playSound('error');
+        return;
+    }
+    msgEl.className = 'task-msg';
+    msgEl.innerText = '';
+    taskSolved = true;
+    for (var j = 0; j < vars.length; j++) vars[j].classList.add('locked');
     var sol = currentTask.solve(v);
-    document.getElementById('task-solution').innerHTML = '<div class="solution-box">' + sol + '</div>';
+    document.getElementById('task-solution').innerHTML = '<div class="solution-box">' + sol.calc + '</div><div class="conclusion-box"><h3>📝 Вывод:</h3>' + sol.conclusion + '</div>';
     playSound('success');
     setTimeout(function(){ playSound('success'); }, 200);
 }
