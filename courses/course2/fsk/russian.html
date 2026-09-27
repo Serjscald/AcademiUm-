@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Русский язык — АкадемиУм!</title>
+    <link rel="stylesheet" href="../../../css/style.css">
+    <style>
+        .task-box { background: #0f172a; border: 2px solid var(--gold); border-radius: 12px; padding: 20px; margin: 15px 0; text-align: left; line-height: 1.6; font-size: 16px; }
+        .task-box .wrong-word { color: var(--accent-red); text-decoration: underline wavy; font-weight: bold; }
+        .task-box .caps-word { color: var(--gold); font-weight: bold; text-transform: uppercase; }
+        .answer-box { background: rgba(34, 197, 94, 0.15); border: 2px solid var(--accent-green); border-radius: 10px; padding: 15px; margin: 15px 0; text-align: left; line-height: 1.6; animation: fadeIn 0.4s; }
+        .answer-box b { color: var(--accent-green); }
+        .note-box { background: rgba(56, 189, 248, 0.1); border-left: 4px solid #38bdf8; padding: 12px 15px; margin: 10px 0; font-size: 14px; text-align: left; font-style: italic; color: var(--text-muted); }
+        .note-box b { color: #38bdf8; font-style: normal; }
+        .quiz-options { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        .quiz-opt { background: #1e293b; border: 2px solid #475569; border-radius: 10px; padding: 14px 18px; color: white; font-size: 15px; cursor: pointer; transition: all 0.2s; text-align: left; }
+        .quiz-opt:hover { border-color: var(--gold); background: #334155; }
+        .quiz-opt.correct { background: rgba(34, 197, 94, 0.2); border-color: var(--accent-green); color: var(--accent-green); font-weight: bold; }
+        .quiz-opt.wrong { background: rgba(239, 68, 68, 0.2); border-color: var(--accent-red); color: var(--accent-red); animation: shake 0.4s; }
+        .quiz-opt.disabled { pointer-events: none; opacity: 0.7; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+        .btn-reveal { background: var(--gold); color: #0f172a; margin-top: 10px; }
+        .sentence-sentences { display: flex; flex-direction: column; gap: 6px; margin: 10px 0; }
+        .sentence-line { padding: 8px 12px; background: #1e293b; border-radius: 6px; font-size: 15px; }
+        .sentence-line strong { color: var(--gold); margin-right: 8px; }
+    </style>
+</head>
+<body>
+
+<div id="start-screen">
+    <h2>📝 Русский язык</h2>
+    <p>Нажмите, чтобы начать обучение</p>
+</div>
+
+<canvas id="fireworks-canvas"></canvas>
+
+<div class="app-container" id="app"></div>
+
+<script src="../../../js/core.js"></script>
+<script src="../../../js/data-russian.js"></script>
+<script>
+var app = document.getElementById('app');
+var currentCards = [];
+var cardIndex = 0;
+var quizIndex = 0;
+var mistakes = 0;
+var currentMode = 'learn';
+var revealed = false;
+var answered = false;
+
+function renderScreen(screenName, data) {
+    app.innerHTML = '';
+    revealed = false;
+    answered = false;
+    
+    if (screenName === 'modes') {
+        app.innerHTML = '<h1>Русский язык</h1><div class="subtitle">Выберите режим</div><div class="grid" style="margin-top:40px"><div class="tile" onclick="handleMode(\'learn\')">Обучение</div><div class="tile" onclick="handleMode(\'quiz\')">Контроль</div></div><button class="btn btn-back" onclick="navigateTo(\'index.html\')">Назад</button>';
+    } else if (screenName === 'topics') {
+        var mode = (data && data.mode) ? data.mode : 'learn';
+        currentMode = mode;
+        var title = (mode === 'learn') ? 'Обучение' : 'Контроль';
+        var topicsHTML = '';
+        if (mode === 'quiz') {
+            topicsHTML += '<div class="tile" onclick="startTopic(\'all\')">За все время</div>';
+        }
+        for (var key in russianDB.topicTitles) {
+            topicsHTML += '<div class="tile" onclick="startTopic(\'' + key + '\')">' + russianDB.topicTitles[key] + '</div>';
+        }
+        app.innerHTML = '<h1>' + title + '</h1><div class="subtitle">Выберите тему</div><div class="grid single-col" style="margin-top:20px">' + topicsHTML + '</div><button class="btn btn-back" onclick="renderScreen(\'modes\')">Назад</button>';
+    } else if (screenName === 'flashcard') {
+        renderLearnCard();
+    } else if (screenName === 'quiz') {
+        renderQuizCard();
+    } else if (screenName === 'result') {
+        var isWin = (mistakes === 0);
+        var msg = isWin ? '🎉 Отличная работа!' : 'Нужно заниматься усерднее, Данечка!';
+        var cls = isWin ? 'result-win' : 'result-lose';
+        app.innerHTML = '<h1>Результат</h1><div class="result-msg ' + cls + '">' + msg + '</div><button class="btn btn-orange" onclick="renderScreen(\'modes\')">В меню</button><button class="btn btn-back" onclick="navigateTo(\'../../../index.html\')">На главную</button>';
+        if (isWin) startFireworks();
+    }
+}
+
+function renderLearnCard() {
+    var card = currentCards[cardIndex];
+    var html = '<h1>Задание ' + (cardIndex + 1) + ' / ' + currentCards.length + '</h1>';
+    html += buildQuestionHTML(card);
+    html += '<div id="answer-area"></div>';
+    html += '<button id="reveal-btn" class="btn btn-reveal" onclick="revealAnswer()">Показать ответ</button>';
+    html += '<button class="btn btn-orange" onclick="nextCard()">Следующее</button>';
+    html += '<button class="btn btn-stop" onclick="renderScreen(\'topics\',{mode:\'learn\'})">Прервать</button>';
+    app.innerHTML = html;
+}
+
+function buildQuestionHTML(card) {
+    var html = '';
+    if (card.type === 'A') {
+        html += '<div class="task-box"><div style="color:var(--gold);font-size:13px;margin-bottom:8px">Исключите ЛИШНЕЕ слово. Выпишите это слово.</div>' + card.q + '</div>';
+    } else if (card.type === 'B') {
+        var q = card.q.replace(card.wrong, '<span class="wrong-word">' + card.wrong + '</span>');
+        html += '<div class="task-box"><div style="color:var(--gold);font-size:13px;margin-bottom:8px">Замените НЕВЕРНО употреблённое слово. Выпишите слово-замену.</div>' + q + '</div>';
+    } else if (card.type === 'C') {
+        html += '<div class="task-box"><div style="color:var(--gold);font-size:13px;margin-bottom:8px">Выберите правильный вариант ответа.</div>' + card.q + '</div>';
+    } else if (card.type === 'D') {
+        html += '<div class="task-box"><div style="color:var(--gold);font-size:13px;margin-bottom:8px">В каком предложении НЕВЕРНО употреблено выделенное слово?</div><div class="sentence-sentences">';
+        for (var i = 0; i < card.sentences.length; i++) {
+            html += '<div class="sentence-line"><strong>' + (i + 1) + '.</strong> ' + card.sentences[i] + '</div>';
+        }
+        html += '</div></div>';
+    }
+    return html;
+}
+
+function buildAnswerHTML(card) {
+    var html = '<div class="answer-box"><b>Ответ: </b>';
+    if (card.type === 'A' || card.type === 'B') {
+        html += card.a.join(' <b>ИЛИ</b> ');
+    } else if (card.type === 'C') {
+        html += card.correct;
+    } else if (card.type === 'D') {
+        html += 'Предложение №' + card.answer + ' (правильно: <b>' + card.correct + '</b>)';
+    }
+    html += '</div>';
+    if (card.note) {
+        html += '<div class="note-box"><b>💡 Пояснение:</b> ' + card.note + '</div>';
+    }
+    return html;
+}
+
+function revealAnswer() {
+    if (revealed) return;
+    revealed = true;
+    playSound('success');
+    var card = currentCards[cardIndex];
+    document.getElementById('answer-area').innerHTML = buildAnswerHTML(card);
+    var btn = document.getElementById('reveal-btn');
+    btn.style.display = 'none';
+}
+
+function renderQuizCard() {
+    var card = currentCards[quizIndex];
+    var html = '<h1>Контроль ' + (quizIndex + 1) + ' / ' + currentCards.length + '</h1>';
+    html += buildQuestionHTML(card);
+    html += '<div class="quiz-options" id="quiz-options"></div>';
+    html += '<div id="quiz-feedback"></div>';
+    html += '<button id="next-quiz-btn" class="btn btn-orange" style="display:none" onclick="nextQuiz()">Следующее</button>';
+    html += '<button class="btn btn-stop" onclick="renderScreen(\'topics\',{mode:\'quiz\'})">Прервать</button>';
+    app.innerHTML = html;
+    buildQuizOptions(card);
+}
+
+function buildQuizOptions(card) {
+    var container = document.getElementById('quiz-options');
+    var options = [];
+    
+    if (card.type === 'A') {
+        // 4 варианта из слов предложения + правильные ответы
+        var pool = extractWords(card.q);
+        options = card.a.slice();
+        var traps = pool.filter(function(w){ return options.indexOf(w) === -1; });
+        traps.sort(function(){ return Math.random() - 0.5; });
+        while (options.length < 4 && traps.length > 0) {
+            options.push(traps.shift());
+        }
+        options.sort(function(){ return Math.random() - 0.5; });
+    } else if (card.type === 'B') {
+        options = card.a.slice();
+        var traps = (card.traps || []).slice();
+        traps.sort(function(){ return Math.random() - 0.5; });
+        while (options.length < 4 && traps.length > 0) {
+            options.push(traps.shift());
+        }
+        options.sort(function(){ return Math.random() - 0.5; });
+    } else if (card.type === 'C') {
+        options = card.options.slice();
+        options.sort(function(){ return Math.random() - 0.5; });
+    } else if (card.type === 'D') {
+        options = [1, 2, 3, 4, 5];
+    }
+    
+    var html = '';
+    for (var i = 0; i < options.length; i++) {
+        var label = (card.type === 'C') ? options[i] : (options[i] + '');
+        html += '<div class="quiz-opt" data-val="' + escapeAttr(options[i]) + '" onclick="checkQuizAnswer(this)">' + label + '</div>';
+    }
+    container.innerHTML = html;
+}
+
+function escapeAttr(s) {
+    return String(s).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function extractWords(sentence) {
+    var clean = sentence.replace(/[.,!?;:()«»—–\-]/g, ' ');
+    var words = clean.split(/\s+/).filter(function(w){ return w.length > 2; });
+    var unique = [];
+    for (var i = 0; i < words.length; i++) {
+        var w = words[i].toLowerCase();
+        if (unique.indexOf(w) === -1) unique.push(w);
+    }
+    return unique;
+}
+
+function checkQuizAnswer(el) {
+    if (answered) return;
+    answered = true;
+    var card = currentCards[quizIndex];
+    var val = el.getAttribute('data-val');
+    var isCorrect = false;
+    
+    if (card.type === 'A' || card.type === 'B') {
+        var lower = val.toLowerCase();
+        for (var i = 0; i < card.a.length; i++) {
+            if (card.a[i].toLowerCase() === lower) { isCorrect = true; break; }
+        }
+    } else if (card.type === 'C') {
+        isCorrect = (val === card.correct);
+    } else if (card.type === 'D') {
+        isCorrect = (parseInt(val) === card.answer);
+    }
+    
+    var allOpts = document.querySelectorAll('#quiz-options .quiz-opt');
+    for (var j = 0; j < allOpts.length; j++) {
+        allOpts[j].classList.add('disabled');
+        var v = allOpts[j].getAttribute('data-val');
+        var isThisCorrect = false;
+        if (card.type === 'A' || card.type === 'B') {
+            var lv = v.toLowerCase();
+            for (var k = 0; k < card.a.length; k++) {
+                if (card.a[k].toLowerCase() === lv) { isThisCorrect = true; break; }
+            }
+        } else if (card.type === 'C') {
+            isThisCorrect = (v === card.correct);
+        } else if (card.type === 'D') {
+            isThisCorrect = (parseInt(v) === card.answer);
+        }
+        if (isThisCorrect) allOpts[j].classList.add('correct');
+    }
+    
+    if (isCorrect) {
+        playSound('success');
+    } else {
+        el.classList.add('wrong');
+        playSound('error');
+        mistakes++;
+    }
+    
+    var fb = document.getElementById('quiz-feedback');
+    if (card.note) {
+        fb.innerHTML = '<div class="note-box"><b>💡 Пояснение:</b> ' + card.note + '</div>';
+    }
+    document.getElementById('next-quiz-btn').style.display = 'inline-block';
+}
+
+function nextQuiz() {
+    quizIndex++;
+    if (quizIndex < currentCards.length) {
+        renderScreen('quiz');
+    } else {
+        renderScreen('result');
+    }
+}
+
+function handleMode(mode) {
+    var el = event.target;
+    el.classList.add('success');
+    playSound('success');
+    setTimeout(function(){ renderScreen('topics', {mode: mode}); }, 400);
+}
+
+function startTopic(scope) {
+    var el = event.target;
+    el.classList.add('success');
+    playSound('success');
+    if (scope === 'all') {
+        currentCards = [];
+        for (var key in russianDB.topicTitles) {
+            currentCards = currentCards.concat(russianDB[key]);
+        }
+    } else {
+        currentCards = russianDB[scope].slice();
+    }
+    currentCards.sort(function(){ return Math.random() - 0.5; });
+    if (currentMode === 'learn') {
+        cardIndex = 0;
+        setTimeout(function(){ renderScreen('flashcard'); }, 400);
+    } else {
+        quizIndex = 0; mistakes = 0;
+        setTimeout(function(){ renderScreen('quiz'); }, 400);
+    }
+}
+
+function nextCard() {
+    playSound('success');
+    cardIndex++;
+    if (cardIndex < currentCards.length) {
+        renderScreen('flashcard');
+    } else {
+        renderScreen('topics', {mode: 'learn'});
+    }
+}
+
+var startScreen = document.getElementById('start-screen');
+startScreen.addEventListener('click', function(){
+    initAudio();
+    startScreen.style.opacity = '0';
+    setTimeout(function(){ startScreen.style.display = 'none'; }, 500);
+    renderScreen('modes');
+});
+</script>
+</body>
+</html>
