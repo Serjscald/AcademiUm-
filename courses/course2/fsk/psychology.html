@@ -36,7 +36,14 @@ function renderScreen(screenName, data) {
         var mode = (data && data.mode) ? data.mode : 'learn';
         currentMode = mode;
         var title = (mode === 'learn') ? 'Обучение' : 'Контроль';
-        app.innerHTML = '<h1>' + title + '</h1><div class="subtitle">Выберите тему</div><div class="grid single-col" style="margin-top:20px"><div class="tile" onclick="startTopic(\'topic1\')">Тема 1: Структура психики</div></div><button class="btn btn-back" onclick="renderScreen(\'modes\')">Назад</button>';
+        var topicsHTML = '';
+        if (mode === 'quiz') {
+            topicsHTML += '<div class="tile" onclick="startTopic(\'all\')">За все время</div>';
+        }
+        for (var key in psychologyDB.topicTitles) {
+            topicsHTML += '<div class="tile" onclick="startTopic(\'' + key + '\')">' + psychologyDB.topicTitles[key] + '</div>';
+        }
+        app.innerHTML = '<h1>' + title + '</h1><div class="subtitle">Выберите тему</div><div class="grid single-col" style="margin-top:20px">' + topicsHTML + '</div><button class="btn btn-back" onclick="renderScreen(\'modes\')">Назад</button>';
     } else if (screenName === 'flashcard') {
         var card = currentCards[cardIndex];
         app.innerHTML = '<h1>Карточка ' + (cardIndex + 1) + ' / ' + currentCards.length + '</h1><div class="flashcard"><div class="fc-word">' + card.word + '</div><div class="fc-trans">' + card.trans + '</div></div><button class="btn btn-orange" onclick="nextCard()">Следующая</button><button class="btn btn-stop" onclick="renderScreen(\'topics\',{mode:\'learn\'})">Прервать</button>';
@@ -88,7 +95,14 @@ function startTopic(scope) {
     var el = event.target;
     el.classList.add('success');
     playSound('success');
-    currentCards = psychologyDB[scope].slice();
+    if (scope === 'all') {
+        currentCards = [];
+        for (var key in psychologyDB.topicTitles) {
+            currentCards = currentCards.concat(psychologyDB[key]);
+        }
+    } else {
+        currentCards = psychologyDB[scope].slice();
+    }
     currentCards.sort(function(){ return Math.random() - 0.5; });
     if (currentMode === 'learn') {
         cardIndex = 0;
