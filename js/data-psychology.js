@@ -1,4 +1,4 @@
-const psychologyDB = {
+var psychologyDB = {
     topicTitles: {
         topic1: "Тема 1: Структура психики",
         topic2: "Тема 2: Психоанализ и проективные методы"
