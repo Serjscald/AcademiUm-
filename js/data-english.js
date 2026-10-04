@@ -52,15 +52,12 @@ var englishDB = {
     ],
 
     topic3: [
-        // Исчисляемые существительные
         { word: "Countable nouns", trans: "Исчисляемые существительные: можно посчитать (one carrot, two carrots). Имеют форму множественного числа." },
         { word: "carrot", trans: "морковь — исчисляемое." },
         { word: "apricot", trans: "абрикос — исчисляемое." },
         { word: "melon", trans: "дыня — исчисляемое." },
         { word: "cucumber", trans: "огурец — исчисляемое." },
         { word: "lemon", trans: "лимон — исчисляемое." },
-
-        // Неисчисляемые существительные
         { word: "Uncountable nouns", trans: "Неисчисляемые существительные: нельзя посчитать поштучно. Всегда в единственном числе, с глаголом is." },
         { word: "wine", trans: "вино — неисчисляемое (жидкость)." },
         { word: "lemonade", trans: "лимонад — неисчисляемое (жидкость)." },
@@ -93,8 +90,6 @@ var englishDB = {
         { word: "lentil", trans: "чечевица — неисчисляемое." },
         { word: "green pea", trans: "зелёный горошек — неисчисляемое." },
         { word: "wheat", trans: "пшено / пшеница — неисчисляемое." },
-
-        // Способы счёта неисчисляемых
         { word: "a bar of chocolate", trans: "плитка шоколада." },
         { word: "a bar of soap", trans: "кусок мыла." },
         { word: "a chunk of", trans: "большой кусок чего-либо." },
@@ -121,8 +116,6 @@ var englishDB = {
         { word: "a sheet of paper", trans: "лист бумаги." },
         { word: "a kilo of meat", trans: "килограмм мяса." },
         { word: "a litre of water", trans: "литр воды." },
-
-        // much / many / little / few / some / any
         { word: "much / little", trans: "определяют НЕисчисляемые существительные: much snow, little sugar." },
         { word: "many / few", trans: "определяют исчисляемые существительные: many spoons, few knives." },
         { word: "a little", trans: "немного (позитивный оттенок): I have a little time — у меня есть немного времени." },
@@ -132,8 +125,6 @@ var englishDB = {
         { word: "a lot of / lots of", trans: "много — используется и с исчисляемыми, и с неисчисляемыми: a lot of friends, a lot of snow." },
         { word: "some", trans: "несколько / какой-то — в утвердительных предложениях и вопросах-предложениях: There are some coins." },
         { word: "any", trans: "сколько-нибудь / никакой — в вопросительных и отрицательных предложениях: I don't have any coins." },
-
-        // Упражнение 1: a few / few / a lot of (пропуски)
         { word: "Let us take ___ friends with us. (несколько)", trans: "a few — Let us take a few friends with us." },
         { word: "There are ___ fruit-trees in our garden. (много)", trans: "a lot of — There are a lot of fruit-trees in our garden." },
         { word: "We have very ___ copy-books at home. (мало)", trans: "few — We have very few copy-books at home." },
@@ -143,8 +134,6 @@ var englishDB = {
         { word: "She always makes ___ mistakes in her letters. (много)", trans: "a lot of — She always makes a lot of mistakes in her letters." },
         { word: "We have very ___ towers in London. (мало)", trans: "few — We have very few towers in London." },
         { word: "There are ___ new words in the text. (несколько)", trans: "a few — There are a few new words in the text." },
-
-        // Упражнение 3: Choose the right word
         { word: "I can't see ___ chalk at the blackboard. (any/some)", trans: "any — chalk неисчисляемое, отрицательное предложение." },
         { word: "There ___ no glue in the bottle. (is/are)", trans: "is — glue неисчисляемое." },
         { word: "This ___ pencil case and these ___ pens. (is/are)", trans: "is / are — this + ед.ч., these + мн.ч." },
@@ -153,8 +142,6 @@ var englishDB = {
         { word: "The spectacles ___ on the shelf. (is/are)", trans: "are — spectacles всегда во множественном числе." },
         { word: "There are not ___ students in this college. (much/many/any)", trans: "many — students исчисляемое; или any в отрицании." },
         { word: "The pair of socks ___ behind the bed. (was/were)", trans: "was — подлежащее 'the pair' (ед.ч.)." },
-
-        // Перевод RU → EN
         { word: "У меня есть много друзей.", trans: "I have many friends. / I have a lot of friends." },
         { word: "На улице много снега.", trans: "There is much snow in the street. / There is a lot of snow in the street." },
         { word: "На дереве сидит несколько птиц.", trans: "There are a few birds in the tree." },
@@ -166,8 +153,6 @@ var englishDB = {
         { word: "В моем чае много молока.", trans: "There is much milk in my tea. / There is a lot of milk in my tea." },
         { word: "Как много у тебя друзей?", trans: "How many friends do you have?" },
         { word: "Сколько сахара у тебя есть?", trans: "How much sugar do you have?" },
-
-        // Скороговорка (бонус)
         { word: "If two witches were watching two watches, which witch would watch which watch?", trans: "Если две ведьмы смотрели бы на двое часов, то какая ведьма смотрела бы на какие часы? (скороговорка на отработку [w] и [tʃ])" }
     ]
 };
