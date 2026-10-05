@@ -163,3 +163,104 @@ function handleTileClick(el, isSuccess, callback) {
         setTimeout(() => el.classList.remove('error'), 400);
     }
 }
+// js/core.js (добавить в конец файла)
+
+function renderStatisticsTask(taskIndex) {
+    const task = statisticsTasks[taskIndex];
+    if (!task) return;
+
+    const container = document.getElementById('task-container'); // Убедись, что в statistics.html есть <div id="task-container"></div>
+    if (!container) return;
+
+    // 1. Заголовок и описание
+    let html = `<h2>${task.title}</h2><p>${task.desc}</p>`;
+
+    // 2. Таблица
+    html += '<table class="stats-table"><thead><tr>';
+    task.headers.forEach(h => html += `<th>${h}</th>`);
+    html += '</tr></thead><tbody>';
+
+    task.rows.forEach((row, rIdx) => {
+        html += `<tr><td>${row.l}</td>`;
+        row.c.forEach((cell, cIdx) => {
+            // Если у ячейки есть переменная (k), делаем её кликабельной
+            if (cell.k) {
+                html += `<td>
+                            <span class="clickable-cell" 
+                                  data-r="${rIdx}" 
+                                  data-c="${cIdx}" 
+                                  data-correct="${cell.k}"
+                                  onclick="openVarSelector(this)">
+                                ${cell.v}
+                            </span>
+                         </td>`;
+            } else {
+                html += `<td>${cell.v}</td>`;
+            }
+        });
+        html += '</tr>';
+    });
+    html += '</tbody></table>';
+
+    // 3. Кнопка решения (скрыта, пока не все выбрано)
+    html += `<div id="solve-btn-area" style="margin-top:20px; text-align:center;">
+                <button id="btn-solve" disabled onclick="showSolution(${taskIndex})">РЕШИТЬ ЗАДАЧУ</button>
+             </div>`;
+             
+    // 4. Область решения (скрыта по умолчанию)
+    html += `<div id="solution-area" style="display:none; margin-top:20px; border:1px solid #4CAF50; padding:15px; border-radius:8px;"></div>`;
+
+    container.innerHTML = html;
+    
+    // Инициализация счетчика выбранных переменных
+    window.selectedVars = {}; 
+    updateSolveButton();
+}
+
+// Глобальная функция для открытия выбора переменной
+function openVarSelector(element) {
+    // Простая реализация через prompt для скорости. 
+    // В продакшене лучше сделать красивое модальное окно или dropdown.
+    const options = ["p0", "q0", "p1", "q1", "p0q0_th", "p1q1_th"];
+    const choice = prompt(`Выберите переменную для числа ${element.innerText}:\n${options.join(', ')}`);
+    
+    if (options.includes(choice)) {
+        element.dataset.userChoice = choice;
+        element.style.border = "2px solid #2196F3"; // Подсветка выбранного
+        element.style.backgroundColor = "#E3F2FD";
+        element.innerText = `${choice} = ${element.innerText.split('=')[1] || element.innerText}`; // Обновляем текст
+        
+        // Сохраняем выбор
+        const key = `${element.dataset.r}-${element.dataset.c}`;
+        window.selectedVars[key] = choice;
+        
+        updateSolveButton();
+    }
+}
+
+function updateSolveButton() {
+    const btn = document.getElementById('btn-solve');
+    if (!btn) return;
+    
+    // Считаем сколько уникальных ячеек выбрано
+    const totalCells = Object.keys(window.selectedVars).length;
+    // В каждой задаче 3 строки * 4 ячейки = 12 переменных (обычно)
+    // Можно динамически считать, но для простоты проверим > 0
+    btn.disabled = totalCells < 12; 
+    btn.innerText = totalCells < 12 ? `Выбрано ${totalCells}/12` : "РЕШИТЬ ЗАДАЧУ";
+}
+
+function showSolution(taskIndex) {
+    const task = statisticsTasks[taskIndex];
+    const area = document.getElementById('solution-area');
+    
+    let solHtml = '<h3>Решение:</h3>';
+    task.sol.forEach(step => {
+        solHtml += `<p><strong>${step}</strong></p>`;
+    });
+    solHtml += `<hr><p style="color:#FFC107; font-weight:bold;">Вывод: ${task.conc}</p>`;
+    
+    area.innerHTML = solHtml;
+    area.style.display = 'block';
+    area.scrollIntoView({behavior: "smooth"});
+}
