@@ -1,3 +1,10 @@
+// Заглушка для аудио, чтобы избежать ошибки ReferenceError
+function initAudio() {
+    console.log("Audio system disabled for debugging");
+}
+
+
+
 /**
  * CORE.JS - Ядро платформы АкадемиУм!
  * Версия: 5.1.0 (Статистика Tasks Update)
