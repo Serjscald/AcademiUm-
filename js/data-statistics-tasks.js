@@ -1,6 +1,6 @@
 /**
  * ДАННЫЕ ЗАДАЧ ПО СТАТИСТИКЕ (ИНДЕКСНЫЙ АНАЛИЗ)
- * Версия: 1.0 (Full 12 Tasks Update)
+ * Версия: 2.0 (Fixed Structure & Full Content)
  */
 
 const statisticsTasks = [
