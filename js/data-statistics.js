@@ -11,6 +11,7 @@ var statisticsDB = {
         topic9: "Тема 9: Ряды динамики",
         topic10: "Тема 10: Анализ интенсивности динамики"
     },
+
     topic1: [
         { word: "Статистика (наука)", trans: "Отрасль знаний, объединяющая принципы и методы работы с числовыми данными, характеризующими массовые явления." },
         { word: "Статистика (данные)", trans: "Синоним слова «данные»; совокупность числовых сведений о массовых явлениях." },
@@ -31,6 +32,7 @@ var statisticsDB = {
         { word: "Прогноз", trans: "Результат научной деятельности, направленной на выявление возможных состояний объектов в будущем." },
         { word: "Познавательное значение статистики", trans: "Даёт цифровое освещение явлений, доказательную силу выводам, раскрывает взаимосвязи, обнаруживает новые закономерности." }
     ],
+
     topic2: [
         { word: "Статистическое наблюдение", trans: "Первая стадия исследования; научно организованный учёт фактов и сбор массовых данных по единой программе." },
         { word: "Объект наблюдения", trans: "Совокупность явлений или процессов, которые подлежат исследованию; точные границы регистрации сведений." },
@@ -48,7 +50,7 @@ var statisticsDB = {
         { word: "Непрерывное (текущее) наблюдение", trans: "Постоянно охватывает факты по мере их возникновения." },
         { word: "Периодическое наблюдение", trans: "Проводится через определённые промежутки времени." },
         { word: "Единовременное наблюдение", trans: "Проводится по мере возникновения ситуации для её анализа." },
-        { word: "Сводка статистических данных", trans: "Классификация и агрегирование материалов наблюдения; переход от единичного к общему." },
+        { word: "Сводка статистических данных", trans: "Классификация и ��грегирование материалов наблюдения; переход от единичного к общему." },
         { word: "Группировка", trans: "Расчленение множества единиц совокупности на однородные группы по существенным признакам." },
         { word: "Основание группировки", trans: "Признак, по которому совокупность расчленена на группы; может быть атрибутивным или количественным." },
         { word: "Типологическая группировка", trans: "Разделение явления на классы, социально-экономические типы." },
@@ -62,6 +64,7 @@ var statisticsDB = {
         { word: "Интервальный вариационный ряд", trans: "Ряд, построенный по непрерывно варьирующему признаку; данные объединены в интервалы." },
         { word: "Формула Стерджесса", trans: "Формула для определения оптимальной величины интервала: h = (xmax − xmin) / (1 + 3,322·lg N)." }
     ],
+
     topic3: [
         { word: "Статистическая таблица", trans: "Система строк и столбцов, позволяющая рационально и наглядно представить цифровые характеристики явлений." },
         { word: "Подлежащее таблицы", trans: "Характеризуемый объект: единицы совокупности, группы единиц или совокупность в целом; располагается в левой части." },
@@ -83,6 +86,7 @@ var statisticsDB = {
         { word: "Кумулята", trans: "Кривая накопленных частот; ордината показывает, сколько единиц имеет значение признака, не превосходящее указанного." },
         { word: "Номограмма", trans: "Особый вид графика для приближённого решения уравнений и вычисления значений функций нескольких аргументов." }
     ],
+
     topic4: [
         { word: "Абсолютная величина", trans: "Число именованное, имеющее размерность; выражает размеры, уровни, объёмы явлений; получается в результате статистического наблюдения." },
         { word: "Индивидуальная абсолютная величина", trans: "Выражает размер количественного признака у отдельной единицы совокупности." },
@@ -99,6 +103,7 @@ var statisticsDB = {
         { word: "Темп роста", trans: "Относительная величина динамики в процентах; показывает, во сколько раз уровень вырос." },
         { word: "Темп прироста", trans: "Темп роста минус 100%; показывает, на сколько процентов изменилось явление." }
     ],
+
     topic5: [
         { word: "Средняя величина", trans: "Обобщающая характеристика изучаемого признака в совокупности; отражает типичный уровень в расчёте на единицу совокупности." },
         { word: "Условия применения средних", trans: "Наличие качественно однородной совокупности и достаточно большой её объём." },
@@ -123,6 +128,7 @@ var statisticsDB = {
         { word: "Когда применять гармоническую", trans: "Когда числитель известен, а знаменатель — нет." },
         { word: "Когда применять геометрическую", trans: "Только при расчёте среднегодового темпа роста." }
     ],
+
     topic6: [
         { word: "Вариация", trans: "Колеблемость значений признака; два ряда с одинаковой средней могут сильно отличаться по вариации." },
         { word: "Значение показателей вариации", trans: "Дополняют средние, характеризуют однородность совокупности, границы колеблемости, взаимосвязь признаков." },
@@ -143,6 +149,7 @@ var statisticsDB = {
         { word: "Многовершинность распределения", trans: "Свидетельствует о неоднородности совокупности; требуется перегруппировка данных." },
         { word: "Дисперсия в математической статистике", trans: "На дисперсии основаны практически все методы математической статистики; она раскладывается на составные элементы." }
     ],
+
     topic7: [
         { word: "Генеральная совокупность", trans: "Набор элементов (люди, объекты), которые необходимо изучить." },
         { word: "Выборка", trans: "Меньший набор элементов, извлечённых из генеральной совокупности." },
@@ -156,13 +163,14 @@ var statisticsDB = {
         { word: "Доверительный интервал", trans: "Интервал, рассчитанный так, что с известной вероятностью включает неизвестный параметр генеральной совокупности." },
         { word: "Уровень доверительности", trans: "Вероятность того, что параметр совокупности принадлежит доверительному интервалу; обычно 95%, также 90%, 99%, 99,9%." },
         { word: "Ширина доверительного интервала", trans: "Чем выше уровень доверительности, тем шире (и менее полезен) доверительный интервал." },
-        { word: "Двусторонний 95% интервал для среднего", trans: "Мы уверены на 95%, что μ находится между x̄ − t·Sx̄ и x̄ + t·Sx̄, где t берётся из t-таблицы." },
+        { word: "Двусторонний 95% интервал для среднего", trans: "Мы уверены на 95%, что μ находится между x̄ − t·Sx̄ и x + t·Sx̄, где t берётся из t-таблицы." },
         { word: "Доверительный интервал для доли", trans: "Мы уверены на 95%, что доля π находится между p − t·Sp и p + t·Sp." },
         { word: "Стандартная ошибка доли (Sp)", trans: "Sp = √(p·(1−p) / n); показывает неопределённость в наблюдаемой доле." },
         { word: "Стандартное отклонение биномиальной частоты", trans: "σX = √(n·π·(1−π)); для генеральной совокупности." },
         { word: "Ошибка регистрации", trans: "Ошибка, возникающая при неправильной фиксации данных в процессе наблюдения." },
         { word: "Ошибка репрезентативности", trans: "Ошибка, возникающая из-за того, что выборка не полностью отражает генеральную совокупность." }
     ],
+
     topic8: [
         { word: "Экономический индекс", trans: "Относительная величина, характеризующая изменение явления во времени, в пространстве или по сравнению с эталоном." },
         { word: "Динамический индекс", trans: "Индекс, где база сравнения — уровень за предшествующий период." },
@@ -192,6 +200,7 @@ var statisticsDB = {
         { word: "Абсолютный прирост за счёт цен", trans: "Δp = Σ(p₁q₁) − Σ(p₀q₁) (по Пааше)." },
         { word: "Абсолютный прирост за счёт объёма", trans: "Δq = Σ(p₀q₁) − Σ(p₀q₀)." }
     ],
+
     topic9: [
         { word: "Ряд динамики", trans: "Числовые значения статистического показателя, представленные во временной последовательности." },
         { word: "Уровни ряда", trans: "Показатели второй графы ряда динамики; первый — начальный уровень, последний — конечный." },
@@ -212,7 +221,7 @@ var statisticsDB = {
         { word: "Средний уровень моментного ряда (равные интервалы)", trans: "ȳ = (½y₁ + y₂ + ... + ½yₙ) / (n−1)." },
         { word: "Средний уровень моментного ряда (неравные интервалы)", trans: "ȳ = Σ(y·t) / Σt (средняя арифметическая взвешенная)." },
         { word: "Средний абсолютный прирост", trans: "Δ̄ = (yn − y₁) / (n−1) или средняя из цепных приростов." },
-        { word: "Средний коэффициент роста", trans: "K̄p = ⁿ⁻¹√(yn / y₁) = ⁿ⁻¹√(Kp₁·Kp₂·...·Kpₙ₋₁)." },
+        { word: "Средний коэффициент роста", trans: "K̄p = ⁻¹√(yn / y₁) = ⁿ⁻¹√(Kp₁·Kp₂·...·Kpₙ₋₁)." },
         { word: "Средний темп роста", trans: "T̄p = K̄p × 100%." },
         { word: "Средний темп прироста", trans: "T̄n = T̄p − 100%." },
         { word: "Укрупнение интервалов", trans: "Способ выявления тенденции: объединение периодов и расчёт итогов или средних для укрупнённых интервалов." },
@@ -223,6 +232,7 @@ var statisticsDB = {
         { word: "Трендовая модель (гиперболическая)", trans: "ŷt = a₀ + a₁·(1/t)." },
         { word: "Упрощение расчёта тренда", trans: "Введение обозначений дат t так, чтобы Σt = 0 (нечётное n: −2,−1,0,+1,+2; чётное n: −5,−3,−1,+1,+3,+5)." }
     ],
+
     topic10: [
         { word: "Ряд динамики (хронологический ряд)", trans: "Последовательность упорядоченных во времени числовых показателей, характеризующих уровень развития явления." },
         { word: "Элементы ряда динамики", trans: "Два обязательных элемента: время (показатель времени) и уровни развития явления." },
@@ -252,97 +262,320 @@ var statisticsDB = {
         { word: "Средний уровень моментного ряда (равные интервалы)", trans: "ȳ = (½y₁ + y₂ + ... + ½yₙ) / (n−1)." },
         { word: "Средний уровень моментного ряда (неравные интервалы)", trans: "ȳ = Σ(y·t) / Σt." },
         { word: "Средний абсолютный прирост", trans: "Δ̄ = (yn − y₁) / (n−1)." },
-        { word: "Средний темп роста", trans: "T̄p = ⁻¹√(yn / y₁) × 100% (средняя геометрическая)." },
+        { word: "Средний темп роста", trans: "T̄p = ¹√(yn / y₁) × 100% (средняя геометрическая)." },
         { word: "Средний темп прироста", trans: "T̄n = T̄p − 100%." }
     ],
+
     tasks: [
         {
-            id: "theater",
-            title: "Задача: Выручка театра",
-            formulas: [
-                "Выручка = Σ(p × q)",
-                "Цена отчётного периода p₁ = (p₁q₁) / q₁",
-                "Индекс выручки I_pq = Σ(p1×q1) / Σ(p0×q0)",
-                "Индекс цен I_p = Σ(p1×q1) / Σ(p0×q1)",
-                "Индекс объёма I_q = Σ(p0×q1) / Σ(p0×q0)",
-                "ΔВыручка = Σ(p1×q1) - Σ(p0×q0)"
-            ],
-            html: '<p>Театр продаёт билеты трёх типов. Оцените изменение выручки в апреле по сравнению с февралём и разложите его на факторы.</p><table class="stat-table"><tr><th>Тип билета</th><th>Цена фев (руб.)</th><th>Продано фев (шт.)</th><th>Продано апр (тыс. руб.)</th><th>Продано апр (шт.)</th></tr><tr><td>Взрослый</td><td class="var" data-correct="p0" data-val="500">500</td><td class="var" data-correct="q0" data-val="1100">1100</td><td class="var" data-correct="p1q1" data-val="520000">520</td><td class="var" data-correct="q1" data-val="1300">1300</td></tr><tr><td>Льготный</td><td class="var" data-correct="p0" data-val="250">250</td><td class="var" data-correct="q0" data-val="800">800</td><td class="var" data-correct="p1q1" data-val="160000">160</td><td class="var" data-correct="q1" data-val="800">800</td></tr><tr><td>Детский</td><td class="var" data-correct="p0" data-val="100">100</td><td class="var" data-correct="q0" data-val="600">600</td><td class="var" data-correct="p1q1" data-val="90000">90</td><td class="var" data-correct="q1" data-val="600">600</td></tr></table>',
-            varLabels: { 
-                p0: "p₀ (цена базисного периода)", 
-                q0: "q₀ (кол-во базисного периода)", 
-                p1q1: "p₁q₁ (выручка отчётного периода)", 
-                q1: "q₁ (кол-во отчётного периода)" 
-            },
-            varColors: {
-                p0: "#fbbf24",
-                q0: "#22c55e",
-                p1: "#38bdf8",
-                q1: "#a78bfa",
-                p1q1: "#f97316"
-            },
+            id: "task_theater_old",
+            title: "Театр: билеты (старая задача)",
+            formulas: ["ip = p₁/p₀", "iq = q₁/q₀", "Iqp = Σ(p₁q₁)/Σ(p₀q₀)", "Ip = Σ(p₁q₁)/Σ(p₀q₁)", "Iq = Σ(p₀q₁)/Σ(p₀q₀)", "Δpq = Σ(p₁q₁) − Σ(p₀q₀)", "Δp = Σ(p₁q₁) − Σ(p₀q₁)", "Δq = Σ(p₀q₁) − Σ(p₀q₀)"],
+            html: '<table class="task-table"><tr><th>Тип билета</th><th>p₀ (руб.)</th><th>q₀ (шт.)</th><th>p₁ (руб.)</th><th>q₁ (шт.)</th></tr><tr><td>Взрослый</td><td class="var" data-var="p0_1">500</td><td class="var" data-var="q0_1">1000</td><td class="var" data-var="p1_1">600</td><td class="var" data-var="q1_1">1200</td></tr><tr><td>Льготный</td><td class="var" data-var="p0_2">250</td><td class="var" data-var="q0_2">500</td><td class="var" data-var="p1_2">300</td><td class="var" data-var="q1_2">600</td></tr><tr><td>Детский</td><td class="var" data-var="p0_3">100</td><td class="var" data-var="q0_3">300</td><td class="var" data-var="p1_3">150</td><td class="var" data-var="q1_3">400</td></tr></table>',
+            varLabels: { p0_1: "Цена взрослый (базис)", q0_1: "Кол-во взрослый (базис)", p1_1: "Цена взрослый (отчёт)", q1_1: "Кол-во взрослый (отчёт)", p0_2: "Цена льготный (базис)", q0_2: "Кол-во льготный (базис)", p1_2: "Цена льготный (отчёт)", q1_2: "Кол-во льготный (отчёт)", p0_3: "Цена детский (базис)", q0_3: "Кол-во детский (базис)", p1_3: "Цена детский (отчёт)", q1_3: "Кол-во детский (отчёт)" },
             solve: function(v) {
-                var p1_1 = v.p1q1_1 / v.q1_1;
-                var p1_2 = v.p1q1_2 / v.q1_2;
-                var p1_3 = v.p1q1_3 / v.q1_3;
-                
-                var rev0 = v.p0_1*v.q0_1 + v.p0_2*v.q0_2 + v.p0_3*v.q0_3;
-                var rev1 = v.p1q1_1 + v.p1q1_2 + v.p1q1_3;
-                var revQ = v.p0_1*v.q1_1 + v.p0_2*v.q1_2 + v.p0_3*v.q1_3;
-                
-                var dRev = rev1 - rev0;
-                var dP = rev1 - revQ;
-                var dQ = revQ - rev0;
-                var iRev = (rev1/rev0*100).toFixed(1);
-                var iP = (rev1/revQ*100).toFixed(1);
-                var iQ = (revQ/rev0*100).toFixed(1);
-                
-                var c = this.varColors;
-                var calc = '';
-                
-                calc += '<div style="margin-bottom:15px;padding-bottom:10px;border-bottom:1px solid #334155">';
-                calc += '<b style="color:var(--gold)">Шаг 1. Определение цен апреля (p₁)</b><br>';
-                calc += '<span style="color:' + c.p1 + ';font-family:monospace">p₁ = (p₁q₁) / q₁</span><br>';
-                calc += '<span style="color:' + c.p1 + '">p₁</span> (взр) = <span style="color:' + c.p1q1 + '">520000</span> / <span style="color:' + c.q1 + '">1300</span> = <b style="color:' + c.p1 + '">' + p1_1 + ' руб.</b><br>';
-                calc += '<span style="color:' + c.p1 + '">p₁</span> (льг) = <span style="color:' + c.p1q1 + '">160000</span> / <span style="color:' + c.q1 + '">800</span> = <b style="color:' + c.p1 + '">' + p1_2 + ' руб.</b><br>';
-                calc += '<span style="color:' + c.p1 + '">p₁</span> (дет) = <span style="color:' + c.p1q1 + '">90000</span> / <span style="color:' + c.q1 + '">600</span> = <b style="color:' + c.p1 + '">' + p1_3 + ' руб.</b>';
-                calc += '</div>';
-                
-                calc += '<div style="margin-bottom:15px;padding-bottom:10px;border-bottom:1px solid #334155">';
-                calc += '<b style="color:var(--gold)">Шаг 2. Совокупные величины</b><br>';
-                calc += '<span style="font-family:monospace">Σ<span style="color:' + c.p0 + '">p₀</span><span style="color:' + c.q0 + '">q₀</span> = Σ(<span style="color:' + c.p0 + '">p₀</span> × <span style="color:' + c.q0 + '">q₀</span>)</span><br>';
-                calc += 'Σ<span style="color:' + c.p0 + '">p₀</span><span style="color:' + c.q0 + '">q₀</span> = (<span style="color:' + c.p0 + '">500</span>×<span style="color:' + c.q0 + '">1100</span>) + (<span style="color:' + c.p0 + '">250</span>×<span style="color:' + c.q0 + '">800</span>) + (<span style="color:' + c.p0 + '">100</span>×<span style="color:' + c.q0 + '">600</span>) = <b>' + rev0 + ' руб.</b><br><br>';
-                calc += '<span style="font-family:monospace">Σ<span style="color:' + c.p1q1 + '">p₁q₁</span> = Σ(<span style="color:' + c.p1q1 + '">p₁q₁</span>)</span><br>';
-                calc += 'Σ<span style="color:' + c.p1q1 + '">p₁q₁</span> = <span style="color:' + c.p1q1 + '">520000</span> + <span style="color:' + c.p1q1 + '">160000</span> + <span style="color:' + c.p1q1 + '">90000</span> = <b>' + rev1 + ' руб.</b><br><br>';
-                calc += '<span style="font-family:monospace">Σ<span style="color:' + c.p0 + '">p₀</span><span style="color:' + c.q1 + '">q₁</span> = Σ(<span style="color:' + c.p0 + '">p₀</span> × <span style="color:' + c.q1 + '">q₁</span>)</span><br>';
-                calc += 'Σ<span style="color:' + c.p0 + '">p₀</span><span style="color:' + c.q1 + '">q₁</span> = (<span style="color:' + c.p0 + '">500</span>×<span style="color:' + c.q1 + '">1300</span>) + (<span style="color:' + c.p0 + '">250</span>×<span style="color:' + c.q1 + '">800</span>) + (<span style="color:' + c.p0 + '">100</span>×<span style="color:' + c.q1 + '">600</span>) = <b>' + revQ + ' руб.</b>';
-                calc += '</div>';
-                
-                calc += '<div style="margin-bottom:15px;padding-bottom:10px;border-bottom:1px solid #334155">';
-                calc += '<b style="color:var(--gold)">Шаг 3. Индексы</b><br>';
-                calc += '<span style="font-family:monospace">I_pq = Σ(<span style="color:' + c.p1q1 + '">p₁q₁</span>) / Σ(<span style="color:' + c.p0 + '">p₀</span><span style="color:' + c.q0 + '">q₀</span>)</span><br>';
-                calc += 'I_pq = <span style="color:' + c.p1q1 + '">' + rev1 + '</span> / <span style="color:' + c.p0 + '">' + rev0 + '</span> = <b>' + iRev + '%</b><br><br>';
-                calc += '<span style="font-family:monospace">I_p = Σ(<span style="color:' + c.p1q1 + '">p₁q₁</span>) / Σ(<span style="color:' + c.p0 + '">p₀</span><span style="color:' + c.q1 + '">q₁</span>)</span><br>';
-                calc += 'I_p = <span style="color:' + c.p1q1 + '">' + rev1 + '</span> / <span style="color:' + c.p0 + '">' + revQ + '</span> = <b>' + iP + '%</b><br><br>';
-                calc += '<span style="font-family:monospace">I_q = Σ(<span style="color:' + c.p0 + '">p₀</span><span style="color:' + c.q1 + '">q₁</span>) / Σ(<span style="color:' + c.p0 + '">p₀</span><span style="color:' + c.q0 + '">q₀</span>)</span><br>';
-                calc += 'I_q = <span style="color:' + c.p0 + '">' + revQ + '</span> / <span style="color:' + c.p0 + '">' + rev0 + '</span> = <b>' + iQ + '%</b>';
-                calc += '</div>';
-                
-                calc += '<div>';
-                calc += '<b style="color:var(--gold)">Шаг 4. Абсолютные изменения</b><br>';
-                calc += '<span style="font-family:monospace">ΔОбщее = Σ(<span style="color:' + c.p1q1 + '">p₁q₁</span>) - Σ(<span style="color:' + c.p0 + '">p₀</span><span style="color:' + c.q0 + '">q₀</span>)</span><br>';
-                calc += 'ΔОбщее = <span style="color:' + c.p1q1 + '">' + rev1 + '</span> - <span style="color:' + c.p0 + '">' + rev0 + '</span> = <b>' + dRev + ' руб.</b><br><br>';
-                calc += '<span style="font-family:monospace">ΔЦен = Σ(<span style="color:' + c.p1q1 + '">p₁q₁</span>) - Σ(<span style="color:' + c.p0 + '">p₀</span><span style="color:' + c.q1 + '">q₁</span>)</span><br>';
-                calc += 'ΔЦен = <span style="color:' + c.p1q1 + '">' + rev1 + '</span> - <span style="color:' + c.p0 + '">' + revQ + '</span> = <b>' + dP + ' руб.</b><br><br>';
-                calc += '<span style="font-family:monospace">ΔКол-ва = Σ(<span style="color:' + c.p0 + '">p₀</span><span style="color:' + c.q1 + '">q₁</span>) - Σ(<span style="color:' + c.p0 + '">p₀</span><span style="color:' + c.q0 + '">q₀</span>)</span><br>';
-                calc += 'ΔКол-ва = <span style="color:' + c.p0 + '">' + revQ + '</span> - <span style="color:' + c.p0 + '">' + rev0 + '</span> = <b>' + dQ + ' руб.</b>';
-                calc += '</div>';
-                
-                var dir = (dRev < 0) ? 'снизилась' : 'выросла';
-                var mainFactor = (Math.abs(dP) > Math.abs(dQ)) ? 'цен' : 'количества';
-                var conclusion = 'Выручка театра ' + dir + ' на ' + Math.abs(dRev) + ' руб. (индекс выручки ' + iRev + '%). Увеличение количества проданных билетов добавило ' + dQ + ' руб., однако изменение цен принесло ' + dP + ' руб. Преобладающим оказалось влияние фактора ' + mainFactor + ': именно оно и определило итоговую динамику выручки.';
-                
-                return { calc: calc, conclusion: conclusion };
+                var p0q0 = v.p0_1*v.q0_1 + v.p0_2*v.q0_2 + v.p0_3*v.q0_3;
+                var p1q1 = v.p1_1*v.q1_1 + v.p1_2*v.q1_2 + v.p1_3*v.q1_3;
+                var p0q1 = v.p0_1*v.q1_1 + v.p0_2*v.q1_2 + v.p0_3*v.q1_3;
+                var Iqp = (p1q1/p0q0*100).toFixed(2);
+                var Ip = (p1q1/p0q1*100).toFixed(2);
+                var Iq = (p0q1/p0q0*100).toFixed(2);
+                var dpq = p1q1 - p0q0;
+                var dp = p1q1 - p0q1;
+                var dq = p0q1 - p0q0;
+                return {
+                    calc: 'Σ(p₀q₀) = ' + p0q0 + ' руб.\nΣ(p₁q₁) = ' + p1q1 + ' руб.\nΣ(p₀q₁) = ' + p0q1 + ' руб.\n\nIqp = ' + p1q1 + '/' + p0q0 + ' × 100 = ' + Iqp + '%\nIp = ' + p1q1 + '/' + p0q1 + ' × 100 = ' + Ip + '%\nIq = ' + p0q1 + '/' + p0q0 + ' × 100 = ' + Iq + '%\n\nΔpq = ' + p1q1 + ' − ' + p0q0 + ' = ' + dpq + ' руб.\nΔp = ' + p1q1 + ' − ' + p0q1 + ' = ' + dp + ' руб.\nΔq = ' + p0q1 + ' − ' + p0q0 + ' = ' + dq + ' руб.',
+                    conclusion: 'Выручка театра изменилась на ' + dpq + ' руб. (' + Iqp + '%). За счёт изменения цен выручка изменилась на ' + dp + ' руб., за счёт изменения количества проданных билетов — на ' + dq + ' руб.'
+                };
+            }
+        },
+        {
+            id: "task_museum_1",
+            title: "Музей: январь → март (стандартная)",
+            formulas: ["ip = p₁/p₀", "iq = q₁/q₀", "Iqp = Σ(p₁q₁)/Σ(p₀q₀)", "Ip = Σ(p₁q₁)/Σ(p₀q₁)", "Iq = Σ(p₀q₁)/Σ(p₀q₀)", "Δpq = Σ(p₁q₁) − Σ(p₀q₀)", "Δp = Σ(p₁q₁) − Σ(p₀q₁)", "Δq = Σ(p₀q₁) − Σ(p₀q₀)"],
+            html: '<table class="task-table"><tr><th>Тип билета</th><th>p₀ (руб.)</th><th>q₀ (шт.)</th><th>p₁ (руб.)</th><th>q₁ (шт.)</th></tr><tr><td>Взрослый</td><td class="var" data-var="p0_1">300</td><td class="var" data-var="q0_1">1200</td><td class="var" data-var="p1_1">350</td><td class="var" data-var="q1_1">1100</td></tr><tr><td>Льготный</td><td class="var" data-var="p0_2">150</td><td class="var" data-var="q0_2">800</td><td class="var" data-var="p1_2">180</td><td class="var" data-var="q1_2">750</td></tr><tr><td>Детский</td><td class="var" data-var="p0_3">100</td><td class="var" data-var="q0_3">500</td><td class="var" data-var="p1_3">120</td><td class="var" data-var="q1_3">600</td></tr></table>',
+            varLabels: { p0_1: "Цена взрослый (янв)", q0_1: "Кол-во взрослый (янв)", p1_1: "Цена взрослый (мар)", q1_1: "Кол-во взрослый (мар)", p0_2: "Цена льготный (янв)", q0_2: "Кол-во льготный (янв)", p1_2: "Цена льготный (мар)", q1_2: "Кол-во льготный (мар)", p0_3: "Цена детский (янв)", q0_3: "Кол-во детский (янв)", p1_3: "Цена детский (мар)", q1_3: "Кол-во детский (мар)" },
+            solve: function(v) {
+                var p0q0 = v.p0_1*v.q0_1 + v.p0_2*v.q0_2 + v.p0_3*v.q0_3;
+                var p1q1 = v.p1_1*v.q1_1 + v.p1_2*v.q1_2 + v.p1_3*v.q1_3;
+                var p0q1 = v.p0_1*v.q1_1 + v.p0_2*v.q1_2 + v.p0_3*v.q1_3;
+                var Iqp = (p1q1/p0q0*100).toFixed(2);
+                var Ip = (p1q1/p0q1*100).toFixed(2);
+                var Iq = (p0q1/p0q0*100).toFixed(2);
+                var dpq = p1q1 - p0q0;
+                var dp = p1q1 - p0q1;
+                var dq = p0q1 - p0q0;
+                return {
+                    calc: 'Σ(p₀q₀) = ' + p0q0 + ' руб.\nΣ(p₁q₁) = ' + p1q1 + ' руб.\nΣ(p₀q₁) = ' + p0q1 + ' руб.\n\nIqp = ' + p1q1 + '/' + p0q0 + ' × 100 = ' + Iqp + '%\nIp = ' + p1q1 + '/' + p0q1 + ' × 100 = ' + Ip + '%\nIq = ' + p0q1 + '/' + p0q0 + ' × 100 = ' + Iq + '%\n\nΔpq = ' + p1q1 + ' − ' + p0q0 + ' = ' + dpq + ' руб.\nΔp = ' + p1q1 + ' − ' + p0q1 + ' = ' + dp + ' руб.\nΔq = ' + p0q1 + ' − ' + p0q0 + ' = ' + dq + ' руб.',
+                    conclusion: 'Выручка музея изменилась на ' + dpq + ' руб. (' + Iqp + '%). За счёт изменения цен выручка изменилась на ' + dp + ' руб., за счёт изменения количества проданных билетов — на ' + dq + ' руб.'
+                };
+            }
+        },
+        {
+            id: "task_theater_2",
+            title: "Театр: февраль → апрель (стандартная)",
+            formulas: ["ip = p₁/p₀", "iq = q₁/q₀", "Iqp = Σ(p₁q₁)/Σ(p₀q₀)", "Ip = Σ(p₁q₁)/Σ(p₀q₁)", "Iq = Σ(p₀q₁)/Σ(p₀q₀)", "Δpq = Σ(p₁q₁) − Σ(p₀q₀)", "Δp = Σ(p₁q₁) − Σ(p₀q₁)", "Δq = Σ(p₀q₁) − Σ(p₀q₀)"],
+            html: '<table class="task-table"><tr><th>Тип билета</th><th>p₀ (руб.)</th><th>q₀ (шт.)</th><th>p₁ (руб.)</th><th>q₁ (шт.)</th></tr><tr><td>Взрослый</td><td class="var" data-var="p0_1">500</td><td class="var" data-var="q0_1">1100</td><td class="var" data-var="p1_1">400</td><td class="var" data-var="q1_1">1300</td></tr><tr><td>Льготный</td><td class="var" data-var="p0_2">250</td><td class="var" data-var="q0_2">800</td><td class="var" data-var="p1_2">200</td><td class="var" data-var="q1_2">800</td></tr><tr><td>Детский</td><td class="var" data-var="p0_3">100</td><td class="var" data-var="q0_3">600</td><td class="var" data-var="p1_3">150</td><td class="var" data-var="q1_3">600</td></tr></table>',
+            varLabels: { p0_1: "Цена взрослый (фев)", q0_1: "Кол-во взрослый (фев)", p1_1: "Цена взрослый (апр)", q1_1: "Кол-во взрослый (апр)", p0_2: "Цена льготный (фев)", q0_2: "Кол-во льготный (фев)", p1_2: "Цена льготный (апр)", q1_2: "Кол-во льготный (апр)", p0_3: "Цена детский (фев)", q0_3: "Кол-во детский (фев)", p1_3: "Цена детский (апр)", q1_3: "Кол-во детский (апр)" },
+            solve: function(v) {
+                var p0q0 = v.p0_1*v.q0_1 + v.p0_2*v.q0_2 + v.p0_3*v.q0_3;
+                var p1q1 = v.p1_1*v.q1_1 + v.p1_2*v.q1_2 + v.p1_3*v.q1_3;
+                var p0q1 = v.p0_1*v.q1_1 + v.p0_2*v.q1_2 + v.p0_3*v.q1_3;
+                var Iqp = (p1q1/p0q0*100).toFixed(2);
+                var Ip = (p1q1/p0q1*100).toFixed(2);
+                var Iq = (p0q1/p0q0*100).toFixed(2);
+                var dpq = p1q1 - p0q0;
+                var dp = p1q1 - p0q1;
+                var dq = p0q1 - p0q0;
+                return {
+                    calc: 'Σ(p₀q₀) = ' + p0q0 + ' руб.\nΣ(p₁q₁) = ' + p1q1 + ' руб.\nΣ(p₀q₁) = ' + p0q1 + ' руб.\n\nIqp = ' + p1q1 + '/' + p0q0 + ' × 100 = ' + Iqp + '%\nIp = ' + p1q1 + '/' + p0q1 + ' × 100 = ' + Ip + '%\nIq = ' + p0q1 + '/' + p0q0 + ' × 100 = ' + Iq + '%\n\nΔpq = ' + p1q1 + ' − ' + p0q0 + ' = ' + dpq + ' руб.\nΔp = ' + p1q1 + ' − ' + p0q1 + ' = ' + dp + ' руб.\nΔq = ' + p0q1 + ' − ' + p0q0 + ' = ' + dq + ' руб.',
+                    conclusion: 'Выручка театра изменилась на ' + dpq + ' руб. (' + Iqp + '%). За счёт изменения цен выручка изменилась на ' + dp + ' руб., за счёт изменения количества проданных билетов — на ' + dq + ' руб.'
+                };
+            }
+        },
+        {
+            id: "task_circus_3",
+            title: "Цирк: июнь → июль (стандартная)",
+            formulas: ["ip = p₁/p₀", "iq = q₁/q₀", "Iqp = Σ(p₁q₁)/Σ(p₀q₀)", "Ip = Σ(p₁q₁)/Σ(p₀q₁)", "Iq = Σ(p₀q₁)/Σ(p₀q₀)", "Δpq = Σ(p₁q₁) − Σ(p₀q₀)", "Δp = Σ(p₁q₁) − Σ(p₀q₁)", "Δq = Σ(p₀q₁) − Σ(p₀q₀)"],
+            html: '<table class="task-table"><tr><th>Тип билета</th><th>p₀ (руб.)</th><th>q₀ (шт.)</th><th>p₁ (руб.)</th><th>q₁ (шт.)</th></tr><tr><td>Взрослый</td><td class="var" data-var="p0_1">800</td><td class="var" data-var="q0_1">1000</td><td class="var" data-var="p1_1">750</td><td class="var" data-var="q1_1">1100</td></tr><tr><td>Льготный</td><td class="var" data-var="p0_2">500</td><td class="var" data-var="q0_2">500</td><td class="var" data-var="p1_2">500</td><td class="var" data-var="q1_2">600</td></tr><tr><td>Детский</td><td class="var" data-var="p0_3">400</td><td class="var" data-var="q0_3">1200</td><td class="var" data-var="p1_3">450</td><td class="var" data-var="q1_3">800</td></tr></table>',
+            varLabels: { p0_1: "Цена взрослый (июн)", q0_1: "Кол-во взрослый (июн)", p1_1: "Цена взрослый (июл)", q1_1: "Кол-во взрослый (июл)", p0_2: "Цена льготный (июн)", q0_2: "Кол-во льготный (июн)", p1_2: "Цена льготный (июл)", q1_2: "Кол-во льготный (июл)", p0_3: "Цена детский (июн)", q0_3: "Кол-во детский (июн)", p1_3: "Цена детский (июл)", q1_3: "Кол-во детский (июл)" },
+            solve: function(v) {
+                var p0q0 = v.p0_1*v.q0_1 + v.p0_2*v.q0_2 + v.p0_3*v.q0_3;
+                var p1q1 = v.p1_1*v.q1_1 + v.p1_2*v.q1_2 + v.p1_3*v.q1_3;
+                var p0q1 = v.p0_1*v.q1_1 + v.p0_2*v.q1_2 + v.p0_3*v.q1_3;
+                var Iqp = (p1q1/p0q0*100).toFixed(2);
+                var Ip = (p1q1/p0q1*100).toFixed(2);
+                var Iq = (p0q1/p0q0*100).toFixed(2);
+                var dpq = p1q1 - p0q0;
+                var dp = p1q1 - p0q1;
+                var dq = p0q1 - p0q0;
+                return {
+                    calc: 'Σ(p₀q₀) = ' + p0q0 + ' руб.\nΣ(p₁q₁) = ' + p1q1 + ' руб.\nΣ(p₀q₁) = ' + p0q1 + ' руб.\n\nIqp = ' + p1q1 + '/' + p0q0 + ' × 100 = ' + Iqp + '%\nIp = ' + p1q1 + '/' + p0q1 + ' × 100 = ' + Ip + '%\nIq = ' + p0q1 + '/' + p0q0 + ' × 100 = ' + Iq + '%\n\nΔpq = ' + p1q1 + ' − ' + p0q0 + ' = ' + dpq + ' руб.\nΔp = ' + p1q1 + ' − ' + p0q1 + ' = ' + dp + ' руб.\nΔq = ' + p0q1 + ' − ' + p0q0 + ' = ' + dq + ' руб.',
+                    conclusion: 'Выручка цирка изменилась на ' + dpq + ' руб. (' + Iqp + '%). За счёт изменения цен выручка изменилась на ' + dp + ' руб., за счёт изменения количества проданных билетов — на ' + dq + ' руб.'
+                };
+            }
+        },
+        {
+            id: "task_cinema_4",
+            title: "Кинотеатр: май → июль (стандартная)",
+            formulas: ["ip = p₁/p₀", "iq = q₁/q₀", "Iqp = Σ(p₁q₁)/Σ(p₀q₀)", "Ip = Σ(p₁q₁)/Σ(p₀q₁)", "Iq = Σ(p₀q₁)/Σ(p₀q₀)", "Δpq = Σ(p₁q₁) − Σ(p₀q₀)", "Δp = Σ(p₁q₁) − Σ(p₀q₁)", "Δq = Σ(p₀q₁) − Σ(p₀q₀)"],
+            html: '<table class="task-table"><tr><th>Тип билета</th><th>p₀ (руб.)</th><th>q₀ (шт.)</th><th>p₁ (руб.)</th><th>q₁ (шт.)</th></tr><tr><td>Взрослый</td><td class="var" data-var="p0_1">500</td><td class="var" data-var="q0_1">500</td><td class="var" data-var="p1_1">600</td><td class="var" data-var="q1_1">600</td></tr><tr><td>Льготный</td><td class="var" data-var="p0_2">400</td><td class="var" data-var="q0_2">600</td><td class="var" data-var="p1_2">400</td><td class="var" data-var="q1_2">800</td></tr><tr><td>Детский</td><td class="var" data-var="p0_3">300</td><td class="var" data-var="q0_3">550</td><td class="var" data-var="p1_3">350</td><td class="var" data-var="q1_3">600</td></tr></table>',
+            varLabels: { p0_1: "Цена взрослый (май)", q0_1: "Кол-во взрослый (май)", p1_1: "Цена взрослый (июл)", q1_1: "Кол-во взрослый (июл)", p0_2: "Цена льготный (май)", q0_2: "Кол-во льготный (май)", p1_2: "Цена льготный (июл)", q1_2: "Кол-во льготный (июл)", p0_3: "Цена детский (май)", q0_3: "Кол-во детский (май)", p1_3: "Цена детский (июл)", q1_3: "Кол-во детский (июл)" },
+            solve: function(v) {
+                var p0q0 = v.p0_1*v.q0_1 + v.p0_2*v.q0_2 + v.p0_3*v.q0_3;
+                var p1q1 = v.p1_1*v.q1_1 + v.p1_2*v.q1_2 + v.p1_3*v.q1_3;
+                var p0q1 = v.p0_1*v.q1_1 + v.p0_2*v.q1_2 + v.p0_3*v.q1_3;
+                var Iqp = (p1q1/p0q0*100).toFixed(2);
+                var Ip = (p1q1/p0q1*100).toFixed(2);
+                var Iq = (p0q1/p0q0*100).toFixed(2);
+                var dpq = p1q1 - p0q0;
+                var dp = p1q1 - p0q1;
+                var dq = p0q1 - p0q0;
+                return {
+                    calc: 'Σ(p₀q₀) = ' + p0q0 + ' руб.\nΣ(p₁q₁) = ' + p1q1 + ' руб.\nΣ(p₀q₁) = ' + p0q1 + ' руб.\n\nIqp = ' + p1q1 + '/' + p0q0 + ' × 100 = ' + Iqp + '%\nIp = ' + p1q1 + '/' + p0q1 + ' × 100 = ' + Ip + '%\nIq = ' + p0q1 + '/' + p0q0 + ' × 100 = ' + Iq + '%\n\nΔpq = ' + p1q1 + ' − ' + p0q0 + ' = ' + dpq + ' руб.\nΔp = ' + p1q1 + ' − ' + p0q1 + ' = ' + dp + ' руб.\nΔq = ' + p0q1 + ' − ' + p0q0 + ' = ' + dq + ' руб.',
+                    conclusion: 'Выручка кинотеатра изменилась на ' + dpq + ' руб. (' + Iqp + '%). За счёт изменения цен выручка изменилась на ' + dp + ' руб., за счёт изменения количества проданных билетов — на ' + dq + ' руб.'
+                };
+            }
+        },
+        {
+            id: "task_museum_5",
+            title: "Музей: январь → март (выручка в янв)",
+            formulas: ["q₀ = Выручка₀ / p₀", "ip = p₁/p₀", "iq = q₁/q₀", "Iqp = Σ(p₁q₁)/Σ(p₀q₀)", "Ip = Σ(p₁q₁)/Σ(p₀q₁)", "Iq = Σ(p₀q₁)/Σ(p₀q₀)", "Δpq = Σ(p₁q₁) − Σ(p₀q₀)", "Δp = Σ(p₁q₁) − Σ(p₀q₁)", "Δq = Σ(p₀q₁) − Σ(p₀q₀)"],
+            html: '<table class="task-table"><tr><th>Тип билета</th><th>p₀ (руб.)</th><th>Выручка₀ (тыс.руб.)</th><th>p₁ (руб.)</th><th>q₁ (шт.)</th></tr><tr><td>Взрослый</td><td class="var" data-var="p0_1">300</td><td class="var" data-var="rev0_1">360</td><td class="var" data-var="p1_1">350</td><td class="var" data-var="q1_1">1100</td></tr><tr><td>Льготный</td><td class="var" data-var="p0_2">150</td><td class="var" data-var="rev0_2">120</td><td class="var" data-var="p1_2">180</td><td class="var" data-var="q1_2">750</td></tr><tr><td>Детский</td><td class="var" data-var="p0_3">100</td><td class="var" data-var="rev0_3">50</td><td class="var" data-var="p1_3">120</td><td class="var" data-var="q1_3">600</td></tr></table>',
+            varLabels: { p0_1: "Цена взрослый (янв)", rev0_1: "Выручка взрослый (янв, тыс.руб.)", p1_1: "Цена взрослый (мар)", q1_1: "Кол-во взрослый (мар)", p0_2: "Цена льготный (янв)", rev0_2: "Выручка льготный (янв, тыс.руб.)", p1_2: "Цена льготный (мар)", q1_2: "Кол-во льготный (мар)", p0_3: "Цена детский (янв)", rev0_3: "Выручка детский (янв, тыс.руб.)", p1_3: "Цена детский (мар)", q1_3: "Кол-во детский (мар)" },
+            solve: function(v) {
+                var q0_1 = v.rev0_1 * 1000 / v.p0_1;
+                var q0_2 = v.rev0_2 * 1000 / v.p0_2;
+                var q0_3 = v.rev0_3 * 1000 / v.p0_3;
+                var p0q0 = v.p0_1*q0_1 + v.p0_2*q0_2 + v.p0_3*q0_3;
+                var p1q1 = v.p1_1*v.q1_1 + v.p1_2*v.q1_2 + v.p1_3*v.q1_3;
+                var p0q1 = v.p0_1*v.q1_1 + v.p0_2*v.q1_2 + v.p0_3*v.q1_3;
+                var Iqp = (p1q1/p0q0*100).toFixed(2);
+                var Ip = (p1q1/p0q1*100).toFixed(2);
+                var Iq = (p0q1/p0q0*100).toFixed(2);
+                var dpq = p1q1 - p0q0;
+                var dp = p1q1 - p0q1;
+                var dq = p0q1 - p0q0;
+                return {
+                    calc: 'Сначала найдём q₀:\nq₀(взр) = 360000/300 = ' + q0_1.toFixed(0) + ' шт.\nq₀(льг) = 120000/150 = ' + q0_2.toFixed(0) + ' шт.\nq₀(дет) = 50000/100 = ' + q0_3.toFixed(0) + ' шт.\n\nΣ(p₀q₀) = ' + p0q0.toFixed(0) + ' руб.\nΣ(p₁q₁) = ' + p1q1 + ' руб.\nΣ(p₀q₁) = ' + p0q1 + ' руб.\n\nIqp = ' + p1q1 + '/' + p0q0.toFixed(0) + ' × 100 = ' + Iqp + '%\nIp = ' + p1q1 + '/' + p0q1 + ' × 100 = ' + Ip + '%\nIq = ' + p0q1 + '/' + p0q0.toFixed(0) + ' × 100 = ' + Iq + '%\n\nΔpq = ' + p1q1 + ' − ' + p0q0.toFixed(0) + ' = ' + dpq.toFixed(0) + ' руб.\nΔp = ' + p1q1 + ' − ' + p0q1 + ' = ' + dp + ' руб.\nΔq = ' + p0q1 + ' − ' + p0q0.toFixed(0) + ' = ' + dq.toFixed(0) + ' руб.',
+                    conclusion: 'Выручка музея изменилась на ' + dpq.toFixed(0) + ' руб. (' + Iqp + '%). За счёт изменения цен выручка изменилась на ' + dp + ' руб., за счёт изменения количества проданных билетов — на ' + dq.toFixed(0) + ' руб.'
+                };
+            }
+        },
+        {
+            id: "task_theater_6",
+            title: "Театр: февраль → апрель (выручка в фев)",
+            formulas: ["q₀ = Выручка₀ / p₀", "ip = p₁/p₀", "iq = q₁/q₀", "Iqp = Σ(p₁q₁)/Σ(p₀q₀)", "Ip = Σ(p₁q₁)/Σ(p₀q₁)", "Iq = Σ(p₀q₁)/Σ(p₀q₀)", "Δpq = Σ(p₁q₁) − Σ(p₀q₀)", "Δp = Σ(p₁q₁) − Σ(p₀q₁)", "Δq = Σ(p₀q₁) − Σ(p₀q₀)"],
+            html: '<table class="task-table"><tr><th>Тип билета</th><th>p₀ (руб.)</th><th>Выручка₀ (тыс.руб.)</th><th>p₁ (руб.)</th><th>q₁ (шт.)</th></tr><tr><td>Взрослый</td><td class="var" data-var="p0_1">500</td><td class="var" data-var="rev0_1">550</td><td class="var" data-var="p1_1">400</td><td class="var" data-var="q1_1">1300</td></tr><tr><td>Льготный</td><td class="var" data-var="p0_2">250</td><td class="var" data-var="rev0_2">200</td><td class="var" data-var="p1_2">200</td><td class="var" data-var="q1_2">800</td></tr><tr><td>Детский</td><td class="var" data-var="p0_3">100</td><td class="var" data-var="rev0_3">60</td><td class="var" data-var="p1_3">150</td><td class="var" data-var="q1_3">600</td></tr></table>',
+            varLabels: { p0_1: "Цена взрослый (фев)", rev0_1: "Выручка взрослый (фев, тыс.руб.)", p1_1: "Цена взрослый (апр)", q1_1: "Кол-во взрослый (апр)", p0_2: "Цена льготный (фев)", rev0_2: "Выручка льготный (фев, тыс.руб.)", p1_2: "Цена льготный (апр)", q1_2: "Кол-во льготный (апр)", p0_3: "Цена детский (фев)", rev0_3: "Выручка детский (фев, тыс.руб.)", p1_3: "Цена детский (апр)", q1_3: "Кол-во детский (апр)" },
+            solve: function(v) {
+                var q0_1 = v.rev0_1 * 1000 / v.p0_1;
+                var q0_2 = v.rev0_2 * 1000 / v.p0_2;
+                var q0_3 = v.rev0_3 * 1000 / v.p0_3;
+                var p0q0 = v.p0_1*q0_1 + v.p0_2*q0_2 + v.p0_3*q0_3;
+                var p1q1 = v.p1_1*v.q1_1 + v.p1_2*v.q1_2 + v.p1_3*v.q1_3;
+                var p0q1 = v.p0_1*v.q1_1 + v.p0_2*v.q1_2 + v.p0_3*v.q1_3;
+                var Iqp = (p1q1/p0q0*100).toFixed(2);
+                var Ip = (p1q1/p0q1*100).toFixed(2);
+                var Iq = (p0q1/p0q0*100).toFixed(2);
+                var dpq = p1q1 - p0q0;
+                var dp = p1q1 - p0q1;
+                var dq = p0q1 - p0q0;
+                return {
+                    calc: 'Сначала найдём q₀:\nq₀(взр) = 550000/500 = ' + q0_1.toFixed(0) + ' шт.\nq₀(льг) = 200000/250 = ' + q0_2.toFixed(0) + ' шт.\nq₀(дет) = 60000/100 = ' + q0_3.toFixed(0) + ' шт.\n\nΣ(p₀q₀) = ' + p0q0.toFixed(0) + ' руб.\nΣ(p₁q₁) = ' + p1q1 + ' руб.\nΣ(p₀q₁) = ' + p0q1 + ' руб.\n\nIqp = ' + p1q1 + '/' + p0q0.toFixed(0) + ' × 100 = ' + Iqp + '%\nIp = ' + p1q1 + '/' + p0q1 + ' × 100 = ' + Ip + '%\nIq = ' + p0q1 + '/' + p0q0.toFixed(0) + ' × 100 = ' + Iq + '%\n\nΔpq = ' + p1q1 + ' − ' + p0q0.toFixed(0) + ' = ' + dpq.toFixed(0) + ' руб.\nΔp = ' + p1q1 + ' − ' + p0q1 + ' = ' + dp + ' руб.\nΔq = ' + p0q1 + ' − ' + p0q0.toFixed(0) + ' = ' + dq.toFixed(0) + ' руб.',
+                    conclusion: 'Выручка театра изменилась на ' + dpq.toFixed(0) + ' руб. (' + Iqp + '%). За счёт изменения цен выручка изменилась на ' + dp + ' руб., за счёт изменения количества проданных билетов — на ' + dq.toFixed(0) + ' руб.'
+                };
+            }
+        }
+    ]
+        {
+            id: "task_circus_7",
+            title: "Цирк: июнь → июль (выручка в июл)",
+            formulas: ["q₁ = Выручка₁ / p₁", "ip = p₁/p₀", "iq = q₁/q₀", "Iqp = Σ(p₁q₁)/Σ(p₀q₀)", "Ip = Σ(p₁q₁)/Σ(p₀q₁)", "Iq = Σ(p₀q₁)/Σ(p₀q₀)", "Δpq = Σ(p₁q₁) − Σ(p₀q₀)", "Δp = Σ(p₁q₁) − Σ(p₀q₁)", "Δq = Σ(p₀q₁) − Σ(p₀q₀)"],
+            html: '<table class="task-table"><tr><th>Тип билета</th><th>p₀ (руб.)</th><th>q₀ (шт.)</th><th>p₁ (руб.)</th><th>Выручка₁ (тыс.руб.)</th></tr><tr><td>Взрослый</td><td class="var" data-var="p0_1">800</td><td class="var" data-var="q0_1">1000</td><td class="var" data-var="p1_1">750</td><td class="var" data-var="rev1_1">825</td></tr><tr><td>Льготный</td><td class="var" data-var="p0_2">500</td><td class="var" data-var="q0_2">500</td><td class="var" data-var="p1_2">500</td><td class="var" data-var="rev1_2">300</td></tr><tr><td>Детский</td><td class="var" data-var="p0_3">400</td><td class="var" data-var="q0_3">1200</td><td class="var" data-var="p1_3">450</td><td class="var" data-var="rev1_3">360</td></tr></table>',
+            varLabels: { p0_1: "Цена взрослый (июн)", q0_1: "Кол-во взрослый (июн)", p1_1: "Цена взрослый (июл)", rev1_1: "Выручка взрослый (июл, тыс.руб.)", p0_2: "Цена льготный (июн)", q0_2: "Кол-во льготный (июн)", p1_2: "Цена льготный (июл)", rev1_2: "Выручка льготный (июл, тыс.руб.)", p0_3: "Цена детский (июн)", q0_3: "Кол-во детский (июн)", p1_3: "Цена детский (июл)", rev1_3: "Выручка детский (июл, тыс.руб.)" },
+            solve: function(v) {
+                var q1_1 = v.rev1_1 * 1000 / v.p1_1;
+                var q1_2 = v.rev1_2 * 1000 / v.p1_2;
+                var q1_3 = v.rev1_3 * 1000 / v.p1_3;
+                var p0q0 = v.p0_1*v.q0_1 + v.p0_2*v.q0_2 + v.p0_3*v.q0_3;
+                var p1q1 = v.p1_1*q1_1 + v.p1_2*q1_2 + v.p1_3*q1_3;
+                var p0q1 = v.p0_1*q1_1 + v.p0_2*q1_2 + v.p0_3*q1_3;
+                var Iqp = (p1q1/p0q0*100).toFixed(2);
+                var Ip = (p1q1/p0q1*100).toFixed(2);
+                var Iq = (p0q1/p0q0*100).toFixed(2);
+                var dpq = p1q1 - p0q0;
+                var dp = p1q1 - p0q1;
+                var dq = p0q1 - p0q0;
+                return {
+                    calc: 'Сначала найдём q₁:\nq₁(взр) = 825000/750 = ' + q1_1.toFixed(0) + ' шт.\nq₁(льг) = 300000/500 = ' + q1_2.toFixed(0) + ' шт.\nq₁(дет) = 360000/450 = ' + q1_3.toFixed(0) + ' шт.\n\nΣ(p₀q₀) = ' + p0q0 + ' руб.\nΣ(p₁q₁) = ' + p1q1.toFixed(0) + ' руб.\nΣ(p₀q₁) = ' + p0q1.toFixed(0) + ' руб.\n\nIqp = ' + p1q1.toFixed(0) + '/' + p0q0 + ' × 100 = ' + Iqp + '%\nIp = ' + p1q1.toFixed(0) + '/' + p0q1.toFixed(0) + ' × 100 = ' + Ip + '%\nIq = ' + p0q1.toFixed(0) + '/' + p0q0 + ' × 100 = ' + Iq + '%\n\nΔpq = ' + p1q1.toFixed(0) + ' − ' + p0q0 + ' = ' + dpq.toFixed(0) + ' руб.\nΔp = ' + p1q1.toFixed(0) + ' − ' + p0q1.toFixed(0) + ' = ' + dp.toFixed(0) + ' руб.\nΔq = ' + p0q1.toFixed(0) + ' − ' + p0q0 + ' = ' + dq.toFixed(0) + ' руб.',
+                    conclusion: 'Выручка цирка изменилась на ' + dpq.toFixed(0) + ' руб. (' + Iqp + '%). За счёт изменения цен выручка изменилась на ' + dp.toFixed(0) + ' руб., за счёт изменения количества проданных билетов — на ' + dq.toFixed(0) + ' руб.'
+                };
+            }
+        },
+        {
+            id: "task_cinema_8",
+            title: "Кинотеатр: май → июль (выручка в июл)",
+            formulas: ["q₁ = Выручка₁ / p₁", "ip = p₁/p₀", "iq = q₁/q₀", "Iqp = Σ(p₁q₁)/Σ(p₀q₀)", "Ip = Σ(p₁q₁)/Σ(p₀q₁)", "Iq = Σ(p₀q₁)/Σ(p₀q₀)", "Δpq = Σ(p₁q₁) − Σ(p₀q₀)", "Δp = Σ(p₁q₁) − Σ(p₀q₁)", "Δq = Σ(p₀q₁) − Σ(p₀q₀)"],
+            html: '<table class="task-table"><tr><th>Тип билета</th><th>p₀ (руб.)</th><th>q₀ (шт.)</th><th>p₁ (руб.)</th><th>Выручка₁ (тыс.руб.)</th></tr><tr><td>Взрослый</td><td class="var" data-var="p0_1">500</td><td class="var" data-var="q0_1">500</td><td class="var" data-var="p1_1">600</td><td class="var" data-var="rev1_1">360</td></tr><tr><td>Льготный</td><td class="var" data-var="p0_2">400</td><td class="var" data-var="q0_2">600</td><td class="var" data-var="p1_2">400</td><td class="var" data-var="rev1_2">320</td></tr><tr><td>Детский</td><td class="var" data-var="p0_3">300</td><td class="var" data-var="q0_3">550</td><td class="var" data-var="p1_3">350</td><td class="var" data-var="rev1_3">210</td></tr></table>',
+            varLabels: { p0_1: "Цена взрослый (май)", q0_1: "Кол-во взрослый (май)", p1_1: "Цена взрослый (июл)", rev1_1: "Выручка взрослый (июл, тыс.руб.)", p0_2: "Цена льготный (май)", q0_2: "Кол-во льготный (май)", p1_2: "Цена льготный (июл)", rev1_2: "Выручка льготный (июл, тыс.руб.)", p0_3: "Цена детский (май)", q0_3: "Кол-во детский (май)", p1_3: "Цена детский (июл)", rev1_3: "Выручка детский (июл, тыс.руб.)" },
+            solve: function(v) {
+                var q1_1 = v.rev1_1 * 1000 / v.p1_1;
+                var q1_2 = v.rev1_2 * 1000 / v.p1_2;
+                var q1_3 = v.rev1_3 * 1000 / v.p1_3;
+                var p0q0 = v.p0_1*v.q0_1 + v.p0_2*v.q0_2 + v.p0_3*v.q0_3;
+                var p1q1 = v.p1_1*q1_1 + v.p1_2*q1_2 + v.p1_3*q1_3;
+                var p0q1 = v.p0_1*q1_1 + v.p0_2*q1_2 + v.p0_3*q1_3;
+                var Iqp = (p1q1/p0q0*100).toFixed(2);
+                var Ip = (p1q1/p0q1*100).toFixed(2);
+                var Iq = (p0q1/p0q0*100).toFixed(2);
+                var dpq = p1q1 - p0q0;
+                var dp = p1q1 - p0q1;
+                var dq = p0q1 - p0q0;
+                return {
+                    calc: 'Сначала найдём q₁:\nq₁(взр) = 360000/600 = ' + q1_1.toFixed(0) + ' шт.\nq₁(льг) = 320000/400 = ' + q1_2.toFixed(0) + ' шт.\nq₁(дет) = 210000/350 = ' + q1_3.toFixed(0) + ' шт.\n\nΣ(p₀q₀) = ' + p0q0 + ' руб.\nΣ(p₁q₁) = ' + p1q1.toFixed(0) + ' руб.\nΣ(p₀q₁) = ' + p0q1.toFixed(0) + ' руб.\n\nIqp = ' + p1q1.toFixed(0) + '/' + p0q0 + ' × 100 = ' + Iqp + '%\nIp = ' + p1q1.toFixed(0) + '/' + p0q1.toFixed(0) + ' × 100 = ' + Ip + '%\nIq = ' + p0q1.toFixed(0) + '/' + p0q0 + ' × 100 = ' + Iq + '%\n\nΔpq = ' + p1q1.toFixed(0) + ' − ' + p0q0 + ' = ' + dpq.toFixed(0) + ' руб.\nΔp = ' + p1q1.toFixed(0) + ' − ' + p0q1.toFixed(0) + ' = ' + dp.toFixed(0) + ' руб.\nΔq = ' + p0q1.toFixed(0) + ' − ' + p0q0 + ' = ' + dq.toFixed(0) + ' руб.',
+                    conclusion: 'Выручка кинотеатра изменилась на ' + dpq.toFixed(0) + ' руб. (' + Iqp + '%). За счёт изменения цен выручка изменилась на ' + dp.toFixed(0) + ' руб., за счёт изменения количества проданных билетов — на ' + dq.toFixed(0) + ' руб.'
+                };
+            }
+        },
+        {
+            id: "task_museum_9",
+            title: "Музей: январь → март (выручка в янв, найти p₀)",
+            formulas: ["p₀ = Выручка₀ / q₀", "ip = p₁/p₀", "iq = q₁/q₀", "Iqp = Σ(p₁q₁)/Σ(p₀q₀)", "Ip = Σ(p₁q₁)/Σ(p₀q₁)", "Iq = Σ(p₀q₁)/Σ(p₀q₀)", "Δpq = Σ(p₁q₁) − Σ(p₀q₀)", "Δp = Σ(p₁q₁) − Σ(p₀q₁)", "Δq = Σ(p₀q₁) − Σ(p₀q₀)"],
+            html: '<table class="task-table"><tr><th>Тип билета</th><th>Выручка₀ (тыс.руб.)</th><th>q₀ (шт.)</th><th>p₁ (руб.)</th><th>q₁ (шт.)</th></tr><tr><td>Взрослый</td><td class="var" data-var="rev0_1">360</td><td class="var" data-var="q0_1">1200</td><td class="var" data-var="p1_1">350</td><td class="var" data-var="q1_1">1100</td></tr><tr><td>Льготный</td><td class="var" data-var="rev0_2">120</td><td class="var" data-var="q0_2">800</td><td class="var" data-var="p1_2">180</td><td class="var" data-var="q1_2">750</td></tr><tr><td>Детский</td><td class="var" data-var="rev0_3">50</td><td class="var" data-var="q0_3">500</td><td class="var" data-var="p1_3">120</td><td class="var" data-var="q1_3">600</td></tr></table>',
+            varLabels: { rev0_1: "Выручка взрослый (янв, тыс.руб.)", q0_1: "Кол-во взрослый (янв)", p1_1: "Цена взрослый (мар)", q1_1: "Кол-во взрослый (мар)", rev0_2: "Выручка льготный (янв, тыс.руб.)", q0_2: "Кол-во льготный (янв)", p1_2: "Цена льготный (мар)", q1_2: "Кол-во льготный (мар)", rev0_3: "Выручка детский (янв, тыс.руб.)", q0_3: "Кол-во детский (янв)", p1_3: "Цена детский (мар)", q1_3: "Кол-во детский (мар)" },
+            solve: function(v) {
+                var p0_1 = v.rev0_1 * 1000 / v.q0_1;
+                var p0_2 = v.rev0_2 * 1000 / v.q0_2;
+                var p0_3 = v.rev0_3 * 1000 / v.q0_3;
+                var p0q0 = p0_1*v.q0_1 + p0_2*v.q0_2 + p0_3*v.q0_3;
+                var p1q1 = v.p1_1*v.q1_1 + v.p1_2*v.q1_2 + v.p1_3*v.q1_3;
+                var p0q1 = p0_1*v.q1_1 + p0_2*v.q1_2 + p0_3*v.q1_3;
+                var Iqp = (p1q1/p0q0*100).toFixed(2);
+                var Ip = (p1q1/p0q1*100).toFixed(2);
+                var Iq = (p0q1/p0q0*100).toFixed(2);
+                var dpq = p1q1 - p0q0;
+                var dp = p1q1 - p0q1;
+                var dq = p0q1 - p0q0;
+                return {
+                    calc: 'Сначала найдём p₀:\np₀(взр) = 360000/1200 = ' + p0_1.toFixed(0) + ' руб.\np₀(льг) = 120000/800 = ' + p0_2.toFixed(0) + ' руб.\np₀(дет) = 50000/500 = ' + p0_3.toFixed(0) + ' руб.\n\nΣ(p₀q₀) = ' + p0q0.toFixed(0) + ' руб.\nΣ(p₁q₁) = ' + p1q1 + ' руб.\nΣ(p₀q₁) = ' + p0q1.toFixed(0) + ' руб.\n\nIqp = ' + p1q1 + '/' + p0q0.toFixed(0) + ' × 100 = ' + Iqp + '%\nIp = ' + p1q1 + '/' + p0q1.toFixed(0) + ' × 100 = ' + Ip + '%\nIq = ' + p0q1.toFixed(0) + '/' + p0q0.toFixed(0) + ' × 100 = ' + Iq + '%\n\nΔpq = ' + p1q1 + ' − ' + p0q0.toFixed(0) + ' = ' + dpq.toFixed(0) + ' руб.\nΔp = ' + p1q1 + ' − ' + p0q1.toFixed(0) + ' = ' + dp.toFixed(0) + ' руб.\nΔq = ' + p0q1.toFixed(0) + ' − ' + p0q0.toFixed(0) + ' = ' + dq.toFixed(0) + ' руб.',
+                    conclusion: 'Выручка музея изменилась на ' + dpq.toFixed(0) + ' руб. (' + Iqp + '%). За счёт изменения цен выручка изменилась на ' + dp.toFixed(0) + ' руб., за счёт изменения количества проданных билетов — на ' + dq.toFixed(0) + ' руб.'
+                };
+            }
+        },
+        {
+            id: "task_theater_10",
+            title: "Театр: февраль → апрель (выручка в апр, найти p₁)",
+            formulas: ["p₁ = Выручка₁ / q₁", "ip = p₁/p₀", "iq = q₁/q₀", "Iqp = Σ(p₁q₁)/Σ(p₀q₀)", "Ip = Σ(p₁q₁)/Σ(p₀q₁)", "Iq = Σ(p₀q₁)/Σ(p₀q₀)", "Δpq = Σ(p₁q₁) − Σ(p₀q₀)", "Δp = Σ(p₁q₁) − Σ(p₀q₁)", "Δq = Σ(p₀q₁) − Σ(p₀q₀)"],
+            html: '<table class="task-table"><tr><th>Тип билета</th><th>p₀ (руб.)</th><th>q₀ (шт.)</th><th>Выручка₁ (тыс.руб.)</th><th>q₁ (шт.)</th></tr><tr><td>Взрослый</td><td class="var" data-var="p0_1">500</td><td class="var" data-var="q0_1">1100</td><td class="var" data-var="rev1_1">520</td><td class="var" data-var="q1_1">1300</td></tr><tr><td>Льготный</td><td class="var" data-var="p0_2">250</td><td class="var" data-var="q0_2">800</td><td class="var" data-var="rev1_2">160</td><td class="var" data-var="q1_2">800</td></tr><tr><td>Детский</td><td class="var" data-var="p0_3">100</td><td class="var" data-var="q0_3">600</td><td class="var" data-var="rev1_3">90</td><td class="var" data-var="q1_3">600</td></tr></table>',
+            varLabels: { p0_1: "Цена взрослый (фев)", q0_1: "Кол-во взрослый (фев)", rev1_1: "Выручка взрослый (апр, тыс.руб.)", q1_1: "Кол-во взрослый (апр)", p0_2: "Цена льготный (фев)", q0_2: "Кол-во льготный (фев)", rev1_2: "Выручка льготный (апр, тыс.руб.)", q1_2: "Кол-во льготный (апр)", p0_3: "Цена детский (фев)", q0_3: "Кол-во детский (фев)", rev1_3: "Выручка детский (апр, тыс.руб.)", q1_3: "Кол-во детский (апр)" },
+            solve: function(v) {
+                var p1_1 = v.rev1_1 * 1000 / v.q1_1;
+                var p1_2 = v.rev1_2 * 1000 / v.q1_2;
+                var p1_3 = v.rev1_3 * 1000 / v.q1_3;
+                var p0q0 = v.p0_1*v.q0_1 + v.p0_2*v.q0_2 + v.p0_3*v.q0_3;
+                var p1q1 = p1_1*v.q1_1 + p1_2*v.q1_2 + p1_3*v.q1_3;
+                var p0q1 = v.p0_1*v.q1_1 + v.p0_2*v.q1_2 + v.p0_3*v.q1_3;
+                var Iqp = (p1q1/p0q0*100).toFixed(2);
+                var Ip = (p1q1/p0q1*100).toFixed(2);
+                var Iq = (p0q1/p0q0*100).toFixed(2);
+                var dpq = p1q1 - p0q0;
+                var dp = p1q1 - p0q1;
+                var dq = p0q1 - p0q0;
+                return {
+                    calc: 'Сначала найдём p₁:\np₁(взр) = 520000/1300 = ' + p1_1.toFixed(2) + ' руб.\np₁(льг) = 160000/800 = ' + p1_2.toFixed(2) + ' руб.\np₁(дет) = 90000/600 = ' + p1_3.toFixed(2) + ' руб.\n\nΣ(p₀q₀) = ' + p0q0 + ' руб.\nΣ(p₁q₁) = ' + p1q1.toFixed(0) + ' руб.\nΣ(p₀q₁) = ' + p0q1 + ' руб.\n\nIqp = ' + p1q1.toFixed(0) + '/' + p0q0 + ' × 100 = ' + Iqp + '%\nIp = ' + p1q1.toFixed(0) + '/' + p0q1 + ' × 100 = ' + Ip + '%\nIq = ' + p0q1 + '/' + p0q0 + ' × 100 = ' + Iq + '%\n\nΔpq = ' + p1q1.toFixed(0) + ' − ' + p0q0 + ' = ' + dpq.toFixed(0) + ' руб.\nΔp = ' + p1q1.toFixed(0) + ' − ' + p0q1 + ' = ' + dp.toFixed(0) + ' руб.\nΔq = ' + p0q1 + ' − ' + p0q0 + ' = ' + dq + ' руб.',
+                    conclusion: 'Выручка театра изменилась на ' + dpq.toFixed(0) + ' руб. (' + Iqp + '%). За счёт изменения цен выручка изменилась на ' + dp.toFixed(0) + ' руб., за счёт изменения количества проданных билетов — на ' + dq + ' руб.'
+                };
+            }
+        },
+        {
+            id: "task_circus_11",
+            title: "Цирк: июнь → июль (выручка в июн, найти p₀)",
+            formulas: ["p₀ = Выручка₀ / q₀", "ip = p₁/p₀", "iq = q₁/q₀", "Iqp = Σ(p₁q₁)/Σ(p₀q₀)", "Ip = Σ(p₁q₁)/Σ(p₀q₁)", "Iq = Σ(p₀q₁)/Σ(p₀q₀)", "Δpq = Σ(p₁q₁) − Σ(p₀q₀)", "Δp = Σ(p₁q₁) − Σ(p₀q₁)", "Δq = Σ(p₀q₁) − Σ(p₀q₀)"],
+            html: '<table class="task-table"><tr><th>Тип билета</th><th>Выручка₀ (тыс.руб.)</th><th>q₀ (шт.)</th><th>p₁ (руб.)</th><th>q₁ (шт.)</th></tr><tr><td>Взрослый</td><td class="var" data-var="rev0_1">800</td><td class="var" data-var="q0_1">1000</td><td class="var" data-var="p1_1">750</td><td class="var" data-var="q1_1">1100</td></tr><tr><td>Льготный</td><td class="var" data-var="rev0_2">250</td><td class="var" data-var="q0_2">500</td><td class="var" data-var="p1_2">500</td><td class="var" data-var="q1_2">600</td></tr><tr><td>Детский</td><td class="var" data-var="rev0_3">480</td><td class="var" data-var="q0_3">1200</td><td class="var" data-var="p1_3">450</td><td class="var" data-var="q1_3">800</td></tr></table>',
+            varLabels: { rev0_1: "Выручка взрослый (июн, тыс.руб.)", q0_1: "Кол-во взрослый (июн)", p1_1: "Цена взрослый (июл)", q1_1: "Кол-во взрослый (июл)", rev0_2: "Выручка льготный (июн, тыс.руб.)", q0_2: "Кол-во льготный (июн)", p1_2: "Цена льготный (июл)", q1_2: "Кол-во льготный (июл)", rev0_3: "Выручка детский (июн, тыс.руб.)", q0_3: "Кол-во детский (июн)", p1_3: "Цена детский (июл)", q1_3: "Кол-во детский (июл)" },
+            solve: function(v) {
+                var p0_1 = v.rev0_1 * 1000 / v.q0_1;
+                var p0_2 = v.rev0_2 * 1000 / v.q0_2;
+                var p0_3 = v.rev0_3 * 1000 / v.q0_3;
+                var p0q0 = p0_1*v.q0_1 + p0_2*v.q0_2 + p0_3*v.q0_3;
+                var p1q1 = v.p1_1*v.q1_1 + v.p1_2*v.q1_2 + v.p1_3*v.q1_3;
+                var p0q1 = p0_1*v.q1_1 + p0_2*v.q1_2 + p0_3*v.q1_3;
+                var Iqp = (p1q1/p0q0*100).toFixed(2);
+                var Ip = (p1q1/p0q1*100).toFixed(2);
+                var Iq = (p0q1/p0q0*100).toFixed(2);
+                var dpq = p1q1 - p0q0;
+                var dp = p1q1 - p0q1;
+                var dq = p0q1 - p0q0;
+                return {
+                    calc: 'Сначала найдём p₀:\np₀(взр) = 800000/1000 = ' + p0_1.toFixed(0) + ' руб.\np₀(льг) = 250000/500 = ' + p0_2.toFixed(0) + ' руб.\np₀(дет) = 480000/1200 = ' + p0_3.toFixed(0) + ' руб.\n\nΣ(p₀q₀) = ' + p0q0.toFixed(0) + ' руб.\nΣ(p₁q₁) = ' + p1q1 + ' руб.\nΣ(p₀q₁) = ' + p0q1.toFixed(0) + ' руб.\n\nIqp = ' + p1q1 + '/' + p0q0.toFixed(0) + ' × 100 = ' + Iqp + '%\nIp = ' + p1q1 + '/' + p0q1.toFixed(0) + ' × 100 = ' + Ip + '%\nIq = ' + p0q1.toFixed(0) + '/' + p0q0.toFixed(0) + ' × 100 = ' + Iq + '%\n\nΔpq = ' + p1q1 + ' − ' + p0q0.toFixed(0) + ' = ' + dpq.toFixed(0) + ' руб.\nΔp = ' + p1q1 + ' − ' + p0q1.toFixed(0) + ' = ' + dp.toFixed(0) + ' руб.\nΔq = ' + p0q1.toFixed(0) + ' − ' + p0q0.toFixed(0) + ' = ' + dq.toFixed(0) + ' руб.',
+                    conclusion: 'Выручка цирка изменилась на ' + dpq.toFixed(0) + ' руб. (' + Iqp + '%). За счёт изменения цен выручка изменилась на ' + dp.toFixed(0) + ' руб., за счёт изменения количества проданных билетов — на ' + dq.toFixed(0) + ' руб.'
+                };
+            }
+        },
+        {
+            id: "task_cinema_12",
+            title: "Кинотеатр: май → июль (выручка в июл, найти p₁)",
+            formulas: ["p₁ = Выручка₁ / q₁", "ip = p₁/p₀", "iq = q₁/q₀", "Iqp = Σ(p₁q₁)/Σ(p₀q₀)", "Ip = Σ(p₁q₁)/Σ(p₀q₁)", "Iq = Σ(p₀q₁)/Σ(p₀q₀)", "Δpq = Σ(p₁q₁) − Σ(p₀q₀)", "Δp = Σ(p₁q₁) − Σ(p₀q₁)", "Δq = Σ(p₀q₁) − Σ(p₀q₀)"],
+            html: '<table class="task-table"><tr><th>Тип билета</th><th>p₀ (руб.)</th><th>q₀ (шт.)</th><th>Выручка₁ (тыс.руб.)</th><th>q₁ (шт.)</th></tr><tr><td>Взрослый</td><td class="var" data-var="p0_1">500</td><td class="var" data-var="q0_1">500</td><td class="var" data-var="rev1_1">360</td><td class="var" data-var="q1_1">600</td></tr><tr><td>Льготный</td><td class="var" data-var="p0_2">400</td><td class="var" data-var="q0_2">600</td><td class="var" data-var="rev1_2">320</td><td class="var" data-var="q1_2">800</td></tr><tr><td>Детский</td><td class="var" data-var="p0_3">300</td><td class="var" data-var="q0_3">550</td><td class="var" data-var="rev1_3">210</td><td class="var" data-var="q1_3">600</td></tr></table>',
+            varLabels: { p0_1: "Цена взрослый (май)", q0_1: "Кол-во взрослый (май)", rev1_1: "Выручка взрослый (июл, тыс.руб.)", q1_1: "Кол-во взрослый (июл)", p0_2: "Цена льготный (май)", q0_2: "Кол-во льготный (май)", rev1_2: "Выручка льготный (июл, тыс.руб.)", q1_2: "Кол-во льготный (июл)", p0_3: "Цена детский (май)", q0_3: "Кол-во детский (май)", rev1_3: "Выручка детский (июл, тыс.руб.)", q1_3: "Кол-во детский (июл)" },
+            solve: function(v) {
+                var p1_1 = v.rev1_1 * 1000 / v.q1_1;
+                var p1_2 = v.rev1_2 * 1000 / v.q1_2;
+                var p1_3 = v.rev1_3 * 1000 / v.q1_3;
+                var p0q0 = v.p0_1*v.q0_1 + v.p0_2*v.q0_2 + v.p0_3*v.q0_3;
+                var p1q1 = p1_1*v.q1_1 + p1_2*v.q1_2 + p1_3*v.q1_3;
+                var p0q1 = v.p0_1*v.q1_1 + v.p0_2*v.q1_2 + v.p0_3*v.q1_3;
+                var Iqp = (p1q1/p0q0*100).toFixed(2);
+                var Ip = (p1q1/p0q1*100).toFixed(2);
+                var Iq = (p0q1/p0q0*100).toFixed(2);
+                var dpq = p1q1 - p0q0;
+                var dp = p1q1 - p0q1;
+                var dq = p0q1 - p0q0;
+                return {
+                    calc: 'Сначала найдём p₁:\np₁(взр) = 360000/600 = ' + p1_1.toFixed(0) + ' руб.\np₁(льг) = 320000/800 = ' + p1_2.toFixed(0) + ' руб.\np₁(дет) = 210000/600 = ' + p1_3.toFixed(0) + ' руб.\n\nΣ(p₀q₀) = ' + p0q0 + ' руб.\nΣ(p₁q₁) = ' + p1q1.toFixed(0) + ' руб.\nΣ(p₀q₁) = ' + p0q1 + ' руб.\n\nIqp = ' + p1q1.toFixed(0) + '/' + p0q0 + ' × 100 = ' + Iqp + '%\nIp = ' + p1q1.toFixed(0) + '/' + p0q1 + ' × 100 = ' + Ip + '%\nIq = ' + p0q1 + '/' + p0q0 + ' × 100 = ' + Iq + '%\n\nΔpq = ' + p1q1.toFixed(0) + ' − ' + p0q0 + ' = ' + dpq.toFixed(0) + ' руб.\nΔp = ' + p1q1.toFixed(0) + ' − ' + p0q1 + ' = ' + dp.toFixed(0) + ' руб.\nΔq = ' + p0q1 + ' − ' + p0q0 + ' = ' + dq + ' руб.',
+                    conclusion: 'Выручка кинотеатра изменилась на ' + dpq.toFixed(0) + ' руб. (' + Iqp + '%). За счёт изменения цен выручка изменилась на ' + dp.toFixed(0) + ' руб., за счёт изменения количества проданных билетов — на ' + dq + ' руб.'
+                };
             }
         }
     ]
