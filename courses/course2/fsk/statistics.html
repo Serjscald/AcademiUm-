@@ -6,38 +6,15 @@
     <title>Статистика — АкадемиУм!</title>
     <link rel="stylesheet" href="../../../css/style.css">
     <style>
-        .stat-table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 14px; }
-        .stat-table th, .stat-table td { border: 1px solid #475569; padding: 8px; text-align: center; }
-        .stat-table th { background: #334155; color: var(--gold); }
-        .var { color: #38bdf8; text-decoration: underline; cursor: pointer; font-weight: bold; transition: all 0.2s; }
-        .var:hover { background: rgba(56, 189, 248, 0.2); }
-        .var.found { text-decoration: none; }
-        .var.wrong-var { color: var(--accent-red) !important; background: rgba(239, 68, 68, 0.25); text-decoration: none; animation: shake 0.4s; }
-        .var.locked { cursor: default; }
-        .solution-box { background: #0f172a; border: 2px solid var(--accent-green); border-radius: 12px; padding: 20px; margin-top: 20px; text-align: left; line-height: 1.6; animation: fadeIn 0.5s; overflow-x: auto; }
-        .conclusion-box { background: rgba(251, 191, 36, 0.1); border: 2px solid var(--gold); border-radius: 12px; padding: 20px; margin-top: 15px; text-align: left; line-height: 1.6; animation: fadeIn 0.5s; }
-        .conclusion-box h3 { margin: 0 0 10px 0; color: var(--gold); font-size: 16px; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .formulas-box { background: rgba(251, 191, 36, 0.1); border: 1px solid var(--gold); border-radius: 10px; padding: 15px; margin-bottom: 20px; text-align: left; font-size: 14px; }
-        .formulas-box h3 { margin: 0 0 10px 0; font-size: 16px; color: var(--gold); }
-        .formulas-box ul { margin: 0; padding-left: 20px; }
-        .formulas-box li { margin-bottom: 5px; color: var(--text-main); }
-        .var-selector { position: fixed; z-index: 1000; background: #1e293b; border: 2px solid var(--gold); border-radius: 8px; padding: 5px; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.5); max-width: 280px; max-height: 300px; overflow-y: auto; }
-        .var-selector button { display: block; width: 100%; padding: 10px 15px; margin: 2px 0; background: #334155; border: none; border-radius: 5px; color: white; font-size: 14px; cursor: pointer; text-align: left; }
-        .var-selector button:hover { background: var(--gold); color: #0f172a; }
-        .btn-solve { background: var(--accent-green); color: white; margin-top: 15px; }
-        .btn-solve:disabled { background: #475569; cursor: not-allowed; opacity: 0.6; }
-        .task-msg { margin-top: 10px; font-size: 14px; font-weight: bold; min-height: 20px; }
-        .task-msg.err { color: var(--accent-red); }
-        .rotate-overlay { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.98); z-index: 99999; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
-        .rotate-overlay h2 { color: var(--gold); font-size: 24px; margin-bottom: 15px; }
-        .rotate-overlay p { color: var(--text-muted); font-size: 16px; }
-        .rotate-icon { font-size: 60px; margin-bottom: 20px; animation: rotate 2s infinite; }
-        @keyframes rotate { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(90deg); } }
-        @media (max-width: 768px) and (orientation: portrait) {
-            .task-mode .rotate-overlay { display: flex; }
-            .task-mode .app-container { display: none; }
-        }
+        .task-container { background: var(--bg-card); padding: 20px; border-radius: 12px; margin: 20px 0; }
+        .task-table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 14px; }
+        .task-table th, .task-table td { border: 1px solid #475569; padding: 8px; text-align: center; }
+        .task-table th { background: #334155; color: var(--gold); }
+        .var { background: #1e3a5f; cursor: pointer; transition: 0.2s; }
+        .var:hover { background: #2563eb; }
+        .formula-box { background: #0f172a; padding: 15px; border-radius: 8px; margin: 10px 0; font-family: monospace; color: var(--accent-blue); overflow-x: auto; }
+        .solution-step { background: #1e293b; padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 4px solid var(--gold); }
+        .conclusion { background: #14532d; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid var(--accent-green); }
     </style>
 </head>
 <body>
@@ -47,15 +24,7 @@
     <p>Нажмите, чтобы начать обучение</p>
 </div>
 
-<div id="rotate-overlay" class="rotate-overlay">
-    <div class="rotate-icon">📱</div>
-    <h2>Поверните телефон</h2>
-    <p>Для решения задач удобнее использовать альбомную ориентацию</p>
-</div>
-
 <canvas id="fireworks-canvas"></canvas>
-
-<div id="var-selector" class="var-selector"></div>
 
 <div class="app-container" id="app"></div>
 
@@ -63,7 +32,6 @@
 <script src="../../../js/data-statistics.js"></script>
 <script>
 var app = document.getElementById('app');
-var selector = document.getElementById('var-selector');
 var currentCards = [];
 var cardIndex = 0;
 var quizIndex = 0;
@@ -71,37 +39,26 @@ var mistakes = 0;
 var currentMode = 'learn';
 var currentQuizDirection = 'term-to-def';
 var currentTask = null;
-var assignments = {};
-var selectedVarElement = null;
-var taskSolved = false;
-
-document.addEventListener('click', function(){ selector.style.display = 'none'; });
+var taskVars = {};
 
 function renderScreen(screenName, data) {
     app.innerHTML = '';
-    selector.style.display = 'none';
     
     if (screenName === 'modes') {
-        document.body.classList.remove('task-mode');
-        app.innerHTML = '<h1>Статистика</h1><div class="subtitle">Выберите режим</div><div class="grid single-col" style="margin-top:30px"><div class="tile" onclick="handleMode(\'learn\')">Обучение</div><div class="tile" onclick="handleMode(\'quiz\')">Контроль</div><div class="tile" onclick="handleMode(\'tasks\')">Задачи</div></div><button class="btn btn-back" onclick="navigateTo(\'index.html\')">Назад</button>';
+        app.innerHTML = '<h1>Статистика</h1><div class="subtitle">Выберите режим</div><div class="grid" style="margin-top:40px"><div class="tile" onclick="handleMode(\'learn\')">Обучение</div><div class="tile" onclick="handleMode(\'quiz\')">Контроль</div><div class="tile" onclick="handleMode(\'tasks\')">Задачи</div></div><button class="btn btn-back" onclick="navigateTo(\'index.html\')">Назад</button>';
     } else if (screenName === 'topics') {
         var mode = (data && data.mode) ? data.mode : 'learn';
         currentMode = mode;
         var title = (mode === 'learn') ? 'Обучение' : (mode === 'quiz' ? 'Контроль' : 'Задачи');
         var topicsHTML = '';
-        if (mode === 'tasks') {
-            for (var i = 0; i < statisticsDB.tasks.length; i++) {
-                topicsHTML += '<div class="tile" onclick="startTask(' + i + ')">' + statisticsDB.tasks[i].title + '</div>';
-            }
-        } else if (mode === 'quiz') {
+        if (mode === 'quiz') {
             topicsHTML += '<div class="tile" onclick="startTopic(\'all\')">За все время</div>';
-            for (var key in statisticsDB.topicTitles) {
-                topicsHTML += '<div class="tile" onclick="startTopic(\'' + key + '\')">' + statisticsDB.topicTitles[key] + '</div>';
-            }
-        } else {
-            for (var key in statisticsDB.topicTitles) {
-                topicsHTML += '<div class="tile" onclick="startTopic(\'' + key + '\')">' + statisticsDB.topicTitles[key] + '</div>';
-            }
+        }
+        if (mode === 'tasks') {
+            topicsHTML += '<div class="tile" onclick="startRandomTask()">Случайная задача</div>';
+        }
+        for (var key in statisticsDB.topicTitles) {
+            topicsHTML += '<div class="tile" onclick="startTopic(\'' + key + '\')">' + statisticsDB.topicTitles[key] + '</div>';
         }
         app.innerHTML = '<h1>' + title + '</h1><div class="subtitle">Выберите тему</div><div class="grid single-col" style="margin-top:20px">' + topicsHTML + '</div><button class="btn btn-back" onclick="renderScreen(\'modes\')">Назад</button>';
     } else if (screenName === 'flashcard') {
@@ -134,19 +91,21 @@ function renderScreen(screenName, data) {
         var hint = (currentQuizDirection === 'term-to-def') ? 'Выберите определение:' : 'Выберите термин:';
         app.innerHTML = '<h1>Контроль ' + (quizIndex + 1) + ' / ' + currentCards.length + '</h1><div class="flashcard" id="quiz-card"><div class="fc-word" style="font-size:20px">' + questionText + '</div><div class="fc-trans" style="font-size:14px;color:var(--text-muted)">' + hint + '</div></div><div class="quiz-options">' + optsHTML + '</div><button class="btn btn-stop" onclick="renderScreen(\'topics\',{mode:\'quiz\'})">Прервать</button>';
     } else if (screenName === 'task') {
-        document.body.classList.add('task-mode');
-        assignments = {};
-        taskSolved = false;
-        var formulasHTML = '<div class="formulas-box"><h3>📐 Формулы для решения:</h3><ul>';
-        for (var f = 0; f < currentTask.formulas.length; f++) {
-            formulasHTML += '<li>' + currentTask.formulas[f] + '</li>';
+        var formulasHTML = '<div class="formula-box"><strong>Формулы для справки:</strong><br>';
+        for (var i = 0; i < currentTask.formulas.length; i++) {
+            formulasHTML += currentTask.formulas[i] + '<br>';
         }
-        formulasHTML += '</ul></div>';
-        var totalVars = (currentTask.html.match(/class="var"/g) || []).length;
-        app.innerHTML = '<h1>' + currentTask.title + '</h1>' + formulasHTML + '<div class="flashcard" style="border-color:#38bdf8;text-align:left;padding:20px">' + currentTask.html + '</div><div class="task-hint">Нажимайте на числа и выбирайте из списка, какой переменной они соответствуют. Назначение можно менять до нажатия кнопки «Решить».</div><div id="task-progress" style="margin-top:15px;font-size:14px;color:var(--text-muted)">Назначено переменных: 0 / ' + totalVars + '</div><div id="task-msg" class="task-msg"></div><button id="solve-btn" class="btn btn-solve" onclick="solveTask()" disabled>Решить задачу</button><div id="task-solution"></div><button class="btn btn-stop" onclick="renderScreen(\'topics\',{mode:\'tasks\'})">К списку задач</button>';
-        attachVarListeners();
+        formulasHTML += '</div>';
+        
+        app.innerHTML = '<h1>' + currentTask.title + '</h1>' + formulasHTML + '<div class="task-container">' + currentTask.html + '</div><button class="btn btn-orange" onclick="solveTask()">Показать решение</button><button class="btn btn-stop" onclick="renderScreen(\'topics\',{mode:\'tasks\'})">К задачам</button><div id="solution-area"></div>';
+        
+        var varElements = document.querySelectorAll('.var');
+        for (var j = 0; j < varElements.length; j++) {
+            var el = varElements[j];
+            var varName = el.getAttribute('data-var');
+            taskVars[varName] = parseFloat(el.textContent);
+        }
     } else if (screenName === 'result') {
-        document.body.classList.remove('task-mode');
         var isWin = (mistakes === 0);
         var msg = isWin ? '🎉 Отличная работа!' : 'Нужно заниматься усерднее, Данечка!';
         var cls = isWin ? 'result-win' : 'result-lose';
@@ -184,114 +143,24 @@ function startTopic(scope) {
     }
 }
 
-function startTask(idx) {
+function startRandomTask() {
     var el = event.target;
     el.classList.add('success');
     playSound('success');
-    currentTask = statisticsDB.tasks[idx];
+    var tasks = statisticsDB.tasks;
+    var randomIndex = Math.floor(Math.random() * tasks.length);
+    currentTask = tasks[randomIndex];
+    taskVars = {};
     setTimeout(function(){ renderScreen('task'); }, 400);
 }
 
-function attachVarListeners() {
-    var vars = document.querySelectorAll('.var');
-    var colors = currentTask.varColors;
-    
-    for (var i = 0; i < vars.length; i++) {
-        vars[i].addEventListener('click', function(e) {
-            e.stopPropagation();
-            if (taskSolved) return;
-            selectedVarElement = this;
-            
-            var rect = this.getBoundingClientRect();
-            var spaceBelow = window.innerHeight - rect.bottom;
-            var spaceAbove = rect.top;
-            
-            if (spaceBelow < 200 && spaceAbove > spaceBelow) {
-                selector.style.top = 'auto';
-                selector.style.bottom = (window.innerHeight - rect.top + 5) + 'px';
-            } else {
-                selector.style.top = (rect.bottom + 5) + 'px';
-                selector.style.bottom = 'auto';
-            }
-            
-            selector.style.left = Math.min(rect.left, window.innerWidth - 290) + 'px';
-            selector.style.display = 'block';
-            selector.innerHTML = '';
-            
-            var labels = currentTask.varLabels;
-            for (var key in labels) {
-                var btn = document.createElement('button');
-                btn.innerText = labels[key];
-                btn.style.borderLeft = '4px solid ' + colors[key];
-                btn.setAttribute('data-key', key);
-                btn.onclick = function(ev) { ev.stopPropagation(); assignVar(this.getAttribute('data-key')); };
-                selector.appendChild(btn);
-            }
-        });
-    }
-}
-
-function assignVar(varKey) {
-    if (!selectedVarElement) return;
-    var val = parseFloat(selectedVarElement.getAttribute('data-val'));
-    var row = selectedVarElement.parentElement.rowIndex;
-    var col = selectedVarElement.cellIndex;
-    var cellId = 'r' + row + 'c' + col;
-    var color = currentTask.varColors[varKey];
-    
-    assignments[cellId] = { varKey: varKey, val: val, row: row };
-    selectedVarElement.classList.add('found');
-    selectedVarElement.classList.remove('wrong-var');
-    selectedVarElement.style.color = color;
-    selectedVarElement.style.background = color + '33';
-    selectedVarElement.innerText = varKey + ' = ' + val;
-    playSound('success');
-    selector.style.display = 'none';
-    document.getElementById('task-msg').innerText = '';
-    updateTaskProgress();
-}
-
-function updateTaskProgress() {
-    var total = document.querySelectorAll('.var').length;
-    var count = Object.keys(assignments).length;
-    document.getElementById('task-progress').innerText = 'Назначено переменных: ' + count + ' / ' + total;
-    document.getElementById('solve-btn').disabled = (count < total);
-}
-
 function solveTask() {
-    if (taskSolved) return;
-    var vars = document.querySelectorAll('.var');
-    var wrongCount = 0;
-    var v = {};
-    for (var i = 0; i < vars.length; i++) {
-        var row = vars[i].parentElement.rowIndex;
-        var col = vars[i].cellIndex;
-        var cellId = 'r' + row + 'c' + col;
-        var correct = vars[i].getAttribute('data-correct');
-        var assigned = assignments[cellId];
-        if (!assigned || assigned.varKey !== correct) {
-            vars[i].classList.add('wrong-var');
-            wrongCount++;
-        } else {
-            vars[i].classList.remove('wrong-var');
-            v[correct + '_' + row] = assigned.val;
-        }
-    }
-    var msgEl = document.getElementById('task-msg');
-    if (wrongCount > 0) {
-        msgEl.className = 'task-msg err';
-        msgEl.innerText = '⚠️ Неверно назначено ячеек: ' + wrongCount + '. Исправьте красные и нажмите «Решить» снова.';
-        playSound('error');
-        return;
-    }
-    msgEl.className = 'task-msg';
-    msgEl.innerText = '';
-    taskSolved = true;
-    for (var j = 0; j < vars.length; j++) vars[j].classList.add('locked');
-    var sol = currentTask.solve(v);
-    document.getElementById('task-solution').innerHTML = '<div class="solution-box">' + sol.calc + '</div><div class="conclusion-box"><h3>📝 Вывод:</h3>' + sol.conclusion + '</div>';
+    var result = currentTask.solve(taskVars);
+    var solutionHTML = '<div class="solution-step"><strong>Пошаговое решение:</strong><br><pre style="white-space: pre-wrap; font-family: inherit;">' + result.calc + '</pre></div>';
+    solutionHTML += '<div class="conclusion"><strong>Вывод:</strong><br>' + result.conclusion + '</div>';
+    solutionHTML += '<button class="btn btn-orange" onclick="startRandomTask()" style="margin-top:15px">Следующая задача</button>';
+    document.getElementById('solution-area').innerHTML = solutionHTML;
     playSound('success');
-    setTimeout(function(){ playSound('success'); }, 200);
 }
 
 function nextCard() {
