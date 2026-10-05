@@ -12,8 +12,9 @@
         .task-table th { background: #334155; color: var(--gold); }
         .var { background: #1e3a5f; cursor: pointer; transition: 0.2s; }
         .var:hover { background: #2563eb; }
-        .formula-box { background: #0f172a; padding: 15px; border-radius: 8px; margin: 10px 0; font-family: monospace; color: var(--accent-blue); overflow-x: auto; }
+        .formula-box { background: #0f172a; padding: 15px; border-radius: 8px; margin: 10px 0; font-family: monospace; color: var(--accent-blue); overflow-x: auto; white-space: pre-wrap; }
         .solution-step { background: #1e293b; padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 4px solid var(--gold); }
+        .solution-step pre { white-space: pre-wrap; font-family: inherit; margin: 0; }
         .conclusion { background: #14532d; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid var(--accent-green); }
     </style>
 </head>
@@ -30,6 +31,7 @@
 
 <script src="../../../js/core.js"></script>
 <script src="../../../js/data-statistics.js"></script>
+<script src="../../../js/data-statistics-tasks.js"></script>
 <script>
 var app = document.getElementById('app');
 var currentCards = [];
@@ -56,9 +58,10 @@ function renderScreen(screenName, data) {
         }
         if (mode === 'tasks') {
             topicsHTML += '<div class="tile" onclick="startRandomTask()">Случайная задача</div>';
-        }
-        for (var key in statisticsDB.topicTitles) {
-            topicsHTML += '<div class="tile" onclick="startTopic(\'' + key + '\')">' + statisticsDB.topicTitles[key] + '</div>';
+        } else {
+            for (var key in statisticsDB.topicTitles) {
+                topicsHTML += '<div class="tile" onclick="startTopic(\'' + key + '\')">' + statisticsDB.topicTitles[key] + '</div>';
+            }
         }
         app.innerHTML = '<h1>' + title + '</h1><div class="subtitle">Выберите тему</div><div class="grid single-col" style="margin-top:20px">' + topicsHTML + '</div><button class="btn btn-back" onclick="renderScreen(\'modes\')">Назад</button>';
     } else if (screenName === 'flashcard') {
@@ -91,15 +94,16 @@ function renderScreen(screenName, data) {
         var hint = (currentQuizDirection === 'term-to-def') ? 'Выберите определение:' : 'Выберите термин:';
         app.innerHTML = '<h1>Контроль ' + (quizIndex + 1) + ' / ' + currentCards.length + '</h1><div class="flashcard" id="quiz-card"><div class="fc-word" style="font-size:20px">' + questionText + '</div><div class="fc-trans" style="font-size:14px;color:var(--text-muted)">' + hint + '</div></div><div class="quiz-options">' + optsHTML + '</div><button class="btn btn-stop" onclick="renderScreen(\'topics\',{mode:\'quiz\'})">Прервать</button>';
     } else if (screenName === 'task') {
-        var formulasHTML = '<div class="formula-box"><strong>Формулы для справки:</strong><br>';
+        var formulasHTML = '<div class="formula-box"><strong>Формулы для справки:</strong>\n';
         for (var i = 0; i < currentTask.formulas.length; i++) {
-            formulasHTML += currentTask.formulas[i] + '<br>';
+            formulasHTML += currentTask.formulas[i] + '\n';
         }
         formulasHTML += '</div>';
         
         app.innerHTML = '<h1>' + currentTask.title + '</h1>' + formulasHTML + '<div class="task-container">' + currentTask.html + '</div><button class="btn btn-orange" onclick="solveTask()">Показать решение</button><button class="btn btn-stop" onclick="renderScreen(\'topics\',{mode:\'tasks\'})">К задачам</button><div id="solution-area"></div>';
         
         var varElements = document.querySelectorAll('.var');
+        taskVars = {};
         for (var j = 0; j < varElements.length; j++) {
             var el = varElements[j];
             var varName = el.getAttribute('data-var');
@@ -147,16 +151,15 @@ function startRandomTask() {
     var el = event.target;
     el.classList.add('success');
     playSound('success');
-    var tasks = statisticsDB.tasks;
-    var randomIndex = Math.floor(Math.random() * tasks.length);
-    currentTask = tasks[randomIndex];
+    var randomIndex = Math.floor(Math.random() * statisticsTasks.length);
+    currentTask = statisticsTasks[randomIndex];
     taskVars = {};
     setTimeout(function(){ renderScreen('task'); }, 400);
 }
 
 function solveTask() {
     var result = currentTask.solve(taskVars);
-    var solutionHTML = '<div class="solution-step"><strong>Пошаговое решение:</strong><br><pre style="white-space: pre-wrap; font-family: inherit;">' + result.calc + '</pre></div>';
+    var solutionHTML = '<div class="solution-step"><strong>Пошаговое решение:</strong><pre>' + result.calc + '</pre></div>';
     solutionHTML += '<div class="conclusion"><strong>Вывод:</strong><br>' + result.conclusion + '</div>';
     solutionHTML += '<button class="btn btn-orange" onclick="startRandomTask()" style="margin-top:15px">Следующая задача</button>';
     document.getElementById('solution-area').innerHTML = solutionHTML;
