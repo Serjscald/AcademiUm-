@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="../../../css/style.css">
     <style>
         .task-wrapper { max-width: 800px; margin: 0 auto; padding: 20px; }
-        .task-header { text-align: center; color: var(--gold); font-size: 24px; font-weight: bold; margin-bottom: 20px; text-transform: uppercase; }
+        .task-header { text-align: center; color: var(--gold); font-size: 22px; font-weight: bold; margin-bottom: 20px; text-transform: uppercase; }
         
         .formula-box { background: #1e293b; border: 1px solid var(--gold); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
         .formula-box h4 { color: var(--gold); margin-top: 0; display: flex; align-items: center; gap: 10px; }
@@ -17,14 +17,14 @@
         .task-desc-box { background: #0f172a; border: 2px solid #38bdf8; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
         .task-desc { color: #f8fafc; font-size: 16px; line-height: 1.5; margin-bottom: 20px; }
         
-        .task-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; background: #1e293b; border-radius: 8px; overflow: hidden; }
-        .task-table th, .task-table td { border: 1px solid #334155; padding: 12px; text-align: center; font-size: 15px; }
+        .task-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-bottom: 20px; background: #1e293b; border-radius: 8px; overflow: hidden; table-layout: fixed; }
+        .task-table th, .task-table td { border: 1px solid #334155; padding: 12px 8px; text-align: center; font-size: 14px; word-wrap: break-word; }
         .task-table th { background: #334155; color: var(--gold); font-weight: bold; }
         
-        .var { cursor: pointer; transition: 0.2s; font-weight: bold; border-radius: 4px; padding: 4px 8px; display: inline-block; min-width: 40px; }
+        .var { cursor: pointer; transition: 0.2s; font-weight: bold; border-radius: 4px; padding: 4px 8px; display: inline-block; min-width: 40px; color: #60a5fa; }
         .var:hover { filter: brightness(1.2); transform: scale(1.05); }
         
-        .var-menu { position: absolute; background: #1e293b; border: 1px solid var(--gold); border-radius: 8px; padding: 5px; z-index: 100; box-shadow: 0 10px 25px rgba(0,0,0,0.8); display: none; min-width: 150px; }
+        .var-menu { position: absolute; background: #1e293b; border: 1px solid var(--gold); border-radius: 8px; padding: 5px; z-index: 100; box-shadow: 0 10px 25px rgba(0,0,0,0.8); display: none; min-width: 160px; }
         .var-menu div { padding: 10px 15px; cursor: pointer; color: #f8fafc; border-radius: 4px; font-size: 14px; font-weight: bold; transition: 0.2s; }
         .var-menu div:hover { background: #334155; }
 
@@ -126,8 +126,7 @@ function showVarMenu(cell) {
     menu.style.left = (rect.left + window.scrollX) + 'px';
     menu.style.top = (rect.bottom + window.scrollY + 5) + 'px';
     
-    var baseVar = cell.getAttribute('data-var').split('_')[0];
-    var options = { 'p0': 'p₀ (Цена базис)', 'q0': 'q₀ (Кол-во базис)', 'p1': 'p₁ (Цена отчёт)', 'q1': 'q₁ (Кол-во отчёт)', 'p1q1': 'p₁q₁ (Выручка отчёт)' };
+    var options = { 'p0': 'p₀ (Цена базис)', 'q0': 'q₀ (Кол-во базис)', 'p1': 'p₁ (Цена отчёт)', 'q1': 'q₁ (Кол-во отчёт)', 'rev0': 'Выручка₀ (тыс.руб.)', 'rev1': 'Выручка₁ (тыс.руб.)' };
     
     var html = '';
     for (var key in options) {
@@ -147,11 +146,9 @@ function assignVar(type) {
     
     var color = currentTask.colors[type] || '#fff';
     var val = activeCell.getAttribute('data-val');
-    // Если это выручка в тыс. руб., умножаем на 1000 для отображения в ячейке (как на скрине)
-    if (type === 'p1q1' && val < 1000) val = val * 1000; 
     
     activeCell.innerHTML = type + ' = ' + val;
-    activeCell.style.backgroundColor = color + '33'; // 33 = 20% opacity
+    activeCell.style.backgroundColor = color + '33';
     activeCell.style.color = color;
     activeCell.style.border = '1px solid ' + color;
     
@@ -165,7 +162,7 @@ function clearVar() {
     delete assignedVars[fullVar]; delete taskVars[fullVar];
     activeCell.innerHTML = activeCell.getAttribute('data-val');
     activeCell.style.backgroundColor = 'transparent';
-    activeCell.style.color = '#60a5fa'; // default blueish
+    activeCell.style.color = '#60a5fa';
     activeCell.style.border = 'none';
     document.getElementById('varMenu').style.display = 'none';
     checkReady();
