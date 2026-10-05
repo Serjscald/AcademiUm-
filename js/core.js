@@ -264,3 +264,172 @@ function showSolution(taskIndex) {
     area.style.display = 'block';
     area.scrollIntoView({behavior: "smooth"});
 }
+// === РЕНДЕРИНГ ИНТЕРАКТИВНОЙ ЗАДАЧИ ПО СТАТИСТИКЕ ===
+function renderStatisticsTask(taskIndex) {
+    const task = statisticsTasks[taskIndex];
+    if (!task) return;
+
+    const wrapper = document.getElementById('task-wrapper');
+    if (!wrapper) return;
+
+    // Сброс состояния
+    window.currentTaskVars = {};
+    window.currentTaskTotalCells = 0;
+
+    // Генерация HTML таблицы
+    let tableHtml = `<table class="stats-table"><thead><tr>`;
+    task.headers.forEach(h => tableHtml += `<th>${h}</th>`);
+    tableHtml += `</tr></thead><tbody>`;
+
+    task.rows.forEach((row, rIdx) => {
+        tableHtml += `<tr><td>${row.label}</td>`;
+        row.cells.forEach((cell, cIdx) => {
+            if (cell.var) {
+                window.currentTaskTotalCells++;
+                tableHtml += `<td>
+                    <span class="clickable-cell" 
+                          data-r="${rIdx}" data-c="${cIdx}" 
+                          data-correct="${cell.var}"
+                          data-val="${cell.val}"
+                          onclick="handleCellClick(event, this)">
+                        ${cell.val}
+                    </span>
+                </td>`;
+            } else {
+                tableHtml += `<td>${cell.val}</td>`;
+            }
+        });
+        tableHtml += `</tr>`;
+    });
+    tableHtml += `</tbody></table>`;
+
+    // Сборка всего интерфейса задачи
+    wrapper.innerHTML = `
+        <h2 style="color:#fbbf24; text-align:center; margin-bottom:5px;">${task.title}</h2>
+        <p style="text-align:center; color:#94a3b8; margin-bottom:20px;">${task.description}</p>
+        ${tableHtml}
+        <div class="progress-counter" id="task-progress">Назначено переменных: 0 / ${window.currentTaskTotalCells}</div>
+        <div class="solve-btn-area">
+            <button id="btn-solve-task" class="btn-solve" onclick="checkAndSolve(${taskIndex})">РЕШИТЬ ЗАДАЧУ</button>
+        </div>
+        <div id="solution-block" class="solution-area"></div>
+        <div class="task-nav">
+            <button class="btn-nav" onclick="loadRandomTask()">🔄 Другая задача</button>
+            <button class="btn-nav" onclick="window.scrollTo({top:0, behavior:'smooth'})">⬆️ Наверх</button>
+        </div>
+    `;
+}
+
+// === ОБРАБОТКА КЛИКА ПО ЯЧЕЙКЕ ===
+function handleCellClick(e, cellEl) {
+    e.stopPropagation();
+    
+    // Удаляем старые попапы
+    document.querySelectorAll('.var-selector-popup').forEach(p => p.remove());
+
+    const options = ["p0", "q0", "p1", "q1", "p0q0_th", "p1q1_th"];
+    const popup = document.createElement('div');
+    popup.className = 'var-selector-popup';
+    
+    options.forEach(opt => {
+        const div = document.createElement('div');
+        div.className = 'var-option';
+        div.textContent = opt;
+        div.onclick = (ev) => {
+            ev.stopPropagation();
+            selectVariable(cellEl, opt);
+            popup.remove();
+        };
+        popup.appendChild(div);
+    });
+
+    // Позиционирование попапа
+    const rect = cellEl.getBoundingClientRect();
+    popup.style.left = `${rect.left + window.scrollX}px`;
+    popup.style.top = `${rect.bottom + window.scrollY + 5}px`;
+    
+    document.body.appendChild(popup);
+
+    // Закрытие при клике вне
+    setTimeout(() => {
+        document.addEventListener('click', function closePopup() {
+            popup.remove();
+            document.removeEventListener('click', closePopup);
+        }, { once: true });
+    }, 10);
+}
+
+// === ВЫБОР ПЕРЕМЕННОЙ ===
+function selectVariable(cellEl, variable) {
+    const r = cellEl.dataset.r;
+    const c = cellEl.dataset.c;
+    const key = `${r}-${c}`;
+
+    // Сохраняем выбор
+    window.currentTaskVars[key] = variable;
+
+    // Визуальное обновление ячейки
+    cellEl.classList.add('selected');
+    cellEl.classList.remove('error');
+    cellEl.innerHTML = `<small style="display:block;font-size:0.7em;color:#94a3b8;margin-bottom:2px;">${variable}</small>${cellEl.dataset.val}`;
+
+    // Обновляем счетчик
+    const count = Object.keys(window.currentTaskVars).length;
+    document.getElementById('task-progress').textContent = `Назначено переменных: ${count} / ${window.currentTaskTotalCells}`;
+
+    // Активируем кнопку если все выбраны
+    const btn = document.getElementById('btn-solve-task');
+    if (count >= window.currentTaskTotalCells) {
+        btn.classList.add('active');
+    }
+}
+
+// === ПРОВЕРКА И ПОКАЗ РЕШЕНИЯ ===
+function checkAndSolve(taskIndex) {
+    const task = statisticsTasks[taskIndex];
+    const cells = document.querySelectorAll('.clickable-cell');
+    let allCorrect = true;
+
+    cells.forEach(cell => {
+        const r = cell.dataset.r;
+        const c = cell.dataset.c;
+        const key = `${r}-${c}`;
+        const userChoice = window.currentTaskVars[key];
+        const correct = cell.dataset.correct;
+
+        if (userChoice !== correct) {
+            allCorrect = false;
+            cell.classList.add('error');
+            cell.classList.remove('selected');
+        }
+    });
+
+    if (!allCorrect) {
+        alert('❌ Есть ошибки в назначении переменных! Исправьте красные ячейки.');
+        return;
+    }
+
+    // Показываем решение
+    const solBlock = document.getElementById('solution-block');
+    let html = '';
+    
+    task.solution.steps.forEach(step => {
+        html += `<div class="solution-step">
+            <div class="step-title">${step.title}</div>
+            <div class="step-text">${step.text}</div>
+        </div>`;
+    });
+
+    html += `<div class="conclusion-box">
+        <div class="conclusion-title">📝 Вывод:</div>
+        <div>${task.solution.conclusion}</div>
+    </div>`;
+
+    solBlock.innerHTML = html;
+    solBlock.style.display = 'block';
+    solBlock.scrollIntoView({ behavior: 'smooth' });
+
+    // Блокируем повторное нажатие
+    document.getElementById('btn-solve-task').disabled = true;
+    document.getElementById('btn-solve-task').textContent = '✅ Решено';
+}
