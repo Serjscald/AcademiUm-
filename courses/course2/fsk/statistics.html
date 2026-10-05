@@ -6,34 +6,45 @@
     <title>Статистика — АкадемиУм!</title>
     <link rel="stylesheet" href="../../../css/style.css">
     <style>
-        .task-container { background: var(--bg-card); padding: 20px; border-radius: 12px; margin: 20px 0; position: relative; }
-        .task-table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 14px; }
-        .task-table th, .task-table td { border: 1px solid #475569; padding: 10px; text-align: center; }
-        .task-table th { background: #334155; color: var(--gold); }
-        .var { cursor: pointer; transition: 0.2s; font-weight: bold; border-radius: 4px; }
-        .var:hover { filter: brightness(1.2); }
+        .task-wrapper { max-width: 800px; margin: 0 auto; padding: 20px; }
+        .task-header { text-align: center; color: var(--gold); font-size: 24px; font-weight: bold; margin-bottom: 20px; text-transform: uppercase; }
         
-        /* Выпадающее меню */
-        .var-menu { position: absolute; background: #1e293b; border: 1px solid var(--gold); border-radius: 8px; padding: 5px; z-index: 100; box-shadow: 0 4px 12px rgba(0,0,0,0.5); display: none; }
-        .var-menu div { padding: 8px 12px; cursor: pointer; color: var(--text-main); border-radius: 4px; font-size: 14px; }
+        .formula-box { background: #1e293b; border: 1px solid var(--gold); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+        .formula-box h4 { color: var(--gold); margin-top: 0; display: flex; align-items: center; gap: 10px; }
+        .formula-box ul { list-style: none; padding: 0; margin: 0; color: #cbd5e1; font-family: monospace; font-size: 15px; line-height: 1.8; }
+        .formula-box li::before { content: "•"; color: var(--gold); margin-right: 10px; }
+
+        .task-desc-box { background: #0f172a; border: 2px solid #38bdf8; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+        .task-desc { color: #f8fafc; font-size: 16px; line-height: 1.5; margin-bottom: 20px; }
+        
+        .task-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; background: #1e293b; border-radius: 8px; overflow: hidden; }
+        .task-table th, .task-table td { border: 1px solid #334155; padding: 12px; text-align: center; font-size: 15px; }
+        .task-table th { background: #334155; color: var(--gold); font-weight: bold; }
+        
+        .var { cursor: pointer; transition: 0.2s; font-weight: bold; border-radius: 4px; padding: 4px 8px; display: inline-block; min-width: 40px; }
+        .var:hover { filter: brightness(1.2); transform: scale(1.05); }
+        
+        .var-menu { position: absolute; background: #1e293b; border: 1px solid var(--gold); border-radius: 8px; padding: 5px; z-index: 100; box-shadow: 0 10px 25px rgba(0,0,0,0.8); display: none; min-width: 150px; }
+        .var-menu div { padding: 10px 15px; cursor: pointer; color: #f8fafc; border-radius: 4px; font-size: 14px; font-weight: bold; transition: 0.2s; }
         .var-menu div:hover { background: #334155; }
 
-        /* Формулы с цветовым кодированием */
-        .formula-box { background: #0f172a; padding: 15px; border-radius: 8px; margin: 15px 0; font-family: monospace; font-size: 15px; line-height: 1.6; }
-        .formula-line { margin-bottom: 8px; }
-        .c-p0 { color: #38bdf8; font-weight: bold; }
-        .c-q0 { color: #4ade80; font-weight: bold; }
-        .c-p1 { color: #fbbf24; font-weight: bold; }
-        .c-q1 { color: #f472b6; font-weight: bold; }
-        .c-rev0 { color: #a78bfa; font-weight: bold; }
-        .c-q0_calc { color: #4ade80; font-weight: bold; text-decoration: underline; }
-
-        .solution-step { background: #1e293b; padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 4px solid var(--gold); }
-        .solution-step pre { white-space: pre-wrap; font-family: inherit; margin: 0; font-size: 15px; }
-        .conclusion { background: #14532d; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid var(--accent-green); font-size: 15px; }
+        .task-footer { text-align: center; color: #94a3b8; font-size: 14px; margin-top: 20px; }
+        .counter { margin-top: 10px; font-weight: bold; color: #cbd5e1; }
         
-        #solve-btn { opacity: 0.5; pointer-events: none; transition: 0.3s; }
-        #solve-btn.active { opacity: 1; pointer-events: auto; background: var(--accent-green); }
+        #solve-btn { width: 100%; padding: 15px; font-size: 18px; font-weight: bold; margin-top: 20px; border-radius: 8px; border: none; cursor: pointer; transition: 0.3s; background: #334155; color: #64748b; pointer-events: none; }
+        #solve-btn.active { background: #22c55e; color: #fff; pointer-events: auto; box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4); }
+
+        .solution-area { margin-top: 30px; display: none; }
+        .step { background: #0f172a; border: 1px solid #22c55e; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+        .step h3 { color: var(--gold); margin-top: 0; border-bottom: 1px solid #334155; padding-bottom: 10px; }
+        .step p { color: #e2e8f0; font-family: monospace; font-size: 15px; line-height: 1.6; margin: 8px 0; }
+        
+        .conclusion-box { background: #1e293b; border: 1px solid var(--gold); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+        .conclusion-box h4 { color: var(--gold); margin-top: 0; display: flex; align-items: center; gap: 10px; }
+        .conclusion-box p { color: #f8fafc; font-size: 16px; line-height: 1.6; margin: 0; }
+        
+        .back-btn { width: 100%; padding: 15px; background: #334155; color: #fff; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .back-btn:hover { background: #475569; }
     </style>
 </head>
 <body>
@@ -52,24 +63,16 @@
 <script src="../../../js/data-statistics-tasks.js"></script>
 <script>
 var app = document.getElementById('app');
-var currentCards = [];
-var cardIndex = 0;
-var quizIndex = 0;
-var mistakes = 0;
-var currentMode = 'learn';
-var currentQuizDirection = 'term-to-def';
-var currentTask = null;
-var taskVars = {};
-var assignedVars = {};
-var activeCell = null;
+var currentCards = []; var cardIndex = 0; var quizIndex = 0; var mistakes = 0;
+var currentMode = 'learn'; var currentQuizDirection = 'term-to-def';
+var currentTask = null; var taskVars = {}; var assignedVars = {}; var activeCell = null;
 
 function renderScreen(screenName, data) {
     app.innerHTML = '';
     if (screenName === 'modes') {
         app.innerHTML = '<h1>Статистика</h1><div class="subtitle">Выберите режим</div><div class="grid" style="margin-top:40px"><div class="tile" onclick="handleMode(\'learn\')">Обучение</div><div class="tile" onclick="handleMode(\'quiz\')">Контроль</div><div class="tile" onclick="handleMode(\'tasks\')">Задачи</div></div><button class="btn btn-back" onclick="navigateTo(\'index.html\')">Назад</button>';
     } else if (screenName === 'topics') {
-        var mode = (data && data.mode) ? data.mode : 'learn';
-        currentMode = mode;
+        var mode = (data && data.mode) ? data.mode : 'learn'; currentMode = mode;
         var title = (mode === 'learn') ? 'Обучение' : (mode === 'quiz' ? 'Контроль' : 'Задачи');
         var topicsHTML = '';
         if (mode === 'quiz') topicsHTML += '<div class="tile" onclick="startTopic(\'all\')">За все время</div>';
@@ -80,41 +83,34 @@ function renderScreen(screenName, data) {
         var card = currentCards[cardIndex];
         app.innerHTML = '<h1>Карточка ' + (cardIndex + 1) + ' / ' + currentCards.length + '</h1><div class="flashcard"><div class="fc-word">' + card.word + '</div><div class="fc-trans">' + card.trans + '</div></div><button class="btn btn-orange" onclick="nextCard()">Следующая</button><button class="btn btn-stop" onclick="renderScreen(\'topics\',{mode:\'learn\'})">Прервать</button>';
     } else if (screenName === 'quiz') {
-        var qcard = currentCards[quizIndex];
-        currentQuizDirection = (Math.random() < 0.5) ? 'term-to-def' : 'def-to-term';
+        var qcard = currentCards[quizIndex]; currentQuizDirection = (Math.random() < 0.5) ? 'term-to-def' : 'def-to-term';
         var questionText = (currentQuizDirection === 'term-to-def') ? qcard.word : qcard.trans;
         var correctAnswer = (currentQuizDirection === 'term-to-def') ? qcard.trans : qcard.word;
         var optionsPool = currentCards.map(function(c){ return (currentQuizDirection === 'term-to-def') ? c.trans : c.word; });
-        var options = [correctAnswer];
-        while (options.length < 3) { var rnd = optionsPool[Math.floor(Math.random() * optionsPool.length)]; if (options.indexOf(rnd) === -1) options.push(rnd); }
-        options.sort(function(){ return Math.random() - 0.5; });
-        var optsHTML = '';
-        for (var i = 0; i < options.length; i++) {
-            var o = options[i].replace(/'/g, "\\'"); var ca = correctAnswer.replace(/'/g, "\\'");
-            optsHTML += '<div class="quiz-opt" onclick="checkAnswer(this,\'' + o + '\',\'' + ca + '\')">' + options[i].substring(0, 100) + (options[i].length > 100 ? '...' : '') + '</div>';
-        }
+        var options = [correctAnswer]; while (options.length < 3) { var rnd = optionsPool[Math.floor(Math.random() * optionsPool.length)]; if (options.indexOf(rnd) === -1) options.push(rnd); }
+        options.sort(function(){ return Math.random() - 0.5; }); var optsHTML = '';
+        for (var i = 0; i < options.length; i++) { var o = options[i].replace(/'/g, "\\'"); var ca = correctAnswer.replace(/'/g, "\\'"); optsHTML += '<div class="quiz-opt" onclick="checkAnswer(this,\'' + o + '\',\'' + ca + '\')">' + options[i].substring(0, 100) + (options[i].length > 100 ? '...' : '') + '</div>'; }
         app.innerHTML = '<h1>Контроль ' + (quizIndex + 1) + ' / ' + currentCards.length + '</h1><div class="flashcard" id="quiz-card"><div class="fc-word" style="font-size:20px">' + questionText + '</div><div class="fc-trans" style="font-size:14px;color:var(--text-muted)">' + (currentQuizDirection === 'term-to-def' ? 'Выберите определение:' : 'Выберите термин:') + '</div></div><div class="quiz-options">' + optsHTML + '</div><button class="btn btn-stop" onclick="renderScreen(\'topics\',{mode:\'quiz\'})">Прервать</button>';
     } else if (screenName === 'task') {
-        assignedVars = {};
-        var formulasHTML = '<div class="formula-box"><strong>Необходимые формулы:</strong><br>';
-        for (var i = 0; i < currentTask.formulas.length; i++) {
-            var f = currentTask.formulas[i].text;
-            for (var v in currentTask.colors) {
-                var regex = new RegExp('(' + v + '[₀₁]?)', 'g');
-                f = f.replace(regex, '<span class="c-' + v + '">$1</span>');
-            }
-            formulasHTML += '<div class="formula-line">' + f + '</div>';
-        }
-        formulasHTML += '</div>';
+        assignedVars = {}; taskVars = {};
+        var formulasHTML = '<div class="formula-box"><h4>📐 Формулы для решения:</h4><ul>';
+        for (var i = 0; i < currentTask.formulas.length; i++) formulasHTML += '<li>' + currentTask.formulas[i] + '</li>';
+        formulasHTML += '</ul></div>';
         
-        app.innerHTML = '<h1>' + currentTask.title + '</h1>' + formulasHTML + '<div class="task-container" id="taskCont">' + currentTask.html + '</div><button id="solve-btn" class="btn btn-orange" onclick="solveTask()">Решить задачу</button><button class="btn btn-stop" onclick="renderScreen(\'topics\',{mode:\'tasks\'})">К задачам</button><div id="solution-area"></div>';
+        var html = '<div class="task-wrapper">';
+        html += '<div class="task-header">' + currentTask.title + '</div>';
+        html += formulasHTML;
+        html += '<div class="task-desc-box"><div class="task-desc">' + currentTask.description + '</div>' + currentTask.html + '</div>';
+        html += '<div class="task-footer">Нажимайте на числа и выбирайте из списка, какой переменной они соответствуют. Назначение можно менять до нажатия кнопки «Решить».<div class="counter" id="varCounter">Назначено переменных: 0 / ' + currentTask.requiredVars.length + '</div></div>';
+        html += '<button id="solve-btn" onclick="solveTask()">РЕШИТЬ ЗАДАЧУ</button>';
+        html += '<div class="solution-area" id="solutionArea"></div>';
+        html += '<button class="btn btn-back" style="margin-top:20px" onclick="renderScreen(\'topics\',{mode:\'tasks\'})">К списку задач</button>';
+        html += '</div>';
+        app.innerHTML = html;
         
         var varElements = document.querySelectorAll('.var');
         for (var j = 0; j < varElements.length; j++) {
-            varElements[j].addEventListener('click', function(e) {
-                e.stopPropagation();
-                showVarMenu(this);
-            });
+            varElements[j].addEventListener('click', function(e) { e.stopPropagation(); showVarMenu(this); });
         }
         document.addEventListener('click', function() { document.getElementById('varMenu').style.display = 'none'; });
     } else if (screenName === 'result') {
@@ -125,23 +121,22 @@ function renderScreen(screenName, data) {
 }
 
 function showVarMenu(cell) {
-    activeCell = cell;
-    var menu = document.getElementById('varMenu');
+    activeCell = cell; var menu = document.getElementById('varMenu');
     var rect = cell.getBoundingClientRect();
     menu.style.left = (rect.left + window.scrollX) + 'px';
     menu.style.top = (rect.bottom + window.scrollY + 5) + 'px';
     
     var baseVar = cell.getAttribute('data-var').split('_')[0];
-    var options = { 'p0': 'p₀ (Цена базис)', 'q0': 'q₀ (Кол-во базис)', 'p1': 'p₁ (Цена отчёт)', 'q1': 'q₁ (Кол-во отчёт)', 'rev0': 'Выручка₀', 'rev1': 'Выручка₁' };
+    var options = { 'p0': 'p₀ (Цена базис)', 'q0': 'q₀ (Кол-во базис)', 'p1': 'p₁ (Цена отчёт)', 'q1': 'q₁ (Кол-во отчёт)', 'p1q1': 'p₁q₁ (Выручка отчёт)' };
     
     var html = '';
     for (var key in options) {
-        var color = currentTask.colors[key] || '#fff';
-        html += '<div style="color:' + color + '" onclick="assignVar(\'' + key + '\')">' + options[key] + '</div>';
+        if (currentTask.colors[key]) {
+            html += '<div style="color:' + currentTask.colors[key] + '" onclick="assignVar(\'' + key + '\')">' + options[key] + '</div>';
+        }
     }
-    html += '<div style="color:#ef4444" onclick="clearVar()">Очистить</div>';
-    menu.innerHTML = html;
-    menu.style.display = 'block';
+    html += '<div style="color:#ef4444; border-top:1px solid #334155; margin-top:5px; padding-top:10px" onclick="clearVar()">Очистить</div>';
+    menu.innerHTML = html; menu.style.display = 'block';
 }
 
 function assignVar(type) {
@@ -151,8 +146,15 @@ function assignVar(type) {
     taskVars[fullVar] = parseFloat(activeCell.getAttribute('data-val'));
     
     var color = currentTask.colors[type] || '#fff';
-    activeCell.style.backgroundColor = color;
-    activeCell.style.color = '#0f172a';
+    var val = activeCell.getAttribute('data-val');
+    // Если это выручка в тыс. руб., умножаем на 1000 для отображения в ячейке (как на скрине)
+    if (type === 'p1q1' && val < 1000) val = val * 1000; 
+    
+    activeCell.innerHTML = type + ' = ' + val;
+    activeCell.style.backgroundColor = color + '33'; // 33 = 20% opacity
+    activeCell.style.color = color;
+    activeCell.style.border = '1px solid ' + color;
+    
     document.getElementById('varMenu').style.display = 'none';
     checkReady();
 }
@@ -160,31 +162,34 @@ function assignVar(type) {
 function clearVar() {
     if (!activeCell) return;
     var fullVar = activeCell.getAttribute('data-var');
-    delete assignedVars[fullVar];
-    delete taskVars[fullVar];
-    activeCell.style.backgroundColor = '#1e3a5f';
-    activeCell.style.color = '#f8fafc';
+    delete assignedVars[fullVar]; delete taskVars[fullVar];
+    activeCell.innerHTML = activeCell.getAttribute('data-val');
+    activeCell.style.backgroundColor = 'transparent';
+    activeCell.style.color = '#60a5fa'; // default blueish
+    activeCell.style.border = 'none';
     document.getElementById('varMenu').style.display = 'none';
     checkReady();
 }
 
 function checkReady() {
-    var ready = true;
-    for (var i = 0; i < currentTask.requiredVars.length; i++) {
-        if (!assignedVars[currentTask.requiredVars[i]]) { ready = false; break; }
-    }
+    var count = Object.keys(assignedVars).length;
+    document.getElementById('varCounter').innerText = 'Назначено переменных: ' + count + ' / ' + currentTask.requiredVars.length;
+    var ready = (count === currentTask.requiredVars.length);
     var btn = document.getElementById('solve-btn');
-    if (ready) btn.classList.add('active');
-    else btn.classList.remove('active');
+    if (ready) btn.classList.add('active'); else btn.classList.remove('active');
 }
 
 function solveTask() {
     var result = currentTask.solve(taskVars);
-    var solutionHTML = '<div class="solution-step"><strong>Пошаговое решение:</strong><pre>' + result.calc + '</pre></div>';
-    solutionHTML += '<div class="conclusion"><strong>Вывод:</strong><br>' + result.conclusion + '</div>';
-    solutionHTML += '<button class="btn btn-orange" onclick="startRandomTask()" style="margin-top:15px">Следующая задача</button>';
-    document.getElementById('solution-area').innerHTML = solutionHTML;
+    var html = result.calc;
+    html += '<div class="conclusion-box"><h4>📝 Вывод:</h4><p>' + result.conclusion + '</p></div>';
+    html += '<button class="back-btn" onclick="startRandomTask()">К СПИСКУ ЗАДАЧ</button>';
+    
+    var area = document.getElementById('solutionArea');
+    area.innerHTML = html; area.style.display = 'block';
+    document.getElementById('solve-btn').style.display = 'none';
     playSound('success');
+    area.scrollIntoView({ behavior: 'smooth' });
 }
 
 function handleMode(mode) { event.target.classList.add('success'); playSound('success'); setTimeout(function(){ renderScreen('topics', {mode: mode}); }, 400); }
@@ -197,9 +202,9 @@ function startTopic(scope) {
     else { quizIndex = 0; mistakes = 0; setTimeout(function(){ renderScreen('quiz'); }, 400); }
 }
 function startRandomTask() {
-    event.target.classList.add('success'); playSound('success');
+    if(event && event.target) { event.target.classList.add('success'); playSound('success'); }
     currentTask = statisticsTasks[Math.floor(Math.random() * statisticsTasks.length)];
-    taskVars = {}; setTimeout(function(){ renderScreen('task'); }, 400);
+    setTimeout(function(){ renderScreen('task'); }, 400);
 }
 function nextCard() { playSound('success'); cardIndex++; if (cardIndex < currentCards.length) renderScreen('flashcard'); else renderScreen('topics', {mode: 'learn'}); }
 function checkAnswer(el, selected, correct) {
