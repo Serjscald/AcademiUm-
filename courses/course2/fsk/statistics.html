@@ -6,45 +6,69 @@
     <title>Статистика — АкадемиУм!</title>
     <link rel="stylesheet" href="../../../css/style.css">
     <style>
-        .task-wrapper { max-width: 800px; margin: 0 auto; padding: 20px; }
-        .task-header { text-align: center; color: var(--gold); font-size: 22px; font-weight: bold; margin-bottom: 20px; text-transform: uppercase; }
+        /* --- СТИЛИ ДЛЯ ЗАДАЧ (как на эталонном скрине) --- */
+        .task-wrapper { max-width: 800px; margin: 0 auto; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         
-        .formula-box { background: #1e293b; border: 1px solid var(--gold); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
-        .formula-box h4 { color: var(--gold); margin-top: 0; display: flex; align-items: center; gap: 10px; }
-        .formula-box ul { list-style: none; padding: 0; margin: 0; color: #cbd5e1; font-family: monospace; font-size: 15px; line-height: 1.8; }
-        .formula-box li::before { content: "•"; color: var(--gold); margin-right: 10px; }
+        .formula-box { background: #2d3748; border: 1px solid #ecc94b; border-radius: 12px; padding: 20px; margin-bottom: 25px; color: #e2e8f0; }
+        .formula-box h4 { color: #ecc94b; margin-top: 0; margin-bottom: 15px; font-size: 18px; display: flex; align-items: center; gap: 8px; }
+        .formula-box ul { list-style-type: disc; padding-left: 20px; margin: 0; line-height: 1.6; font-size: 15px; }
+        .formula-box li { margin-bottom: 5px; }
 
-        .task-desc-box { background: #0f172a; border: 2px solid #38bdf8; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
-        .task-desc { color: #f8fafc; font-size: 16px; line-height: 1.5; margin-bottom: 20px; }
-        
-        .task-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-bottom: 20px; background: #1e293b; border-radius: 8px; overflow: hidden; table-layout: fixed; }
-        .task-table th, .task-table td { border: 1px solid #334155; padding: 12px 8px; text-align: center; font-size: 14px; word-wrap: break-word; }
-        .task-table th { background: #334155; color: var(--gold); font-weight: bold; }
-        
-        .var { cursor: pointer; transition: 0.2s; font-weight: bold; border-radius: 4px; padding: 4px 8px; display: inline-block; min-width: 40px; color: #60a5fa; }
-        .var:hover { filter: brightness(1.2); transform: scale(1.05); }
-        
-        .var-menu { position: absolute; background: #1e293b; border: 1px solid var(--gold); border-radius: 8px; padding: 5px; z-index: 100; box-shadow: 0 10px 25px rgba(0,0,0,0.8); display: none; min-width: 160px; }
-        .var-menu div { padding: 10px 15px; cursor: pointer; color: #f8fafc; border-radius: 4px; font-size: 14px; font-weight: bold; transition: 0.2s; }
-        .var-menu div:hover { background: #334155; }
+        .task-card { background: #1a202c; border: 2px solid #63b3ed; border-radius: 16px; padding: 25px; margin-bottom: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .task-desc { color: #fff; font-size: 17px; line-height: 1.5; margin-bottom: 20px; text-align: center; font-weight: 500; }
 
-        .task-footer { text-align: center; color: #94a3b8; font-size: 14px; margin-top: 20px; }
-        .counter { margin-top: 10px; font-weight: bold; color: #cbd5e1; }
-        
-        #solve-btn { width: 100%; padding: 15px; font-size: 18px; font-weight: bold; margin-top: 20px; border-radius: 8px; border: none; cursor: pointer; transition: 0.3s; background: #334155; color: #64748b; pointer-events: none; }
-        #solve-btn.active { background: #22c55e; color: #fff; pointer-events: auto; box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4); }
+        /* Таблица */
+        .task-table { width: 100%; border-collapse: collapse; margin: 0 auto; background: #2d3748; border-radius: 8px; overflow: hidden; }
+        .task-table th { background: #4a5568; color: #ecc94b; padding: 12px; text-align: center; font-size: 14px; border: 1px solid #4a5568; }
+        .task-table td { padding: 12px; text-align: center; border: 1px solid #4a5568; color: #e2e8f0; font-size: 15px; vertical-align: middle; }
+        .task-table td:first-child { font-weight: bold; color: #fff; background: #2d3748; }
 
-        .solution-area { margin-top: 30px; display: none; }
-        .step { background: #0f172a; border: 1px solid #22c55e; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
-        .step h3 { color: var(--gold); margin-top: 0; border-bottom: 1px solid #334155; padding-bottom: 10px; }
-        .step p { color: #e2e8f0; font-family: monospace; font-size: 15px; line-height: 1.6; margin: 8px 0; }
+        /* Ячейки с переменными */
+        .var { 
+            cursor: pointer; 
+            color: #63b3ed; /* Голубой цвет текста как на скрине */
+            text-decoration: underline; /* Подчеркивание как гиперссылка */
+            font-weight: bold;
+            transition: all 0.2s;
+            display: inline-block;
+            min-width: 50px;
+        }
+        .var:hover { color: #90cdf4; background: rgba(99, 179, 237, 0.1); }
         
-        .conclusion-box { background: #1e293b; border: 1px solid var(--gold); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
-        .conclusion-box h4 { color: var(--gold); margin-top: 0; display: flex; align-items: center; gap: 10px; }
-        .conclusion-box p { color: #f8fafc; font-size: 16px; line-height: 1.6; margin: 0; }
+        /* Состояние выбранной переменной */
+        .var.selected { text-decoration: none; border-radius: 4px; padding: 2px 6px; }
+
+        /* Меню выбора */
+        .var-menu { position: absolute; background: #2d3748; border: 1px solid #ecc94b; border-radius: 8px; padding: 5px; z-index: 1000; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5); display: none; min-width: 180px; }
+        .var-menu div { padding: 10px 15px; cursor: pointer; color: #fff; border-radius: 4px; font-size: 14px; font-weight: bold; transition: background 0.2s; }
+        .var-menu div:hover { background: #4a5568; }
+
+        .task-footer { text-align: center; color: #a0aec0; font-size: 14px; margin-top: 20px; line-height: 1.5; }
+        .counter { margin-top: 10px; font-weight: bold; color: #cbd5e0; font-size: 16px; }
+
+        #solve-btn { 
+            width: 100%; padding: 16px; font-size: 18px; font-weight: bold; margin-top: 25px; 
+            border-radius: 12px; border: none; cursor: pointer; transition: all 0.3s; 
+            background: #4a5568; color: #718096; pointer-events: none; text-transform: uppercase; letter-spacing: 1px;
+        }
+        #solve-btn.active { background: #48bb78; color: white; pointer-events: auto; box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4); }
+        #solve-btn.active:hover { background: #38a169; }
+
+        /* Решение */
+        .solution-area { margin-top: 30px; display: none; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        .back-btn { width: 100%; padding: 15px; background: #334155; color: #fff; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .back-btn:hover { background: #475569; }
+        .step-block { background: #1a202c; border: 1px solid #48bb78; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+        .step-block h3 { color: #ecc94b; margin-top: 0; margin-bottom: 15px; font-size: 18px; border-bottom: 1px solid #2d3748; padding-bottom: 10px; }
+        .step-block p { color: #e2e8f0; font-size: 15px; line-height: 1.6; margin: 8px 0; font-family: monospace; }
+        .step-block .formula { color: #a0aec0; font-style: italic; margin-bottom: 12px; }
+
+        .conclusion-box { background: #2d3748; border: 1px solid #ecc94b; border-radius: 12px; padding: 20px; margin-bottom: 25px; }
+        .conclusion-box h4 { color: #ecc94b; margin-top: 0; margin-bottom: 10px; font-size: 18px; display: flex; align-items: center; gap: 8px; }
+        .conclusion-box p { color: #fff; font-size: 16px; line-height: 1.6; margin: 0; }
+
+        .back-btn { width: 100%; padding: 16px; background: #4a5568; color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; text-transform: uppercase; }
+        .back-btn:hover { background: #2d3748; }
     </style>
 </head>
 <body>
@@ -98,16 +122,16 @@ function renderScreen(screenName, data) {
         formulasHTML += '</ul></div>';
         
         var html = '<div class="task-wrapper">';
-        html += '<div class="task-header">' + currentTask.title + '</div>';
         html += formulasHTML;
-        html += '<div class="task-desc-box"><div class="task-desc">' + currentTask.description + '</div>' + currentTask.html + '</div>';
+        html += '<div class="task-card"><div class="task-desc">' + currentTask.description + '</div>' + currentTask.html + '</div>';
         html += '<div class="task-footer">Нажимайте на числа и выбирайте из списка, какой переменной они соответствуют. Назначение можно менять до нажатия кнопки «Решить».<div class="counter" id="varCounter">Назначено переменных: 0 / ' + currentTask.requiredVars.length + '</div></div>';
         html += '<button id="solve-btn" onclick="solveTask()">РЕШИТЬ ЗАДАЧУ</button>';
         html += '<div class="solution-area" id="solutionArea"></div>';
-        html += '<button class="btn btn-back" style="margin-top:20px" onclick="renderScreen(\'topics\',{mode:\'tasks\'})">К списку задач</button>';
+        html += '<button class="btn btn-back" style="margin-top:20px; display:none;" id="backBtn" onclick="renderScreen(\'topics\',{mode:\'tasks\'})">К СПИСКУ ЗАДАЧ</button>';
         html += '</div>';
         app.innerHTML = html;
         
+        // Навешиваем обработчики
         var varElements = document.querySelectorAll('.var');
         for (var j = 0; j < varElements.length; j++) {
             varElements[j].addEventListener('click', function(e) { e.stopPropagation(); showVarMenu(this); });
@@ -123,10 +147,11 @@ function renderScreen(screenName, data) {
 function showVarMenu(cell) {
     activeCell = cell; var menu = document.getElementById('varMenu');
     var rect = cell.getBoundingClientRect();
+    // Позиционирование меню
     menu.style.left = (rect.left + window.scrollX) + 'px';
     menu.style.top = (rect.bottom + window.scrollY + 5) + 'px';
     
-    var options = { 'p0': 'p₀ (Цена базис)', 'q0': 'q₀ (Кол-во базис)', 'p1': 'p₁ (Цена отчёт)', 'q1': 'q₁ (Кол-во отчёт)', 'rev0': 'Выручка₀ (тыс.руб.)', 'rev1': 'Выручка₁ (тыс.руб.)' };
+    var options = { 'p0': 'p₀ (Цена базис)', 'q0': 'q₀ (Кол-во базис)', 'p1q1': 'p₁q₁ (Выручка отчёт)', 'q1': 'q₁ (Кол-во отчёт)' };
     
     var html = '';
     for (var key in options) {
@@ -134,7 +159,7 @@ function showVarMenu(cell) {
             html += '<div style="color:' + currentTask.colors[key] + '" onclick="assignVar(\'' + key + '\')">' + options[key] + '</div>';
         }
     }
-    html += '<div style="color:#ef4444; border-top:1px solid #334155; margin-top:5px; padding-top:10px" onclick="clearVar()">Очистить</div>';
+    html += '<div style="color:#fc8181; border-top:1px solid #4a5568; margin-top:5px; padding-top:10px" onclick="clearVar()">Очистить</div>';
     menu.innerHTML = html; menu.style.display = 'block';
 }
 
@@ -147,10 +172,14 @@ function assignVar(type) {
     var color = currentTask.colors[type] || '#fff';
     var val = activeCell.getAttribute('data-val');
     
+    // Если это выручка в тыс., умножаем для отображения (как на скрине 520 -> 520000)
+    if (type === 'p1q1' && val < 1000) val = val * 1000; 
+    
     activeCell.innerHTML = type + ' = ' + val;
-    activeCell.style.backgroundColor = color + '33';
+    activeCell.style.backgroundColor = color + '33'; // Прозрачный фон цвета
     activeCell.style.color = color;
     activeCell.style.border = '1px solid ' + color;
+    activeCell.classList.add('selected');
     
     document.getElementById('varMenu').style.display = 'none';
     checkReady();
@@ -160,10 +189,13 @@ function clearVar() {
     if (!activeCell) return;
     var fullVar = activeCell.getAttribute('data-var');
     delete assignedVars[fullVar]; delete taskVars[fullVar];
+    
     activeCell.innerHTML = activeCell.getAttribute('data-val');
     activeCell.style.backgroundColor = 'transparent';
-    activeCell.style.color = '#60a5fa';
+    activeCell.style.color = '#63b3ed';
     activeCell.style.border = 'none';
+    activeCell.classList.remove('selected');
+    
     document.getElementById('varMenu').style.display = 'none';
     checkReady();
 }
@@ -184,7 +216,10 @@ function solveTask() {
     
     var area = document.getElementById('solutionArea');
     area.innerHTML = html; area.style.display = 'block';
+    
     document.getElementById('solve-btn').style.display = 'none';
+    document.getElementById('backBtn').style.display = 'none'; // Скрываем старую кнопку назад
+    
     playSound('success');
     area.scrollIntoView({ behavior: 'smooth' });
 }
