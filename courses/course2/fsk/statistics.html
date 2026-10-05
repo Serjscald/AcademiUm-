@@ -2,176 +2,112 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>АкадемиУм! | Статистика</title>
-    <link rel="stylesheet" href="../../css/style.css">
+    <!-- Убедись, что путь к стилям верный относительно этого файла -->
+    <link rel="stylesheet" href="../../css/style.css"> 
     <style>
-        /* Дополнительные стили специально для раздела Задач */
-        .task-container { max-width: 900px; margin: 0 auto; padding: 20px; }
+        /* Базовые стили для диагностики и интерфейса */
+        body { font-family: sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 20px; }
+        .error-box { background: #450a0a; border: 1px solid #ef4444; color: #fca5a5; padding: 20px; border-radius: 8px; margin-top: 20px; }
+        .tab-btn { background: #1e293b; border: none; color: #94a3b8; padding: 10px 20px; cursor: pointer; border-radius: 6px; margin-right: 5px; }
+        .tab-btn.active { background: #fbbf24; color: #0f172a; font-weight: bold; }
+        .mode-content { display: none; margin-top: 20px; }
+        .mode-content.active { display: block; }
         
-        /* Таблица задачи */
-        .stats-table { width: 100%; border-collapse: collapse; margin: 20px 0; background: #1e293b; border-radius: 12px; overflow: hidden; }
-        .stats-table th, .stats-table td { padding: 15px; text-align: center; border-bottom: 1px solid #334155; color: #f8fafc; }
-        .stats-table th { background: #0f172a; color: #fbbf24; font-weight: bold; text-transform: uppercase; font-size: 0.9em; }
-        .stats-table tr:last-child td { border-bottom: none; }
-        
-        /* Кликабельные ячейки */
-        .clickable-cell { 
-            cursor: pointer; display: inline-block; padding: 6px 12px; 
-            border-radius: 6px; border: 2px solid transparent; transition: all 0.2s; 
-            font-weight: bold; min-width: 40px;
-        }
-        .clickable-cell:hover { background: rgba(251, 191, 36, 0.1); border-color: #fbbf24; }
+        /* Стили таблицы задач */
+        .stats-table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #1e293b; border-radius: 8px; overflow: hidden; }
+        .stats-table th, .stats-table td { padding: 12px; text-align: center; border-bottom: 1px solid #334155; }
+        .stats-table th { background: #0f172a; color: #fbbf24; }
+        .clickable-cell { cursor: pointer; padding: 5px 10px; border-radius: 4px; border: 1px solid transparent; display: inline-block; min-width: 30px; }
+        .clickable-cell:hover { background: rgba(251, 191, 36, 0.2); border-color: #fbbf24; }
         .clickable-cell.selected { background: rgba(34, 197, 94, 0.2); border-color: #22c55e; color: #22c55e; }
-        .clickable-cell.error { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; color: #ef4444; }
+        .clickable-cell small { display: block; font-size: 0.7em; color: #94a3b8; margin-bottom: 2px; }
         
-        /* Выпадающий список выбора переменной */
-        .var-selector-popup {
-            position: absolute; background: #1e293b; border: 2px solid #fbbf24; 
-            border-radius: 8px; padding: 10px; z-index: 1000; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            display: flex; flex-direction: column; gap: 5px; min-width: 150px;
-        }
-        .var-option {
-            padding: 8px 12px; border-radius: 4px; cursor: pointer; color: #f8fafc; 
-            transition: background 0.2s; text-align: left;
-        }
-        .var-option:hover { background: #334155; }
-        
-        /* Кнопки и прогресс */
-        .solve-btn-area { text-align: center; margin-top: 30px; }
-        .btn-solve { 
-            background: #22c55e; color: white; border: none; padding: 15px 40px; 
-            border-radius: 12px; font-size: 1.1em; font-weight: bold; cursor: pointer; 
-            transition: all 0.3s; opacity: 0.5; pointer-events: none;
-        }
-        .btn-solve.active { opacity: 1; pointer-events: all; box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4); }
-        .btn-solve:hover { transform: translateY(-2px); }
-        
-        .progress-counter { text-align: center; color: #94a3b8; margin-top: 15px; font-size: 0.9em; }
-        
-        /* Блок решения */
-        .solution-area { 
-            margin-top: 30px; border: 2px solid #22c55e; border-radius: 12px; 
-            padding: 25px; background: rgba(34, 197, 94, 0.05); display: none; 
-        }
-        .solution-step { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #334155; }
-        .solution-step:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .step-title { color: #fbbf24; font-weight: bold; margin-bottom: 10px; font-size: 1.1em; }
-        .step-text { line-height: 1.6; color: #e2e8f0; white-space: pre-line; }
-        .conclusion-box { 
-            background: rgba(251, 191, 36, 0.1); border-left: 4px solid #fbbf24; 
-            padding: 15px; margin-top: 20px; border-radius: 0 8px 8px 0; 
-        }
-        .conclusion-title { color: #fbbf24; font-weight: bold; margin-bottom: 8px; }
-        
-        /* Навигация по задачам */
-        .task-nav { display: flex; justify-content: space-between; margin-top: 30px; }
-        .btn-nav { 
-            background: #334155; color: #f8fafc; border: none; padding: 12px 25px; 
-            border-radius: 8px; cursor: pointer; transition: all 0.2s; 
-        }
-        .btn-nav:hover { background: #475569; }
-        
-        /* Адаптив для мобильных */
-        @media (max-width: 768px) {
-            .stats-table { font-size: 0.8em; }
-            .stats-table th, .stats-table td { padding: 8px 4px; }
-            .clickable-cell { padding: 4px 6px; font-size: 0.9em; }
-        }
+        .btn-solve { background: #22c55e; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-size: 1.1em; cursor: pointer; opacity: 0.5; pointer-events: none; margin-top: 20px; }
+        .btn-solve.active { opacity: 1; pointer-events: all; }
+        .solution-area { margin-top: 30px; border: 1px solid #22c55e; padding: 20px; border-radius: 8px; background: rgba(34, 197, 94, 0.05); display: none; }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <!-- Шапка -->
-        <header class="page-header">
-            <h1>📊 СТАТИСТИКА</h1>
-            <button class="btn-back" onclick="window.location.href='index.html'">← Назад</button>
-        </header>
 
-        <!-- Вкладки режимов -->
-        <div class="mode-tabs">
-            <button class="tab-btn active" data-mode="learn">📖 Обучение</button>
-            <button class="tab-btn" data-mode="control">📝 Контроль</button>
-            <button class="tab-btn" data-mode="tasks"> Задачи</button>
+    <h1>📊 СТАТИСТИКА</h1>
+    
+    <div style="margin-bottom: 20px;">
+        <button class="tab-btn active" onclick="switchTab('learn')">📖 Обучение</button>
+        <button class="tab-btn" onclick="switchTab('control')">📝 Контроль</button>
+        <button class="tab-btn" onclick="switchTab('tasks')">🧩 Задачи</button>
+    </div>
+
+    <!-- Вкладка Обучение -->
+    <div id="tab-learn" class="mode-content active">
+        <h2>Теоретические материалы</h2>
+        <p>Раздел в разработке...</p>
+    </div>
+
+    <!-- Вкладка Контроль -->
+    <div id="tab-control" class="mode-content">
+        <h2>Тестирование</h2>
+        <p>224 вопроса по всем темам.</p>
+    </div>
+
+    <!-- Вкладка Задачи -->
+    <div id="tab-tasks" class="mode-content">
+        <div id="task-container">
+            <p style="text-align:center; color:#94a3b8;">Нажмите, чтобы загрузить задачу...</p>
+            <button onclick="loadRandomTask()" style="background:#334155; color:white; border:none; padding:10px 20px; border-radius:6px; cursor:pointer;">Загрузить случайную задачу</button>
         </div>
-
-        <!-- Контейнер контента -->
-        <div id="content-area">
-            
-            <!-- Режим: ОБУЧЕНИЕ (заглушка, можно наполнить позже) -->
-            <div id="mode-learn" class="mode-content active">
-                <div class="placeholder-card">
-                    <h2>Теоретические материалы</h2>
-                    <p>Здесь будут карточки с определениями, формулами и примерами по статистике.</p>
-                    <p><em>(Раздел в разработке)</em></p>
-                </div>
-            </div>
-
-            <!-- Режим: КОНТРОЛЬ (заглушка) -->
-            <div id="mode-control" class="mode-content">
-                <div class="placeholder-card">
-                    <h2>Тестирование</h2>
-                    <p>224 вопроса по всем темам курса статистики.</p>
-                    <button class="btn-primary" onclick="alert('Функция контроля будет подключена из data-statistics.js')">Начать тест</button>
-                </div>
-            </div>
-
-            <!-- Режим: ЗАДАЧИ (полностью рабочий) -->
-            <div id="mode-tasks" class="mode-content">
-                <div class="task-container" id="task-wrapper">
-                    <!-- Сюда рендерится задача через JS -->
-                </div>
-            </div>
-
-        </div>
+        <div id="debug-info" class="error-box" style="display:none;"></div>
     </div>
 
     <!-- Подключение скриптов -->
+    <!-- ВАЖНО: Проверь, что пути ведут к реальным файлам! -->
     <script src="../../js/data-statistics-tasks.js"></script>
     <script src="../../js/core.js"></script>
-    
+
     <script>
-        // === ЛОГИКА ПЕРЕКЛЮЧЕНИЯ ВКЛАДОК ===
-        const tabBtns = document.querySelectorAll('.tab-btn');
-        const modeContents = document.querySelectorAll('.mode-content');
-
-        tabBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                // Убираем активный класс у всех
-                tabBtns.forEach(b => b.classList.remove('active'));
-                modeContents.forEach(c => c.classList.remove('active'));
-                
-                // Добавляем активный класс нажатой кнопке
-                btn.classList.add('active');
-                const mode = btn.dataset.mode;
-                document.getElementById(`mode-${mode}`).classList.add('active');
-                
-                // Если открыли вкладку "Задачи" и там пусто - загружаем задачу
-                if (mode === 'tasks' && !document.querySelector('.stats-table')) {
-                    loadRandomTask();
-                }
-            });
-        });
-
-        // === ФУНКЦИЯ ЗАГРУЗКИ СЛУЧАЙНОЙ ЗАДАЧИ ===
-        function loadRandomTask() {
-            if (!window.statisticsTasks || window.statisticsTasks.length === 0) {
-                document.getElementById('task-wrapper').innerHTML = '<p style="text-align:center;color:#ef4444;">Ошибка: данные задач не загружены!</p>';
-                return;
+        // === ДИАГНОСТИКА ЗАГРУЗКИ ===
+        window.onload = function() {
+            const debug = document.getElementById('debug-info');
+            
+            if (typeof statisticsTasks === 'undefined') {
+                debug.style.display = 'block';
+                debug.innerHTML = `
+                    <strong> ОШИБКА: Массив statisticsTasks не найден!</strong><br><br>
+                    Возможные причины:<br>
+                    1. Файл <code>data-statistics-tasks.js</code> не загружен (проверьте путь ../../js/).<br>
+                    2. В файле синтаксическая ошибка (проверьте консоль браузера F12).<br>
+                    3. Переменная называется иначе (должна быть <code>const statisticsTasks = [...]</code>).
+                `;
+                console.error("Файл data-statistics-tasks.js не определил переменную statisticsTasks");
+            } else {
+                console.log(`✅ Загружено задач: ${statisticsTasks.length}`);
+                // Автозагрузка первой задачи при открытии вкладки
+                // loadRandomTask(); 
             }
-            const randomIndex = Math.floor(Math.random() * statisticsTasks.length);
-            renderStatisticsTask(randomIndex);
+        };
+
+        // === ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ===
+        function switchTab(tabName) {
+            document.querySelectorAll('.mode-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+            // Находим кнопку по тексту или индексу, тут упрощенно:
+            const btns = document.querySelectorAll('.tab-btn');
+            if(tabName === 'learn') btns[0].classList.add('active');
+            if(tabName === 'control') btns[1].classList.add('active');
+            if(tabName === 'tasks') btns[2].classList.add('active');
         }
 
-        // === ИНИЦИАЛИЗАЦИЯ ПРИ ЗАГРУЗКЕ ===
-        // Если URL содержит хэш #tasks, сразу открываем вкладку задач
-        if (window.location.hash === '#tasks') {
-            document.querySelector('[data-mode="tasks"]').click();
-        } else {
-            // По умолчанию открываем обучение, но предзагружаем задачу в фон
-            setTimeout(() => {
-                if (!document.querySelector('.stats-table')) loadRandomTask();
-            }, 500);
+        // === ЗАГРУЗКА ЗАДАЧИ ===
+        function loadRandomTask() {
+            if (typeof statisticsTasks === 'undefined') {
+                alert("Данные задач не загружены! Проверьте файл data-statistics-tasks.js");
+                return;
+            }
+            const idx = Math.floor(Math.random() * statisticsTasks.length);
+            renderStatisticsTask(idx);
         }
     </script>
 </body>
