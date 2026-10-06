@@ -1,165 +1,138 @@
 // ==========================================
-// 🔊 ЗВУКОВАЯ СИСТЕМА
+// CORE.JS - Базовое ядро АкадемиУм v5.0.0
+// Аудио, анимации, навигация и утилиты
 // ==========================================
-let audioCtx = null;
+
+var audioCtx = null;
+var isAudioInit = false;
 
 function initAudio() {
-    if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (!isAudioInit) {
+        try {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            isAudioInit = true;
+        } catch(e) { console.log('Web Audio API not supported'); }
     }
 }
 
 function playSound(type) {
-    if (!audioCtx) return;
-    try {
-        if (type === 'success') {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
-            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.15);
-        } else if (type === 'error') {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(150, audioCtx.currentTime);
-            osc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.2);
-            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.2);
-        }
-    } catch(e) {}
-}
-
-// ==========================================
-// 🎆 ФЕЙЕРВЕРКИ
-// ==========================================
-const canvas = document.getElementById('fireworks-canvas');
-const ctx = canvas ? canvas.getContext('2d') : null;
-let fireworks = [], particles = [], isAnimating = false, animationId;
-
-function resizeCanvas() { 
-    if (canvas) {
-        canvas.width = window.innerWidth; 
-        canvas.height = window.innerHeight; 
-    }
-}
-window.addEventListener('resize', resizeCanvas); 
-resizeCanvas();
-
-class Particle {
-    constructor(x, y, color) {
-        this.x = x; this.y = y; this.color = color;
-        const angle = Math.random() * Math.PI * 2;
-        const speed = Math.random() * 5 + 2;
-        this.velocity = { x: Math.cos(angle) * speed, y: Math.sin(angle) * speed };
-        this.alpha = 1; this.decay = Math.random() * 0.015 + 0.005;
-    }
-    draw() {
-        if (!ctx) return;
-        ctx.save(); ctx.globalAlpha = this.alpha; ctx.fillStyle = this.color;
-        ctx.beginPath(); ctx.arc(this.x, this.y, 3, 0, Math.PI * 2); ctx.fill(); ctx.restore();
-    }
-    update() {
-        this.velocity.y += 0.05; this.x += this.velocity.x; this.y += this.velocity.y;
-        this.alpha -= this.decay; this.draw();
+    if (!audioCtx || !isAudioInit) return;
+    
+    var osc = audioCtx.createOscillator();
+    var gainNode = audioCtx.createGain();
+    
+    osc.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    
+    if (type === 'success') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+        osc.frequency.exponentialRampToValueAtTime(1046.5, audioCtx.currentTime + 0.1); // C6
+        gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.3);
+    } else if (type === 'error') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+        osc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.2);
+        gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.2);
     }
 }
 
-class Firework {
-    constructor() {
-        this.x = Math.random() * canvas.width; this.y = canvas.height;
-        this.targetY = Math.random() * (canvas.height / 2) + 50;
-        this.speed = Math.random() * 3 + 4;
-        this.color = `hsl(${Math.random() * 360}, 100%, 60%)`;
-    }
-    draw() { 
-        if (!ctx) return;
-        ctx.fillStyle = this.color; ctx.beginPath(); ctx.arc(this.x, this.y, 2, 0, Math.PI * 2); ctx.fill(); 
-    }
-    update() {
-        this.y -= this.speed; this.draw();
-        if (this.y <= this.targetY) { this.explode(); return true; } return false;
-    }
-    explode() { for (let i = 0; i < 80; i++) particles.push(new Particle(this.x, this.y, this.color)); }
-}
-
-function animate() {
-    if (!isAnimating || !ctx) return;
-    animationId = requestAnimationFrame(animate);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if (Math.random() < 0.1) fireworks.push(new Firework());
-    for (let i = fireworks.length - 1; i >= 0; i--) if (fireworks[i].update()) fireworks.splice(i, 1);
-    for (let i = particles.length - 1; i >= 0; i--) { particles[i].update(); if (particles[i].alpha <= 0) particles.splice(i, 1); }
-}
-
-function startFireworks() {
-    if (!canvas) return;
-    canvas.style.display = 'block'; isAnimating = true; animate();
-    playFireworkSound();
-    setTimeout(stopFireworks, 5000);
-}
-
-function stopFireworks() {
-    isAnimating = false; if (animationId) cancelAnimationFrame(animationId);
-    if (canvas) {
-        canvas.style.display = 'none'; ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
-    fireworks = []; particles = [];
-}
-
-function playFireworkSound() {
-    if (!audioCtx) return;
-    for (let i = 0; i < 5; i++) {
-        setTimeout(() => {
-            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(400, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(1500, audioCtx.currentTime + 0.4);
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.4);
-            
-            setTimeout(() => {
-                const dur = 1.2; const buf = audioCtx.createBuffer(1, audioCtx.sampleRate * dur, audioCtx.sampleRate);
-                const d = buf.getChannelData(0);
-                for(let j=0; j<d.length; j++) d[j] = (Math.random()*2-1) * Math.exp(-(j/audioCtx.sampleRate)*5);
-                const src = audioCtx.createBufferSource(); src.buffer = buf;
-                const flt = audioCtx.createBiquadFilter(); flt.type='lowpass';
-                flt.frequency.setValueAtTime(4000, audioCtx.currentTime);
-                flt.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + dur);
-                const g = audioCtx.createGain(); g.gain.setValueAtTime(0.5, audioCtx.currentTime);
-                g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + dur);
-                src.connect(flt); flt.connect(g); g.connect(audioCtx.destination); src.start();
-            }, 400);
-        }, i * 700);
-    }
-}
-
-// ==========================================
-// 🎮 ОБЩАЯ ЛОГИКА НАВИГАЦИИ
-// ==========================================
 function navigateTo(url) {
+    window.location.href = url;
+}
+
+function handleTileClick(el, hasSubpage, callback) {
+    el.classList.add('success');
     playSound('success');
-    setTimeout(() => {
-        window.location.href = url;
+    setTimeout(function() {
+        if (callback) callback();
+        else if (hasSubpage) { /* заглушка для курсов без подстраниц */ }
     }, 400);
 }
 
-function handleTileClick(el, isSuccess, callback) {
-    if (isSuccess) {
-        el.classList.add('success');
-        playSound('success');
-        setTimeout(callback, 400);
+// --- Fireworks Animation ---
+var fireworksCanvas = document.getElementById('fireworks-canvas');
+var fwCtx = fireworksCanvas ? fireworksCanvas.getContext('2d') : null;
+var particles = [];
+var animationId = null;
+
+function resizeFireworks() {
+    if (fireworksCanvas) {
+        fireworksCanvas.width = window.innerWidth;
+        fireworksCanvas.height = window.innerHeight;
+    }
+}
+
+if (fireworksCanvas) {
+    window.addEventListener('resize', resizeFireworks);
+    resizeFireworks();
+}
+
+function createParticle(x, y, color) {
+    var count = 30;
+    for (var i = 0; i < count; i++) {
+        var angle = Math.random() * Math.PI * 2;
+        var speed = Math.random() * 4 + 2;
+        particles.push({
+            x: x, y: y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            life: 1,
+            color: color,
+            size: Math.random() * 3 + 1
+        });
+    }
+}
+
+function updateFireworks() {
+    if (!fwCtx) return;
+    fwCtx.clearRect(0, 0, fireworksCanvas.width, fireworksCanvas.height);
+    
+    for (var i = particles.length - 1; i >= 0; i--) {
+        var p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.05; // gravity
+        p.life -= 0.02;
+        
+        if (p.life <= 0) {
+            particles.splice(i, 1);
+        } else {
+            fwCtx.globalAlpha = p.life;
+            fwCtx.fillStyle = p.color;
+            fwCtx.beginPath();
+            fwCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            fwCtx.fill();
+        }
+    }
+    
+    if (particles.length > 0) {
+        animationId = requestAnimationFrame(updateFireworks);
     } else {
-        el.classList.add('error');
-        playSound('error');
-        setTimeout(() => el.classList.remove('error'), 400);
+        cancelAnimationFrame(animationId);
+        fwCtx.clearRect(0, 0, fireworksCanvas.width, fireworksCanvas.height);
+    }
+}
+
+function startFireworks() {
+    if (!fireworksCanvas) return;
+    var colors = ['#fbbf24', '#38bdf8', '#4ade80', '#f472b6', '#c084fc'];
+    var centerX = fireworksCanvas.width / 2;
+    var centerY = fireworksCanvas.height / 2;
+    
+    for (var i = 0; i < 5; i++) {
+        setTimeout(function() {
+            var x = centerX + (Math.random() - 0.5) * 300;
+            var y = centerY + (Math.random() - 0.5) * 200;
+            var color = colors[Math.floor(Math.random() * colors.length)];
+            createParticle(x, y, color);
+            if (particles.length <= 30) updateFireworks();
+        }, i * 200);
     }
 }
