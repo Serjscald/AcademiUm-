@@ -2,113 +2,144 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>АкадемиУм! | Статистика</title>
-    <!-- Убедись, что путь к стилям верный относительно этого файла -->
-    <link rel="stylesheet" href="../../css/style.css"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Статистика — АкадемиУм!</title>
+    <link rel="stylesheet" href="../../../css/style.css">
     <style>
-        /* Базовые стили для диагностики и интерфейса */
-        body { font-family: sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 20px; }
-        .error-box { background: #450a0a; border: 1px solid #ef4444; color: #fca5a5; padding: 20px; border-radius: 8px; margin-top: 20px; }
-        .tab-btn { background: #1e293b; border: none; color: #94a3b8; padding: 10px 20px; cursor: pointer; border-radius: 6px; margin-right: 5px; }
-        .tab-btn.active { background: #fbbf24; color: #0f172a; font-weight: bold; }
-        .mode-content { display: none; margin-top: 20px; }
-        .mode-content.active { display: block; }
-        
-        /* Стили таблицы задач */
-        .stats-table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #1e293b; border-radius: 8px; overflow: hidden; }
-        .stats-table th, .stats-table td { padding: 12px; text-align: center; border-bottom: 1px solid #334155; }
-        .stats-table th { background: #0f172a; color: #fbbf24; }
-        .clickable-cell { cursor: pointer; padding: 5px 10px; border-radius: 4px; border: 1px solid transparent; display: inline-block; min-width: 30px; }
-        .clickable-cell:hover { background: rgba(251, 191, 36, 0.2); border-color: #fbbf24; }
-        .clickable-cell.selected { background: rgba(34, 197, 94, 0.2); border-color: #22c55e; color: #22c55e; }
-        .clickable-cell small { display: block; font-size: 0.7em; color: #94a3b8; margin-bottom: 2px; }
-        
-        .btn-solve { background: #22c55e; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-size: 1.1em; cursor: pointer; opacity: 0.5; pointer-events: none; margin-top: 20px; }
-        .btn-solve.active { opacity: 1; pointer-events: all; }
-        .solution-area { margin-top: 30px; border: 1px solid #22c55e; padding: 20px; border-radius: 8px; background: rgba(34, 197, 94, 0.05); display: none; }
+        .task-container { background: var(--bg-card); padding: 20px; border-radius: 12px; margin: 20px 0; }
+        .task-table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 14px; table-layout: fixed; }
+        .task-table th, .task-table td { border: 1px solid #475569; padding: 8px; text-align: center; word-wrap: break-word; }
+        .task-table th { background: #334155; color: var(--gold); }
+        .var { background: #1e3a5f; cursor: pointer; transition: 0.2s; }
+        .var:hover { background: #2563eb; }
+        .formula-box { background: #0f172a; padding: 15px; border-radius: 8px; margin: 10px 0; font-family: monospace; color: var(--accent-blue); overflow-x: auto; white-space: pre-wrap; }
+        .solution-step { background: #1e293b; padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 4px solid var(--gold); }
+        .solution-step pre { white-space: pre-wrap; font-family: inherit; margin: 0; }
+        .conclusion { background: #14532d; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid var(--accent-green); }
     </style>
 </head>
 <body>
 
-    <h1>📊 СТАТИСТИКА</h1>
+<div id="start-screen">
+    <h2> Статистика</h2>
+    <p>Нажмите, чтобы начать обучение</p>
+</div>
+
+<canvas id="fireworks-canvas"></canvas>
+
+<div class="app-container" id="app"></div>
+
+<script src="../../../js/core.js"></script>
+<script src="../../../js/data-statistics.js"></script>
+<script>
+var app = document.getElementById('app');
+var currentCards = [];
+var cardIndex = 0;
+var quizIndex = 0;
+var mistakes = 0;
+var currentMode = 'learn';
+var currentQuizDirection = 'term-to-def';
+var currentTask = null;
+var taskVars = {};
+
+function renderScreen(screenName, data) {
+    app.innerHTML = '';
     
-    <div style="margin-bottom: 20px;">
-        <button class="tab-btn active" onclick="switchTab('learn')">📖 Обучение</button>
-        <button class="tab-btn" onclick="switchTab('control')">📝 Контроль</button>
-        <button class="tab-btn" onclick="switchTab('tasks')">🧩 Задачи</button>
-    </div>
-
-    <!-- Вкладка Обучение -->
-    <div id="tab-learn" class="mode-content active">
-        <h2>Теоретические материалы</h2>
-        <p>Раздел в разработке...</p>
-    </div>
-
-    <!-- Вкладка Контроль -->
-    <div id="tab-control" class="mode-content">
-        <h2>Тестирование</h2>
-        <p>224 вопроса по всем темам.</p>
-    </div>
-
-    <!-- Вкладка Задачи -->
-    <div id="tab-tasks" class="mode-content">
-        <div id="task-container">
-            <p style="text-align:center; color:#94a3b8;">Нажмите, чтобы загрузить задачу...</p>
-            <button onclick="loadRandomTask()" style="background:#334155; color:white; border:none; padding:10px 20px; border-radius:6px; cursor:pointer;">Загрузить случайную задачу</button>
-        </div>
-        <div id="debug-info" class="error-box" style="display:none;"></div>
-    </div>
-
-    <!-- Подключение скриптов -->
-    <!-- ВАЖНО: Проверь, что пути ведут к реальным файлам! -->
-    <script src="../../js/data-statistics-tasks.js"></script>
-    <script src="../../js/core.js"></script>
-
-    <script>
-        // === ДИАГНОСТИКА ЗАГРУЗКИ ===
-        window.onload = function() {
-            const debug = document.getElementById('debug-info');
-            
-            if (typeof statisticsTasks === 'undefined') {
-                debug.style.display = 'block';
-                debug.innerHTML = `
-                    <strong> ОШИБКА: Массив statisticsTasks не найден!</strong><br><br>
-                    Возможные причины:<br>
-                    1. Файл <code>data-statistics-tasks.js</code> не загружен (проверьте путь ../../js/).<br>
-                    2. В файле синтаксическая ошибка (проверьте консоль браузера F12).<br>
-                    3. Переменная называется иначе (должна быть <code>const statisticsTasks = [...]</code>).
-                `;
-                console.error("Файл data-statistics-tasks.js не определил переменную statisticsTasks");
-            } else {
-                console.log(`✅ Загружено задач: ${statisticsTasks.length}`);
-                // Автозагрузка первой задачи при открытии вкладки
-                // loadRandomTask(); 
-            }
-        };
-
-        // === ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ===
-        function switchTab(tabName) {
-            document.querySelectorAll('.mode-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            
-            document.getElementById(`tab-${tabName}`).classList.add('active');
-            // Находим кнопку по тексту или индексу, тут упрощенно:
-            const btns = document.querySelectorAll('.tab-btn');
-            if(tabName === 'learn') btns[0].classList.add('active');
-            if(tabName === 'control') btns[1].classList.add('active');
-            if(tabName === 'tasks') btns[2].classList.add('active');
+    if (screenName === 'modes') {
+        app.innerHTML = '<h1>Статистика</h1><div class="subtitle">Выберите режим</div><div class="grid" style="margin-top:40px"><div class="tile" onclick="handleMode(\'learn\')">Обучение</div><div class="tile" onclick="handleMode(\'quiz\')">Контроль</div><div class="tile" onclick="handleMode(\'tasks\')">Задачи</div></div><button class="btn btn-back" onclick="navigateTo(\'index.html\')">Назад</button>';
+    } else if (screenName === 'topics') {
+        var mode = (data && data.mode) ? data.mode : 'learn';
+        currentMode = mode;
+        var title = (mode === 'learn') ? 'Обучение' : (mode === 'quiz' ? 'Контроль' : 'Задачи');
+        var topicsHTML = '';
+        if (mode === 'quiz') {
+            topicsHTML += '<div class="tile" onclick="startTopic(\'all\')">За все время</div>';
         }
-
-        // === ЗАГРУЗКА ЗАДАЧИ ===
-        function loadRandomTask() {
-            if (typeof statisticsTasks === 'undefined') {
-                alert("Данные задач не загружены! Проверьте файл data-statistics-tasks.js");
-                return;
+        if (mode === 'tasks') {
+            topicsHTML += '<div class="tile" onclick="startRandomTask()">Случайная задача</div>';
+        } else {
+            for (var key in statisticsDB.topicTitles) {
+                topicsHTML += '<div class="tile" onclick="startTopic(\'' + key + '\')">' + statisticsDB.topicTitles[key] + '</div>';
             }
-            const idx = Math.floor(Math.random() * statisticsTasks.length);
-            renderStatisticsTask(idx);
         }
-    </script>
+        app.innerHTML = '<h1>' + title + '</h1><div class="subtitle">Выберите тему</div><div class="grid single-col" style="margin-top:20px">' + topicsHTML + '</div><button class="btn btn-back" onclick="renderScreen(\'modes\')">Назад</button>';
+    } else if (screenName === 'flashcard') {
+        var card = currentCards[cardIndex];
+        app.innerHTML = '<h1>Карточка ' + (cardIndex + 1) + ' / ' + currentCards.length + '</h1><div class="flashcard"><div class="fc-word">' + card.word + '</div><div class="fc-trans">' + card.trans + '</div></div><button class="btn btn-orange" onclick="nextCard()">Следующая</button><button class="btn btn-stop" onclick="renderScreen(\'topics\',{mode:\'learn\'})">Прервать</button>';
+    } else if (screenName === 'quiz') {
+        var qcard = currentCards[quizIndex];
+        currentQuizDirection = (Math.random() < 0.5) ? 'term-to-def' : 'def-to-term';
+        var questionText = (currentQuizDirection === 'term-to-def') ? qcard.word : qcard.trans;
+        var correctAnswer = (currentQuizDirection === 'term-to-def') ? qcard.trans : qcard.word;
+        var optionsPool = currentCards.map(function(c){ return (currentQuizDirection === 'term-to-def') ? c.trans : c.word; });
+        var options = [correctAnswer];
+        while (options.length < 3) { var rnd = optionsPool[Math.floor(Math.random() * optionsPool.length)]; if (options.indexOf(rnd) === -1) options.push(rnd); }
+        options.sort(function(){ return Math.random() - 0.5; });
+        var optsHTML = '';
+        for (var i = 0; i < options.length; i++) {
+            var o = options[i].replace(/'/g, "\\'"); var ca = correctAnswer.replace(/'/g, "\\'");
+            optsHTML += '<div class="quiz-opt" onclick="checkAnswer(this,\'' + o + '\',\'' + ca + '\')">' + options[i].substring(0, 100) + (options[i].length > 100 ? '...' : '') + '</div>';
+        }
+        app.innerHTML = '<h1>Контроль ' + (quizIndex + 1) + ' / ' + currentCards.length + '</h1><div class="flashcard" id="quiz-card"><div class="fc-word" style="font-size:20px">' + questionText + '</div><div class="fc-trans" style="font-size:14px;color:var(--text-muted)">' + (currentQuizDirection === 'term-to-def' ? 'Выберите определение:' : 'Выберите термин:') + '</div></div><div class="quiz-options">' + optsHTML + '</div><button class="btn btn-stop" onclick="renderScreen(\'topics\',{mode:\'quiz\'})">Прервать</button>';
+    } else if (screenName === 'task') {
+        var formulasHTML = '<div class="formula-box"><strong>Формулы для справки:</strong><br>';
+        for (var i = 0; i < currentTask.formulas.length; i++) {
+            formulasHTML += currentTask.formulas[i] + '<br>';
+        }
+        formulasHTML += '</div>';
+        
+        app.innerHTML = '<h1>' + currentTask.title + '</h1>' + formulasHTML + '<div class="task-container">' + currentTask.html + '</div><button class="btn btn-orange" onclick="solveTask()">Показать решение</button><button class="btn btn-stop" onclick="renderScreen(\'topics\',{mode:\'tasks\'})">К задачам</button><div id="solution-area"></div>';
+        
+        var varElements = document.querySelectorAll('.var');
+        for (var j = 0; j < varElements.length; j++) {
+            var el = varElements[j];
+            var varName = el.getAttribute('data-var');
+            taskVars[varName] = parseFloat(el.textContent);
+        }
+    } else if (screenName === 'result') {
+        var isWin = (mistakes === 0);
+        app.innerHTML = '<h1>Результат</h1><div class="result-msg ' + (isWin ? 'result-win' : 'result-lose') + '">' + (isWin ? ' Отличная работа!' : 'Нужно заниматься усерднее, Данечка!') + '</div><button class="btn btn-orange" onclick="renderScreen(\'modes\')">В меню</button><button class="btn btn-back" onclick="navigateTo(\'../../../index.html\')">На главную</button>';
+        if (isWin) startFireworks();
+    }
+}
+
+function handleMode(mode) { event.target.classList.add('success'); playSound('success'); setTimeout(function(){ renderScreen('topics', {mode: mode}); }, 400); }
+
+function startTopic(scope) {
+    event.target.classList.add('success'); playSound('success');
+    if (scope === 'all') { currentCards = []; for (var key in statisticsDB.topicTitles) currentCards = currentCards.concat(statisticsDB[key]); } 
+    else { currentCards = statisticsDB[scope].slice(); }
+    currentCards.sort(function(){ return Math.random() - 0.5; });
+    if (currentMode === 'learn') { cardIndex = 0; setTimeout(function(){ renderScreen('flashcard'); }, 400); } 
+    else { quizIndex = 0; mistakes = 0; setTimeout(function(){ renderScreen('quiz'); }, 400); }
+}
+
+function startRandomTask() {
+    event.target.classList.add('success'); playSound('success');
+    currentTask = statisticsDB.tasks[Math.floor(Math.random() * statisticsDB.tasks.length)];
+    taskVars = {}; setTimeout(function(){ renderScreen('task'); }, 400);
+}
+
+function solveTask() {
+    var result = currentTask.solve(taskVars);
+    var solutionHTML = '<div class="solution-step"><strong>Пошаговое решение:</strong><pre>' + result.calc + '</pre></div>';
+    solutionHTML += '<div class="conclusion"><strong>Вывод:</strong><br>' + result.conclusion + '</div>';
+    solutionHTML += '<button class="btn btn-orange" onclick="startRandomTask()" style="margin-top:15px">Следующая задача</button>';
+    document.getElementById('solution-area').innerHTML = solutionHTML;
+    playSound('success');
+}
+
+function nextCard() { playSound('success'); cardIndex++; if (cardIndex < currentCards.length) renderScreen('flashcard'); else renderScreen('topics', {mode: 'learn'}); }
+
+function checkAnswer(el, selected, correct) {
+    var card = document.getElementById('quiz-card');
+    if (selected === correct) { el.classList.add('correct'); card.classList.add('correct-flash'); playSound('success'); } 
+    else { el.classList.add('wrong'); card.classList.add('wrong-flash'); playSound('error'); mistakes++; }
+    setTimeout(function(){ quizIndex++; if (quizIndex < currentCards.length) renderScreen('quiz'); else renderScreen('result'); }, 600);
+}
+
+var startScreen = document.getElementById('start-screen');
+startScreen.addEventListener('click', function(){ initAudio(); startScreen.style.opacity = '0'; setTimeout(function(){ startScreen.style.display = 'none'; }, 500); renderScreen('modes'); });
+</script>
 </body>
 </html>
