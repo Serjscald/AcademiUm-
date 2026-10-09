@@ -27,6 +27,14 @@ var mistakes = 0;
 var currentMode = 'learn';
 var currentQuizDirection = 'term-to-def';
 
+// --- ИСПРАВЛЕНИЕ ЗВУКА: Глобальная инициализация при первом клике ---
+document.addEventListener('click', function initAudioOnce() {
+    if (typeof initAudio === 'function') {
+        initAudio();
+    }
+    document.removeEventListener('click', initAudioOnce);
+}, { once: true });
+
 function renderScreen(screenName, data) {
     app.innerHTML = '';
     
@@ -39,12 +47,11 @@ function renderScreen(screenName, data) {
         var title = (mode === 'learn') ? 'Обучение' : 'Контроль';
         var topicsHTML = '';
         
-        // Добавляем кнопку "За все время" только для режима Контроль
         if (mode === 'quiz') {
             topicsHTML += '<div class="tile" onclick="startTopic(\'all\')">За все время</div>';
         }
         
-        // Динамически перебираем ВСЕ темы из itDB.topicTitles
+        // Динамическая генерация тем из itDB.topicTitles
         for (var key in itDB.topicTitles) {
             topicsHTML += '<div class="tile" onclick="startTopic(\'' + key + '\')">' + itDB.topicTitles[key] + '</div>';
         }
@@ -76,14 +83,20 @@ function renderScreen(screenName, data) {
         var msg = isWin ? '🎉 Отличная работа!' : 'Нужно заниматься усерднее, Данечка!';
         var cls = isWin ? 'result-win' : 'result-lose';
         app.innerHTML = '<h1>Результат</h1><div class="result-msg ' + cls + '">' + msg + '</div><button class="btn btn-orange" onclick="renderScreen(\'modes\')">В меню</button><button class="btn btn-back" onclick="navigateTo(\'../../../index.html\')">На главную</button>';
-        if (isWin) startFireworks();
+        if (isWin && typeof startFireworks === 'function') startFireworks();
     }
 }
 
-function handleMode(mode) { event.target.classList.add('success'); playSound('success'); setTimeout(function(){ renderScreen('topics', {mode: mode}); }, 400); }
+function handleMode(mode) { 
+    if(event && event.target) event.target.classList.add('success'); 
+    if(typeof playSound === 'function') playSound('success'); 
+    setTimeout(function(){ renderScreen('topics', {mode: mode}); }, 400); 
+}
 
 function startTopic(scope) {
-    event.target.classList.add('success'); playSound('success');
+    if(event && event.target) event.target.classList.add('success'); 
+    if(typeof playSound === 'function') playSound('success');
+    
     if (scope === 'all') {
         currentCards = [];
         for (var key in itDB.topicTitles) currentCards = currentCards.concat(itDB[key]);
@@ -101,17 +114,40 @@ function startTopic(scope) {
     }
 }
 
-function nextCard() { playSound('success'); cardIndex++; if (cardIndex < currentCards.length) renderScreen('flashcard'); else renderScreen('topics', {mode: 'learn'}); }
+function nextCard() { 
+    if(typeof playSound === 'function') playSound('success'); 
+    cardIndex++; 
+    if (cardIndex < currentCards.length) renderScreen('flashcard'); 
+    else renderScreen('topics', {mode: 'learn'}); 
+}
 
 function checkAnswer(el, selected, correct) {
     var card = document.getElementById('quiz-card');
-    if (selected === correct) { el.classList.add('correct'); card.classList.add('correct-flash'); playSound('success'); } 
-    else { el.classList.add('wrong'); card.classList.add('wrong-flash'); playSound('error'); mistakes++; }
-    setTimeout(function(){ quizIndex++; if (quizIndex < currentCards.length) renderScreen('quiz'); else renderScreen('result'); }, 600);
+    if (selected === correct) { 
+        el.classList.add('correct'); 
+        card.classList.add('correct-flash'); 
+        if(typeof playSound === 'function') playSound('success'); 
+    } else { 
+        el.classList.add('wrong'); 
+        card.classList.add('wrong-flash'); 
+        if(typeof playSound === 'function') playSound('error'); 
+        mistakes++; 
+    }
+    setTimeout(function(){ 
+        quizIndex++; 
+        if (quizIndex < currentCards.length) renderScreen('quiz'); 
+        else renderScreen('result'); 
+    }, 600);
 }
 
 var startScreen = document.getElementById('start-screen');
-startScreen.addEventListener('click', function(){ initAudio(); startScreen.style.opacity = '0'; setTimeout(function(){ startScreen.style.display = 'none'; }, 500); renderScreen('modes'); });
+if (startScreen) {
+    startScreen.addEventListener('click', function(){ 
+        startScreen.style.opacity = '0'; 
+        setTimeout(function(){ startScreen.style.display = 'none'; }, 500); 
+        renderScreen('modes'); 
+    });
+}
 </script>
 </body>
 </html>
