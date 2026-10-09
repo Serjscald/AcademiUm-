@@ -32,22 +32,30 @@ function renderScreen(screenName, data) {
     
     if (screenName === 'modes') {
         app.innerHTML = '<h1>Информационные технологии</h1><div class="subtitle">Выберите режим</div><div class="grid" style="margin-top:40px"><div class="tile" onclick="handleMode(\'learn\')">Обучение</div><div class="tile" onclick="handleMode(\'quiz\')">Контроль</div></div><button class="btn btn-back" onclick="navigateTo(\'index.html\')">Назад</button>';
-    } else if (screenName === 'topics') {
+    } 
+    else if (screenName === 'topics') {
         var mode = (data && data.mode) ? data.mode : 'learn';
         currentMode = mode;
         var title = (mode === 'learn') ? 'Обучение' : 'Контроль';
         var topicsHTML = '';
+        
+        // Добавляем кнопку "За все время" только для режима Контроль
         if (mode === 'quiz') {
             topicsHTML += '<div class="tile" onclick="startTopic(\'all\')">За все время</div>';
         }
+        
+        // Динамически перебираем ВСЕ темы из itDB.topicTitles
         for (var key in itDB.topicTitles) {
             topicsHTML += '<div class="tile" onclick="startTopic(\'' + key + '\')">' + itDB.topicTitles[key] + '</div>';
         }
+        
         app.innerHTML = '<h1>' + title + '</h1><div class="subtitle">Выберите тему</div><div class="grid single-col" style="margin-top:20px">' + topicsHTML + '</div><button class="btn btn-back" onclick="renderScreen(\'modes\')">Назад</button>';
-    } else if (screenName === 'flashcard') {
+    } 
+    else if (screenName === 'flashcard') {
         var card = currentCards[cardIndex];
         app.innerHTML = '<h1>Карточка ' + (cardIndex + 1) + ' / ' + currentCards.length + '</h1><div class="flashcard"><div class="fc-word">' + card.word + '</div><div class="fc-trans">' + card.trans + '</div></div><button class="btn btn-orange" onclick="nextCard()">Следующая</button><button class="btn btn-stop" onclick="renderScreen(\'topics\',{mode:\'learn\'})">Прервать</button>';
-    } else if (screenName === 'quiz') {
+    } 
+    else if (screenName === 'quiz') {
         var qcard = currentCards[quizIndex];
         currentQuizDirection = (Math.random() < 0.5) ? 'term-to-def' : 'def-to-term';
         var questionText = (currentQuizDirection === 'term-to-def') ? qcard.word : qcard.trans;
@@ -62,32 +70,48 @@ function renderScreen(screenName, data) {
             optsHTML += '<div class="quiz-opt" onclick="checkAnswer(this,\'' + o + '\',\'' + ca + '\')">' + options[i].substring(0, 100) + (options[i].length > 100 ? '...' : '') + '</div>';
         }
         app.innerHTML = '<h1>Контроль ' + (quizIndex + 1) + ' / ' + currentCards.length + '</h1><div class="flashcard" id="quiz-card"><div class="fc-word" style="font-size:20px">' + questionText + '</div><div class="fc-trans" style="font-size:14px;color:var(--text-muted)">' + (currentQuizDirection === 'term-to-def' ? 'Выберите определение:' : 'Выберите термин:') + '</div></div><div class="quiz-options">' + optsHTML + '</div><button class="btn btn-stop" onclick="renderScreen(\'topics\',{mode:\'quiz\'})">Прервать</button>';
-    } else if (screenName === 'result') {
+    } 
+    else if (screenName === 'result') {
         var isWin = (mistakes === 0);
-        app.innerHTML = '<h1>Результат</h1><div class="result-msg ' + (isWin ? 'result-win' : 'result-lose') + '">' + (isWin ? '🎉 Отличная работа!' : 'Нужно заниматься усерднее, Данечка!') + '</div><button class="btn btn-orange" onclick="renderScreen(\'modes\')">В меню</button><button class="btn btn-back" onclick="navigateTo(\'../../../index.html\')">На главную</button>';
+        var msg = isWin ? '🎉 Отличная работа!' : 'Нужно заниматься усерднее, Данечка!';
+        var cls = isWin ? 'result-win' : 'result-lose';
+        app.innerHTML = '<h1>Результат</h1><div class="result-msg ' + cls + '">' + msg + '</div><button class="btn btn-orange" onclick="renderScreen(\'modes\')">В меню</button><button class="btn btn-back" onclick="navigateTo(\'../../../index.html\')">На главную</button>';
         if (isWin) startFireworks();
     }
 }
 
 function handleMode(mode) { event.target.classList.add('success'); playSound('success'); setTimeout(function(){ renderScreen('topics', {mode: mode}); }, 400); }
+
 function startTopic(scope) {
     event.target.classList.add('success'); playSound('success');
-    if (scope === 'all') { currentCards = []; for (var key in itDB.topicTitles) currentCards = currentCards.concat(itDB[key]); } 
-    else { currentCards = itDB[scope].slice(); }
+    if (scope === 'all') {
+        currentCards = [];
+        for (var key in itDB.topicTitles) currentCards = currentCards.concat(itDB[key]);
+    } else {
+        currentCards = itDB[scope].slice();
+    }
     currentCards.sort(function(){ return Math.random() - 0.5; });
-    if (currentMode === 'learn') { cardIndex = 0; setTimeout(function(){ renderScreen('flashcard'); }, 400); } 
-    else { quizIndex = 0; mistakes = 0; setTimeout(function(){ renderScreen('quiz'); }, 400); }
+    
+    if (currentMode === 'learn') {
+        cardIndex = 0;
+        setTimeout(function(){ renderScreen('flashcard'); }, 400);
+    } else {
+        quizIndex = 0; mistakes = 0;
+        setTimeout(function(){ renderScreen('quiz'); }, 400);
+    }
 }
+
 function nextCard() { playSound('success'); cardIndex++; if (cardIndex < currentCards.length) renderScreen('flashcard'); else renderScreen('topics', {mode: 'learn'}); }
+
 function checkAnswer(el, selected, correct) {
     var card = document.getElementById('quiz-card');
     if (selected === correct) { el.classList.add('correct'); card.classList.add('correct-flash'); playSound('success'); } 
     else { el.classList.add('wrong'); card.classList.add('wrong-flash'); playSound('error'); mistakes++; }
     setTimeout(function(){ quizIndex++; if (quizIndex < currentCards.length) renderScreen('quiz'); else renderScreen('result'); }, 600);
 }
+
 var startScreen = document.getElementById('start-screen');
 startScreen.addEventListener('click', function(){ initAudio(); startScreen.style.opacity = '0'; setTimeout(function(){ startScreen.style.display = 'none'; }, 500); renderScreen('modes'); });
 </script>
 </body>
 </html>
-
