@@ -60,11 +60,26 @@ document.addEventListener('click', function initAudioOnce() {
     document.removeEventListener('click', initAudioOnce);
 }, { once: true });
 
-// Функция очистки текста от номеров вариантов для режима обучения
+// Усиленная функция очистки текста от любых служебных пометок
 function cleanOrthoText(text) {
     if (!text) return '';
-    // Удаляем: "Вариант X.", "Задание X, вар Y.", "(тема X).", "Ряд X."
-    return text.replace(/(?:Вариант\s+\d+\.|Задание\s+\d+,\s*вар\s+\d+\.|\(тема\s+\d+\)\.?|Ряд\s+[А-Я0-9]+\.)\s*/gi, '').trim();
+    
+    // Удаляем:
+    // 1. "Вариант X." или "вариант X."
+    // 2. "Задание X, вар Y." или "задание X, вар Y."
+    // 3. "(тема X)." или "(Тема X)."
+    // 4. "Ряд X." или "ряд X."
+    // 5. Любые сочетания этих фраз в конце строки
+    
+    var cleaned = text
+        .replace(/(?:[Вв]ариант\s+\d+\.?)/gi, '')
+        .replace(/(?:[Зз]адание\s+\d+,\s*[вВ][аА][рР]\s+\d+\.?)/gi, '')
+        .replace(/(?:\([тТ]ема\s+\d+\)\.?)/gi, '')
+        .replace(/(?:[Рр]яд\s+[А-Яа-я0-9]+\.?)/gi, '')
+        .trim();
+        
+    // Убираем лишние пробелы и точки в конце, если они остались после удаления
+    return cleaned.replace(/\s+/g, ' ').replace(/\.\s*$/, '').trim();
 }
 
 function renderScreen(screenName, data) {
