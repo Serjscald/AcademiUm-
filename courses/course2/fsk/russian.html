@@ -8,7 +8,6 @@
     <style>
         .task-box { background: #0f172a; border: 2px solid var(--gold); border-radius: 12px; padding: 20px; margin: 15px 0; text-align: left; line-height: 1.6; font-size: 16px; }
         .task-box .wrong-word { color: var(--accent-red); text-decoration: underline wavy; font-weight: bold; }
-        .task-box .caps-word { color: var(--gold); font-weight: bold; text-transform: uppercase; }
         .answer-box { background: rgba(34, 197, 94, 0.15); border: 2px solid var(--accent-green); border-radius: 10px; padding: 15px; margin: 15px 0; text-align: left; line-height: 1.6; animation: fadeIn 0.4s; }
         .answer-box b { color: var(--accent-green); }
         .note-box { background: rgba(56, 189, 248, 0.1); border-left: 4px solid #38bdf8; padding: 12px 15px; margin: 10px 0; font-size: 14px; text-align: left; font-style: italic; color: var(--text-muted); }
@@ -34,12 +33,11 @@
 <body>
 
 <div id="start-screen">
-    <h2>📝 Русский язык</h2>
+    <h2> Русский язык</h2>
     <p>Нажмите, чтобы начать обучение</p>
 </div>
 
 <canvas id="fireworks-canvas"></canvas>
-
 <div class="app-container" id="app"></div>
 
 <script src="../../../js/core.js"></script>
@@ -54,7 +52,7 @@ var currentMode = 'learn';
 var revealed = false;
 var answered = false;
 
-// Глобальная инициализация аудио при первом клике (для Safari/Chrome)
+// --- ИСПРАВЛЕНИЕ ЗВУКА: Глобальная инициализация при первом клике ---
 document.addEventListener('click', function initAudioOnce() {
     if (typeof initAudio === 'function') {
         initAudio();
@@ -87,7 +85,7 @@ function renderScreen(screenName, data) {
         renderQuizCard();
     } else if (screenName === 'result') {
         var isWin = (mistakes === 0);
-        var msg = isWin ? ' Отличная работа!' : 'Нужно заниматься усерднее, Данечка!';
+        var msg = isWin ? '🎉 Отличная работа!' : 'Нужно заниматься усерднее, Данечка!';
         var cls = isWin ? 'result-win' : 'result-lose';
         app.innerHTML = '<h1>Результат</h1><div class="result-msg ' + cls + '">' + msg + '</div><button class="btn btn-orange" onclick="renderScreen(\'modes\')">В меню</button><button class="btn btn-back" onclick="navigateTo(\'../../../index.html\')">На главную</button>';
         if (isWin && typeof startFireworks === 'function') startFireworks();
@@ -128,7 +126,9 @@ function buildQuestionHTML(card) {
         html += '<div class="task-box" style="text-align:center;">';
         html += '<div style="color:var(--gold);font-size:14px;margin-bottom:12px;font-weight:bold;">Термин / Пример:</div>';
         html += '<div class="ortho-term">' + card.word + '</div>';
-        html += '<div class="ortho-rule">' + card.trans + '</div>';
+        // УБИРАЕМ НОМЕРА ВАРИАНТОВ ИЗ ОБУЧЕНИЯ
+        var cleanTrans = card.trans.replace(/(?:Задание \d+, вар \d+\.|Вариант \d+\.)\s*/gi, '').trim();
+        html += '<div class="ortho-rule">' + cleanTrans + '</div>';
         html += '</div>';
     }
     
@@ -148,7 +148,9 @@ function buildAnswerHTML(card) {
     } 
     // Новые типы (Орфография)
     else if (card.word && card.trans) {
-        html += card.trans;
+        // В ответе тоже убираем номера вариантов для чистоты
+        var cleanTrans = card.trans.replace(/(?:Задание \d+, вар \d+\.|Вариант \d+\.)\s*/gi, '').trim();
+        html += cleanTrans;
     }
     
     html += '</div>';
@@ -206,7 +208,7 @@ function buildQuizOptions(card) {
     } else if (card.type === 'D') {
         options = [1, 2, 3, 4, 5];
     }
-    // Новые типы (Орфография) - генерируем варианты "Слитно", "Раздельно", "Через дефис" или буквы
+    // Новые типы (Орфография)
     else if (card.word && card.trans) {
         var correctAnswer = '';
         if (card.trans.indexOf('СЛИТНО') !== -1) correctAnswer = 'Слитно';
