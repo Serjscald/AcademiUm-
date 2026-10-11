@@ -140,8 +140,12 @@ function buildQuestionHTML(card) {
         html += '<div class="task-box" style="text-align:center;">';
         html += '<div style="color:var(--gold);font-size:14px;margin-bottom:12px;font-weight:bold;">Термин / Пример:</div>';
         html += '<div class="ortho-term">' + card.word + '</div>';
-        // В режиме обучения ПРАВИЛО СКРЫТО до нажатия кнопки
-        html += '<div class="ortho-rule-placeholder">(Нажмите «Показать ответ», чтобы увидеть правило)</div>';
+        
+        // В режиме обучения показываем подсказку, в контроле - ничего
+        if (currentMode === 'learn') {
+            html += '<div class="ortho-rule-placeholder">(Нажмите «Показать ответ», чтобы увидеть правило)</div>';
+        }
+        
         html += '</div>';
     }
     
@@ -168,7 +172,7 @@ function buildAnswerHTML(card) {
     html += '</div>';
     
     if (card.note) {
-        html += '<div class="note-box"><b>💡 Пояснение:</b> ' + card.note + '</div>';
+        html += '<div class="note-box"><b> Пояснение:</b> ' + card.note + '</div>';
     }
     
     return html;
