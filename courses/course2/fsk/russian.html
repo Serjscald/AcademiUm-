@@ -33,7 +33,7 @@
 <body>
 
 <div id="start-screen">
-    <h2> Русский язык</h2>
+    <h2>📝 Русский язык</h2>
     <p>Нажмите, чтобы начать обучение</p>
 </div>
 
@@ -59,6 +59,13 @@ document.addEventListener('click', function initAudioOnce() {
     }
     document.removeEventListener('click', initAudioOnce);
 }, { once: true });
+
+// Функция очистки текста от номеров вариантов для режима обучения
+function cleanOrthoText(text) {
+    if (!text) return '';
+    // Удаляем: "Вариант X.", "Задание X, вар Y.", "(тема X).", "Ряд X."
+    return text.replace(/(?:Вариант\s+\d+\.|Задание\s+\d+,\s*вар\s+\d+\.|\(тема\s+\d+\)\.?|Ряд\s+[А-Я0-9]+\.)\s*/gi, '').trim();
+}
 
 function renderScreen(screenName, data) {
     app.innerHTML = '';
@@ -126,9 +133,8 @@ function buildQuestionHTML(card) {
         html += '<div class="task-box" style="text-align:center;">';
         html += '<div style="color:var(--gold);font-size:14px;margin-bottom:12px;font-weight:bold;">Термин / Пример:</div>';
         html += '<div class="ortho-term">' + card.word + '</div>';
-        // УБИРАЕМ НОМЕРА ВАРИАНТОВ ИЗ ОБУЧЕНИЯ
-        var cleanTrans = card.trans.replace(/(?:Задание \d+, вар \d+\.|Вариант \d+\.)\s*/gi, '').trim();
-        html += '<div class="ortho-rule">' + cleanTrans + '</div>';
+        // Очищаем правило от номеров вариантов
+        html += '<div class="ortho-rule">' + cleanOrthoText(card.trans) + '</div>';
         html += '</div>';
     }
     
@@ -148,9 +154,8 @@ function buildAnswerHTML(card) {
     } 
     // Новые типы (Орфография)
     else if (card.word && card.trans) {
-        // В ответе тоже убираем номера вариантов для чистоты
-        var cleanTrans = card.trans.replace(/(?:Задание \d+, вар \d+\.|Вариант \d+\.)\s*/gi, '').trim();
-        html += cleanTrans;
+        // Очищаем ответ от номеров вариантов
+        html += cleanOrthoText(card.trans);
     }
     
     html += '</div>';
@@ -208,7 +213,7 @@ function buildQuizOptions(card) {
     } else if (card.type === 'D') {
         options = [1, 2, 3, 4, 5];
     }
-    // Новые типы (Орфография)
+    // Новые типы (Орфография) - генерируем варианты "Слитно", "Раздельно", "Через дефис" или буквы
     else if (card.word && card.trans) {
         var correctAnswer = '';
         if (card.trans.indexOf('СЛИТНО') !== -1) correctAnswer = 'Слитно';
