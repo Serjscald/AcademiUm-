@@ -25,6 +25,10 @@
         .sentence-sentences { display: flex; flex-direction: column; gap: 6px; margin: 10px 0; }
         .sentence-line { padding: 8px 12px; background: #1e293b; border-radius: 6px; font-size: 15px; }
         .sentence-line strong { color: var(--gold); margin-right: 8px; }
+        
+        /* Стили для новых орфографических карточек */
+        .ortho-term { font-size: 22px; color: white; text-align: center; margin: 20px 0; font-weight: bold; }
+        .ortho-rule { color: var(--text-muted); font-style: italic; font-size: 15px; line-height: 1.5; text-align: center; }
     </style>
 </head>
 <body>
@@ -49,6 +53,14 @@ var mistakes = 0;
 var currentMode = 'learn';
 var revealed = false;
 var answered = false;
+
+// Глобальная инициализация аудио при первом клике (для Safari/Chrome)
+document.addEventListener('click', function initAudioOnce() {
+    if (typeof initAudio === 'function') {
+        initAudio();
+    }
+    document.removeEventListener('click', initAudioOnce);
+}, { once: true });
 
 function renderScreen(screenName, data) {
     app.innerHTML = '';
@@ -75,10 +87,10 @@ function renderScreen(screenName, data) {
         renderQuizCard();
     } else if (screenName === 'result') {
         var isWin = (mistakes === 0);
-        var msg = isWin ? '🎉 Отличная работа!' : 'Нужно заниматься усерднее, Данечка!';
+        var msg = isWin ? ' Отличная работа!' : 'Нужно заниматься усерднее, Данечка!';
         var cls = isWin ? 'result-win' : 'result-lose';
         app.innerHTML = '<h1>Результат</h1><div class="result-msg ' + cls + '">' + msg + '</div><button class="btn btn-orange" onclick="renderScreen(\'modes\')">В меню</button><button class="btn btn-back" onclick="navigateTo(\'../../../index.html\')">На главную</button>';
-        if (isWin) startFireworks();
+        if (isWin && typeof startFireworks === 'function') startFireworks();
     }
 }
 
@@ -95,6 +107,8 @@ function renderLearnCard() {
 
 function buildQuestionHTML(card) {
     var html = '';
+    
+    // Старые типы заданий (Лексика и Паронимы)
     if (card.type === 'A') {
         html += '<div class="task-box"><div style="color:var(--gold);font-size:13px;margin-bottom:8px">Исключите ЛИШНЕЕ слово. Выпишите это слово.</div>' + card.q + '</div>';
     } else if (card.type === 'B') {
@@ -108,30 +122,48 @@ function buildQuestionHTML(card) {
             html += '<div class="sentence-line"><strong>' + (i + 1) + '.</strong> ' + card.sentences[i] + '</div>';
         }
         html += '</div></div>';
+    } 
+    // Новые типы заданий (Орфография)
+    else if (card.word && card.trans) {
+        html += '<div class="task-box" style="text-align:center;">';
+        html += '<div style="color:var(--gold);font-size:14px;margin-bottom:12px;font-weight:bold;">Термин / Пример:</div>';
+        html += '<div class="ortho-term">' + card.word + '</div>';
+        html += '<div class="ortho-rule">' + card.trans + '</div>';
+        html += '</div>';
     }
+    
     return html;
 }
 
 function buildAnswerHTML(card) {
     var html = '<div class="answer-box"><b>Ответ: </b>';
+    
+    // Старые типы
     if (card.type === 'A' || card.type === 'B') {
         html += card.a.join(' <b>ИЛИ</b> ');
     } else if (card.type === 'C') {
         html += card.correct;
     } else if (card.type === 'D') {
         html += 'Предложение №' + card.answer + ' (правильно: <b>' + card.correct + '</b>)';
+    } 
+    // Новые типы (Орфография)
+    else if (card.word && card.trans) {
+        html += card.trans;
     }
+    
     html += '</div>';
+    
     if (card.note) {
         html += '<div class="note-box"><b>💡 Пояснение:</b> ' + card.note + '</div>';
     }
+    
     return html;
 }
 
 function revealAnswer() {
     if (revealed) return;
     revealed = true;
-    playSound('success');
+    if(typeof playSound === 'function') playSound('success');
     var card = currentCards[cardIndex];
     document.getElementById('answer-area').innerHTML = buildAnswerHTML(card);
     var btn = document.getElementById('reveal-btn');
@@ -154,23 +186,19 @@ function buildQuizOptions(card) {
     var container = document.getElementById('quiz-options');
     var options = [];
     
+    // Старые типы
     if (card.type === 'A') {
-        // 4 варианта из слов предложения + правильные ответы
         var pool = extractWords(card.q);
         options = card.a.slice();
         var traps = pool.filter(function(w){ return options.indexOf(w) === -1; });
         traps.sort(function(){ return Math.random() - 0.5; });
-        while (options.length < 4 && traps.length > 0) {
-            options.push(traps.shift());
-        }
+        while (options.length < 4 && traps.length > 0) { options.push(traps.shift()); }
         options.sort(function(){ return Math.random() - 0.5; });
     } else if (card.type === 'B') {
         options = card.a.slice();
         var traps = (card.traps || []).slice();
         traps.sort(function(){ return Math.random() - 0.5; });
-        while (options.length < 4 && traps.length > 0) {
-            options.push(traps.shift());
-        }
+        while (options.length < 4 && traps.length > 0) { options.push(traps.shift()); }
         options.sort(function(){ return Math.random() - 0.5; });
     } else if (card.type === 'C') {
         options = card.options.slice();
@@ -178,10 +206,41 @@ function buildQuizOptions(card) {
     } else if (card.type === 'D') {
         options = [1, 2, 3, 4, 5];
     }
+    // Новые типы (Орфография) - генерируем варианты "Слитно", "Раздельно", "Через дефис" или буквы
+    else if (card.word && card.trans) {
+        var correctAnswer = '';
+        if (card.trans.indexOf('СЛИТНО') !== -1) correctAnswer = 'Слитно';
+        else if (card.trans.indexOf('РАЗДЕЛЬНО') !== -1) correctAnswer = 'Раздельно';
+        else if (card.trans.indexOf('ДЕФИС') !== -1 || card.trans.indexOf('дефис') !== -1) correctAnswer = 'Через дефис';
+        else if (card.trans.indexOf('Пропущена') !== -1) {
+            var letter = card.trans.match(/'([А-ЯЁ])'/);
+            if (letter) correctAnswer = letter[1];
+            else correctAnswer = 'По правилу';
+        }
+        
+        if (correctAnswer === 'Слитно') {
+            options = ['Слитно', 'Раздельно', 'Через дефис', 'Зависит от контекста'];
+        } else if (correctAnswer === 'Раздельно') {
+            options = ['Раздельно', 'Слитно', 'Через дефис', 'Зависит от контекста'];
+        } else if (correctAnswer === 'Через дефис') {
+            options = ['Через дефис', 'Слитно', 'Раздельно', 'Зависит от контекста'];
+        } else if (correctAnswer && correctAnswer.length === 1) {
+            var allLetters = ['А', 'О', 'Е', 'И', 'Ы', 'У'];
+            options = [correctAnswer];
+            for (var i = 0; i < allLetters.length && options.length < 4; i++) {
+                if (allLetters[i] !== correctAnswer) options.push(allLetters[i]);
+            }
+        } else {
+            options = ['По правилу', 'Слитно', 'Раздельно', 'Через дефис'];
+        }
+        
+        options.sort(function(){ return Math.random() - 0.5; });
+        container.setAttribute('data-correct', correctAnswer);
+    }
     
     var html = '';
     for (var i = 0; i < options.length; i++) {
-        var label = (card.type === 'C') ? options[i] : (options[i] + '');
+        var label = options[i];
         html += '<div class="quiz-opt" data-val="' + escapeAttr(options[i]) + '" onclick="checkQuizAnswer(this)">' + label + '</div>';
     }
     container.innerHTML = html;
@@ -209,6 +268,7 @@ function checkQuizAnswer(el) {
     var val = el.getAttribute('data-val');
     var isCorrect = false;
     
+    // Старые типы
     if (card.type === 'A' || card.type === 'B') {
         var lower = val.toLowerCase();
         for (var i = 0; i < card.a.length; i++) {
@@ -219,12 +279,19 @@ function checkQuizAnswer(el) {
     } else if (card.type === 'D') {
         isCorrect = (parseInt(val) === card.answer);
     }
+    // Новые типы (Орфография)
+    else if (card.word && card.trans) {
+        var container = document.getElementById('quiz-options');
+        var correctAnswer = container.getAttribute('data-correct');
+        isCorrect = (val === correctAnswer);
+    }
     
     var allOpts = document.querySelectorAll('#quiz-options .quiz-opt');
     for (var j = 0; j < allOpts.length; j++) {
         allOpts[j].classList.add('disabled');
         var v = allOpts[j].getAttribute('data-val');
         var isThisCorrect = false;
+        
         if (card.type === 'A' || card.type === 'B') {
             var lv = v.toLowerCase();
             for (var k = 0; k < card.a.length; k++) {
@@ -234,15 +301,20 @@ function checkQuizAnswer(el) {
             isThisCorrect = (v === card.correct);
         } else if (card.type === 'D') {
             isThisCorrect = (parseInt(v) === card.answer);
+        } else if (card.word && card.trans) {
+            var container = document.getElementById('quiz-options');
+            var correctAnswer = container.getAttribute('data-correct');
+            isThisCorrect = (v === correctAnswer);
         }
+        
         if (isThisCorrect) allOpts[j].classList.add('correct');
     }
     
     if (isCorrect) {
-        playSound('success');
+        if(typeof playSound === 'function') playSound('success');
     } else {
         el.classList.add('wrong');
-        playSound('error');
+        if(typeof playSound === 'function') playSound('error');
         mistakes++;
     }
     
@@ -263,16 +335,15 @@ function nextQuiz() {
 }
 
 function handleMode(mode) {
-    var el = event.target;
-    el.classList.add('success');
-    playSound('success');
+    if(event && event.target) event.target.classList.add('success');
+    if(typeof playSound === 'function') playSound('success');
     setTimeout(function(){ renderScreen('topics', {mode: mode}); }, 400);
 }
 
 function startTopic(scope) {
-    var el = event.target;
-    el.classList.add('success');
-    playSound('success');
+    if(event && event.target) event.target.classList.add('success');
+    if(typeof playSound === 'function') playSound('success');
+    
     if (scope === 'all') {
         currentCards = [];
         for (var key in russianDB.topicTitles) {
@@ -282,6 +353,7 @@ function startTopic(scope) {
         currentCards = russianDB[scope].slice();
     }
     currentCards.sort(function(){ return Math.random() - 0.5; });
+    
     if (currentMode === 'learn') {
         cardIndex = 0;
         setTimeout(function(){ renderScreen('flashcard'); }, 400);
@@ -292,7 +364,7 @@ function startTopic(scope) {
 }
 
 function nextCard() {
-    playSound('success');
+    if(typeof playSound === 'function') playSound('success');
     cardIndex++;
     if (cardIndex < currentCards.length) {
         renderScreen('flashcard');
@@ -302,12 +374,13 @@ function nextCard() {
 }
 
 var startScreen = document.getElementById('start-screen');
-startScreen.addEventListener('click', function(){
-    initAudio();
-    startScreen.style.opacity = '0';
-    setTimeout(function(){ startScreen.style.display = 'none'; }, 500);
-    renderScreen('modes');
-});
+if (startScreen) {
+    startScreen.addEventListener('click', function(){
+        startScreen.style.opacity = '0';
+        setTimeout(function(){ startScreen.style.display = 'none'; }, 500);
+        renderScreen('modes');
+    });
+}
 </script>
 </body>
 </html>
