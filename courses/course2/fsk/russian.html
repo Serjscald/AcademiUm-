@@ -51,18 +51,24 @@ var mistakes = 0;
 var currentMode = 'learn';
 var revealed = false;
 var answered = false;
+var audioInitialized = false;
 
-// --- ИСПРАВЛЕНИЕ ЗВУКА: Глобальная инициализация при первом клике ---
-document.addEventListener('click', function initAudioOnce() {
-    if (typeof initAudio === 'function') {
+// --- НАДЕЖНАЯ ИНИЦИАЛИЗАЦИЯ ЗВУКА ---
+function safeInitAudio() {
+    if (!audioInitialized && typeof initAudio === 'function') {
         initAudio();
+        audioInitialized = true;
     }
-    document.removeEventListener('click', initAudioOnce);
-}, { once: true });
+}
+
+// Привязываем инициализацию ко всем возможным точкам входа
+document.addEventListener('click', safeInitAudio, { once: true });
+document.addEventListener('touchstart', safeInitAudio, { once: true });
 
 // Усиленная функция очистки текста от любых служебных пометок
 function cleanOrthoText(text) {
     if (!text) return '';
+    
     // Удаляем: "Вариант X.", "Задание X, вар Y.", "(тема X).", "Ряд X."
     var cleaned = text
         .replace(/(?:[Вв]ариант\s+\d+\.?)/gi, '')
@@ -70,6 +76,7 @@ function cleanOrthoText(text) {
         .replace(/(?:\([тТ]ема\s+\d+\)\.?)/gi, '')
         .replace(/(?:[Рр]яд\s+[А-Яа-я0-9]+\.?)/gi, '')
         .trim();
+        
     // Убираем лишние пробелы и точки в конце
     return cleaned.replace(/\s+/g, ' ').replace(/\.\s*$/, '').trim();
 }
@@ -172,13 +179,14 @@ function buildAnswerHTML(card) {
     html += '</div>';
     
     if (card.note) {
-        html += '<div class="note-box"><b> Пояснение:</b> ' + card.note + '</div>';
+        html += '<div class="note-box"><b>💡 Пояснение:</b> ' + card.note + '</div>';
     }
     
     return html;
 }
 
 function revealAnswer() {
+    safeInitAudio(); // Дополнительная страховка для звука
     if (revealed) return;
     revealed = true;
     if(typeof playSound === 'function') playSound('success');
@@ -280,6 +288,7 @@ function extractWords(sentence) {
 }
 
 function checkQuizAnswer(el) {
+    safeInitAudio(); // Дополнительная страховка для звука
     if (answered) return;
     answered = true;
     var card = currentCards[quizIndex];
@@ -353,12 +362,14 @@ function nextQuiz() {
 }
 
 function handleMode(mode) {
+    safeInitAudio(); // Инициализация звука при выборе режима
     if(event && event.target) event.target.classList.add('success');
     if(typeof playSound === 'function') playSound('success');
     setTimeout(function(){ renderScreen('topics', {mode: mode}); }, 400);
 }
 
 function startTopic(scope) {
+    safeInitAudio(); // Инициализация звука при выборе темы
     if(event && event.target) event.target.classList.add('success');
     if(typeof playSound === 'function') playSound('success');
     
@@ -382,6 +393,7 @@ function startTopic(scope) {
 }
 
 function nextCard() {
+    safeInitAudio(); // Инициализация звука при переходе к следующей карточке
     if(typeof playSound === 'function') playSound('success');
     cardIndex++;
     if (cardIndex < currentCards.length) {
@@ -394,6 +406,7 @@ function nextCard() {
 var startScreen = document.getElementById('start-screen');
 if (startScreen) {
     startScreen.addEventListener('click', function(){
+        safeInitAudio(); // Гарантированная инициализация звука при старте
         startScreen.style.opacity = '0';
         setTimeout(function(){ startScreen.style.display = 'none'; }, 500);
         renderScreen('modes');
