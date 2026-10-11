@@ -27,7 +27,7 @@
         
         /* Стили для новых орфографических карточек */
         .ortho-term { font-size: 22px; color: white; text-align: center; margin: 20px 0; font-weight: bold; }
-        .ortho-rule { color: var(--text-muted); font-style: italic; font-size: 15px; line-height: 1.5; text-align: center; }
+        .ortho-rule-placeholder { color: var(--text-muted); font-style: italic; font-size: 14px; text-align: center; margin-top: 10px; opacity: 0.6; }
     </style>
 </head>
 <body>
@@ -63,22 +63,14 @@ document.addEventListener('click', function initAudioOnce() {
 // Усиленная функция очистки текста от любых служебных пометок
 function cleanOrthoText(text) {
     if (!text) return '';
-    
-    // Удаляем:
-    // 1. "Вариант X." или "вариант X."
-    // 2. "Задание X, вар Y." или "задание X, вар Y."
-    // 3. "(тема X)." или "(Тема X)."
-    // 4. "Ряд X." или "ряд X."
-    // 5. Любые сочетания этих фраз в конце строки
-    
+    // Удаляем: "Вариант X.", "Задание X, вар Y.", "(тема X).", "Ряд X."
     var cleaned = text
         .replace(/(?:[Вв]ариант\s+\d+\.?)/gi, '')
         .replace(/(?:[Зз]адание\s+\d+,\s*[вВ][аА][рР]\s+\d+\.?)/gi, '')
         .replace(/(?:\([тТ]ема\s+\d+\)\.?)/gi, '')
         .replace(/(?:[Рр]яд\s+[А-Яа-я0-9]+\.?)/gi, '')
         .trim();
-        
-    // Убираем лишние пробелы и точки в конце, если они остались после удаления
+    // Убираем лишние пробелы и точки в конце
     return cleaned.replace(/\s+/g, ' ').replace(/\.\s*$/, '').trim();
 }
 
@@ -148,8 +140,8 @@ function buildQuestionHTML(card) {
         html += '<div class="task-box" style="text-align:center;">';
         html += '<div style="color:var(--gold);font-size:14px;margin-bottom:12px;font-weight:bold;">Термин / Пример:</div>';
         html += '<div class="ortho-term">' + card.word + '</div>';
-        // Очищаем правило от номеров вариантов
-        html += '<div class="ortho-rule">' + cleanOrthoText(card.trans) + '</div>';
+        // В режиме обучения ПРАВИЛО СКРЫТО до нажатия кнопки
+        html += '<div class="ortho-rule-placeholder">(Нажмите «Показать ответ», чтобы увидеть правило)</div>';
         html += '</div>';
     }
     
