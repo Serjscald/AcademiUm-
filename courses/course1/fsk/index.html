@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ФСК 1 курс — АкадемиУм!</title>
+    <link rel="stylesheet" href="../../../css/style.css">
+</head>
+<body>
+
+<div id="start-screen">
+    <h2>🎓 ФСК — 1 курс</h2>
+    <p>Нажмите, чтобы начать обучение</p>
+</div>
+
+<canvas id="fireworks-canvas"></canvas>
+<div class="app-container" id="app"></div>
+
+<script src="../../../js/core.js"></script>
+<script>
+var app = document.getElementById('app');
+
+document.addEventListener('click', function initAudioOnce() {
+    if (typeof initAudio === 'function') initAudio();
+    document.removeEventListener('click', initAudioOnce);
+}, { once: true });
+
+function renderMenu() {
+    app.innerHTML = '<h1>ФСК — 1 курс</h1><div class="subtitle">Выберите дисциплину</div>' +
+        '<div class="grid single-col" style="margin-top:20px">' +
+        '<div class="tile" onclick="go(\'russian.html\')">📝 Русский язык</div>' +
+        '</div>' +
+        '<button class="btn btn-back" onclick="navigateTo(\'../../../index.html\')">На главную</button>';
+}
+
+function go(url) {
+    if (typeof playSound === 'function') playSound('success');
+    setTimeout(function(){ window.location.href = url; }, 300);
+}
+
+var startScreen = document.getElementById('start-screen');
+startScreen.addEventListener('click', function(){
+    startScreen.style.opacity = '0';
+    setTimeout(function(){ startScreen.style.display = 'none'; }, 500);
+    renderMenu();
+});
+</script>
+</body>
+</html>
