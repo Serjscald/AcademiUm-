@@ -2984,6 +2984,101 @@ function checkReady() {
 }
 
 
+// --- ПОШАГОВЫЙ РАЗБОР ДВУХ МУЗЕЙНЫХ ЗАДАЧ (1.1 и 1.2) ---
+// Существующие условие, проверка переменных и currentTask.solve() не меняются.
+// Общие кнопки, подсветка и навигация используются из работающего разбора 1.3.
+function createMuseumGuide(v, conclusion) {
+    var isSecond = currentTask.id === 'task_1_2';
+    function fmt(x) { return new Intl.NumberFormat('ru-RU', {maximumFractionDigits: 2}).format(x); }
+    function rub(x) { return fmt(x) + ' руб.'; }
+    function pct(x) { return fmt(x * 100) + '%'; }
+    function source(type, val) {
+        return '<span class="index-source index-source-' + type + '">' + fmt(val) + '</span>';
+    }
+    function equation(expression, result) {
+        return '<p class="index-calculation">' + expression + ' = <strong>' + result + '</strong></p>';
+    }
+    var names = ['Взрослые', 'Льготные', 'Детские'];
+    var p0 = [v.p0_1, v.p0_2, v.p0_3];
+    var p1 = [v.p1_1, v.p1_2, v.p1_3];
+    var q1 = [v.q1_1, v.q1_2, v.q1_3];
+    var q0 = isSecond
+        ? [v.p0q0_1, v.p0q0_2, v.p0q0_3].map(function(r,i){return r*1000/p0[i];})
+        : [v.q0_1,v.q0_2,v.q0_3];
+    var base = p0.reduce(function(s,p,i){return s+p*q0[i];},0);
+    var actual = p1.reduce(function(s,p,i){return s+p*q1[i];},0);
+    var conditional = p0.reduce(function(s,p,i){return s+p*q1[i];},0);
+    var total = actual-base, price = actual-conditional, quantity = conditional-base;
+    var row = function(prices,amounts,priceType,amountType) {
+        return prices.map(function(p,i){return source(priceType,p)+' × '+source(amountType,amounts[i]);}).join(' + ');
+    };
+    var recover = q0.map(function(n,i){
+        return equation(names[i]+': '+source('p0q0',v['p0q0_'+(i+1)])+' × 1 000 / '+source('p0',p0[i]),fmt(n)+' шт.');
+    }).join('');
+    var stages = [];
+    if (isSecond) {
+        stages.push({
+            title:'Восстанавливаем январское количество билетов (q₀)',
+            question:'Известны январская цена и выручка в тысячах рублей. Как получить число билетов?',
+            body:'<p><strong>Формула:</strong> q₀ = R₀ / p₀. Сначала переводим выручку из тыс. руб. в рубли.</p>'
+                + recover
+                + '<p class="index-step-note">Проверка: количество × цена возвращает исходную январскую выручку.</p>'
+        });
+    } else {
+        stages.push({
+            title:'Разбираемся в обозначениях и периодах',
+            question:'Какие из четырёх столбцов обозначают цены, а какие — число билетов? Что значит индекс 0 или 1?',
+            body:'<p><strong>p</strong> — цена одного билета, <strong>q</strong> — количество проданных билетов. Индекс 0 — январь, индекс 1 — март.</p>'
+                + '<p class="index-step-note">Чтобы получить выручку по каждой категории, умножаем цену на количество билетов за один и тот же месяц.</p>'
+                + equation(source('p0',p0[0])+' × '+source('q0',q0[0]),rub(p0[0]*q0[0]))
+                + equation(source('p1',p1[0])+' × '+source('q1',q1[0]),rub(p1[0]*q1[0]))
+        });
+    }
+    stages.push({
+        title:'Находим три совокупные суммы',
+        question:'Зачем, кроме фактических январской и мартовской выручек, нужна условная сумма при январских ценах?',
+        body:'<p><strong>Январь, Σ(p₀q₀):</strong></p>'
+            + (isSecond
+                ? equation([v.p0q0_1,v.p0q0_2,v.p0q0_3].map(function(n){return '('+source('p0q0',n)+' × 1 000)';}).join(' + '),rub(base))
+                : equation(row(p0,q0,'p0','q0'),rub(base)))
+            + '<p><strong>Март, Σ(p₁q₁):</strong></p>'
+            + equation(row(p1,q1,'p1','q1'),rub(actual))
+            + '<p><strong>Условная сумма, Σ(p₀q₁):</strong></p>'
+            + equation(row(p0,q1,'p0','q1'),rub(conditional))
+            + '<p class="index-step-note">Условная выручка — сколько музей получил бы за мартовские билеты по январским ценам. Она отделяет эффект изменения числа билетов от эффекта цен.</p>'
+    });
+    stages.push({
+        title:'Вычисляем индексы выручки, цен и количества',
+        question:'Какие суммы должны стоять в числителе и знаменателе каждого индекса?',
+        body:'<p><strong>Индекс выручки:</strong> Iₚq = Σ(p₁q₁) / Σ(p₀q₀)</p>'
+            + equation(fmt(actual)+' / '+fmt(base)+' × 100',pct(actual/base))
+            + '<p><strong>Индекс цен:</strong> Iₚ = Σ(p₁q₁) / Σ(p₀q₁)</p>'
+            + equation(fmt(actual)+' / '+fmt(conditional)+' × 100',pct(actual/conditional))
+            + '<p><strong>Индекс количества:</strong> Iq = Σ(p₀q₁) / Σ(p₀q₀)</p>'
+            + equation(fmt(conditional)+' / '+fmt(base)+' × 100',pct(conditional/base))
+            + '<p class="index-step-note">Проверка: Iₚ × Iq = Iₚq (в коэффициентах). Значения свыше 100% означают рост, ниже 100% — снижение.</p>'
+    });
+    stages.push({
+        title:'Отделяем влияние цен от влияния количества',
+        question:'Как разложить общий прирост выручки на два фактора и проверить результат?',
+        body:'<p><strong>Общее изменение:</strong> ΔR = Σ(p₁q₁) − Σ(p₀q₀)</p>'
+            + equation(fmt(actual)+' − '+fmt(base),rub(total))
+            + '<p><strong>Изменение за счёт цен:</strong> ΔP = Σ(p₁q₁) − Σ(p₀q₁)</p>'
+            + equation(fmt(actual)+' − '+fmt(conditional),rub(price))
+            + '<p><strong>Изменение за счёт количества:</strong> ΔQ = Σ(p₀q₁) − Σ(p₀q₀)</p>'
+            + equation(fmt(conditional)+' − '+fmt(base),rub(quantity))
+            + '<p class="index-step-note"><strong>Самопроверка:</strong> '+fmt(price)+' + ('+fmt(quantity)+') = '+rub(total)+'.</p>'
+    });
+    stages.push({
+        title:'Объясняем результат музею',
+        question:'Что произошло с выручкой, как повлияли цены и количество проданных билетов?',
+        body:'<p>'+htmlEscape(conclusion)+'</p>'
+            + '<p class="index-step-note">Итоговый индекс выручки: <strong>'+pct(actual/base)+'</strong>. Абсолютное изменение: <strong>'+rub(total)+'</strong>, в том числе за счёт цен — <strong>'+rub(price)+'</strong>, за счёт количества — <strong>'+rub(quantity)+'</strong>.</p>'
+            + '<p>Прирост выручки и прирост посещаемости — разные показатели. Даже если билетов продали меньше, повышение цены способно увеличить общую выручку.</p>'
+    });
+    return {steps:stages,current:0,opened:{}};
+}
+
 // --- ПОШАГОВОЕ ОБЪЯСНЕНИЕ: ТЕАТР (task_1_3) ---
 // Данные и исходная функция currentTask.solve() остаются без изменений.
 // Здесь вычисляются только значения, необходимые для отображения каждого шага.
@@ -3212,9 +3307,9 @@ function validateAndSolve() {
         playSound('success');
 
         var result = currentTask.solve(taskVars);
-        if (currentTask.id === 'task_1_3' && currentTask.type === 'index_table') {
+        if (currentTask.type === 'index_table' && ['task_1_1','task_1_2','task_1_3'].indexOf(currentTask.id) !== -1) {
             // Новая презентация на 5 этапов; исходный solve() продолжает выполняться.
-            theatreGuide = createTheatreGuide(taskVars, result.conclusion);
+            theatreGuide = currentTask.id === 'task_1_3' ? createTheatreGuide(taskVars, result.conclusion) : createMuseumGuide(taskVars, result.conclusion);
             renderTheatreGuideStep();
             focusTheatreGuideStep();
         } else {
