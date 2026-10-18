@@ -94,7 +94,7 @@ var currentTask = null; var taskVars = {}; var assignedVars = {}; var activeCell
 function renderScreen(screenName, data) {
     app.innerHTML = '';
     if (screenName === 'modes') {
-        app.innerHTML = '<h1>Статистика</h1><div class="subtitle">Выберите режим</div><div class="grid" style="margin-top:40px"><div class="tile" onclick="handleMode(\'learn\')">Обучение</div><div class="tile" onclick="handleMode(\'quiz\')">Контроль</div><div class="tile" onclick="handleMode(\'tasks\')">Задачи</div></div><button class="btn btn-back" onclick="navigateTo(\'index.html\')">Назад</button>';
+        app.innerHTML = '<h1>Статистика</h1><div class="subtitle">Выберите режим</div><div class="grid" style="margin-top:40px"><div class="tile" onclick="handleMode(\'learn\')">Обучение</div><div class="tile" onclick="handleMode(\'quiz\')">Контроль</div><div class="tile" onclick="handleMode(\'tasks\')" style="grid-column: 1 / -1; width: calc((100% - 15px) / 2); justify-self: center;">Задачи</div></div><button class="btn btn-back" onclick="navigateTo(\'index.html\')">Назад</button>';
     } else if (screenName === 'topics') {
         var mode = (data && data.mode) ? data.mode : 'learn'; currentMode = mode;
         var title = (mode === 'learn') ? 'Обучение' : (mode === 'quiz' ? 'Контроль' : 'Задачи');
@@ -224,7 +224,9 @@ function solveTask() {
     area.scrollIntoView({ behavior: 'smooth' });
 }
 
-function handleMode(mode) { event.target.classList.add('success'); playSound('success'); setTimeout(function(){ renderScreen('topics', {mode: mode}); }, 400); }
+function handleMode(mode) {
+    if (mode === 'tasks') { window.location.assign('statistics-practice.html'); return; }
+     event.target.classList.add('success'); playSound('success'); setTimeout(function(){ renderScreen('topics', {mode: mode}); }, 400); }
 function startTopic(scope) {
     event.target.classList.add('success'); playSound('success');
     if (scope === 'all') { currentCards = []; for (var key in statisticsDB.topicTitles) currentCards = currentCards.concat(statisticsDB[key]); } 
