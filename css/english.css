@@ -1,0 +1,53 @@
+/* English learning cards — v6.4.2. Scoped to the English page only. */
+.english-teacher-note,
+.english-teacher-example {
+    width: 100%;
+    text-align: center;
+    text-transform: none;
+    letter-spacing: normal;
+    font-weight: 400;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+}
+.english-teacher-note {
+    margin-top: 18px;
+    padding: 14px 16px;
+    border: 1px solid #475569;
+    border-radius: 12px;
+    background: #1e293b;
+    color: #e2e8f0;
+    font-size: 15px;
+}
+.english-teacher-note strong { color: #fbbf24; }
+.english-teacher-note p { margin: 8px 0 0; }
+.english-teacher-example {
+    margin-top: 10px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    background: #172b39;
+    color: #e2e8f0;
+    font-size: 15px;
+}
+.english-teacher-example strong { color: #7dd3fc; }
+@media (max-width: 480px) {
+    .app-container { padding: 16px; min-height: 0; }
+    .flashcard { padding: 22px 14px; margin: 14px 0; }
+    .fc-word { font-size: clamp(21px, 6vw, 28px); overflow-wrap: anywhere; }
+    .fc-trans { font-size: 16px; overflow-wrap: anywhere; }
+    .english-teacher-note,.english-teacher-example { font-size: 14px; padding: 12px; }
+}
+
+.english-quiz-question{font-size:clamp(19px,5vw,25px);overflow-wrap:anywhere;}
+.english-quiz-choice{display:flex;justify-content:center;align-items:center;text-align:center;width:100%;min-height:54px;line-height:1.4;overflow-wrap:anywhere;}
+.english-quiz-choice:disabled{cursor:default;opacity:1;}
+.english-quiz-feedback{margin-top:14px;text-align:left;line-height:1.55;overflow-wrap:anywhere;}
+.english-quiz-feedback p{margin:9px 0;}
+
+/* Learning cards: center the translation, explanation and example consistently. */
+#app .flashcard .fc-word,
+#app .flashcard .fc-trans,
+#app .flashcard .english-teacher-note,
+#app .flashcard .english-teacher-note p,
+#app .flashcard .english-teacher-example {
+    text-align: center;
+}
