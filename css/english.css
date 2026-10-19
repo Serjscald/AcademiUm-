@@ -1,8 +1,8 @@
-/* English learning cards — v6.4.0. Scoped to the English page only. */
+/* English learning cards — v6.4.2. Scoped to the English page only. */
 .english-teacher-note,
 .english-teacher-example {
     width: 100%;
-    text-align: left;
+    text-align: center;
     text-transform: none;
     letter-spacing: normal;
     font-weight: 400;
@@ -42,3 +42,12 @@
 .english-quiz-choice:disabled{cursor:default;opacity:1;}
 .english-quiz-feedback{margin-top:14px;text-align:left;line-height:1.55;overflow-wrap:anywhere;}
 .english-quiz-feedback p{margin:9px 0;}
+
+/* Learning cards: center the translation, explanation and example consistently. */
+#app .flashcard .fc-word,
+#app .flashcard .fc-trans,
+#app .flashcard .english-teacher-note,
+#app .flashcard .english-teacher-note p,
+#app .flashcard .english-teacher-example {
+    text-align: center;
+}
