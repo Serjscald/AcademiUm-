@@ -1,0 +1,38 @@
+/* English learning cards — v6.2.0. Scoped to the English page only. */
+.english-teacher-note,
+.english-teacher-example {
+    width: 100%;
+    text-align: left;
+    text-transform: none;
+    letter-spacing: normal;
+    font-weight: 400;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+}
+.english-teacher-note {
+    margin-top: 18px;
+    padding: 14px 16px;
+    border: 1px solid #475569;
+    border-radius: 12px;
+    background: #1e293b;
+    color: #e2e8f0;
+    font-size: 15px;
+}
+.english-teacher-note strong { color: #fbbf24; }
+.english-teacher-note p { margin: 8px 0 0; }
+.english-teacher-example {
+    margin-top: 10px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    background: #172b39;
+    color: #e2e8f0;
+    font-size: 15px;
+}
+.english-teacher-example strong { color: #7dd3fc; }
+@media (max-width: 480px) {
+    .app-container { padding: 16px; min-height: 0; }
+    .flashcard { padding: 22px 14px; margin: 14px 0; }
+    .fc-word { font-size: clamp(21px, 6vw, 28px); overflow-wrap: anywhere; }
+    .fc-trans { font-size: 16px; overflow-wrap: anywhere; }
+    .english-teacher-note,.english-teacher-example { font-size: 14px; padding: 12px; }
+}
