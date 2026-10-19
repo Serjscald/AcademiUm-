@@ -20,6 +20,7 @@
 
 <script src="../../../js/core.js"></script>
 <script src="../../../js/data-english.js"></script>
+<script src="../../../js/english-quiz.js?v=6.4.0"></script>
 <script>
 var app = document.getElementById('app');
 var currentCards = [];
@@ -51,31 +52,7 @@ function renderScreen(screenName, data) {
         var extra = (card.note ? '<div class="english-teacher-note"><strong>💡 Пояснение</strong><p>' + card.note + '</p></div>' : '') + (card.example ? '<div class="english-teacher-example"><strong>Пример:</strong> ' + card.example + '</div>' : '');
         app.innerHTML = '<h1>Карточка ' + (cardIndex + 1) + ' / ' + currentCards.length + '</h1><div class="flashcard"><div class="fc-word">' + card.word + '</div><div class="fc-trans">' + card.trans + '</div>' + extra + '</div><button class="btn btn-orange" onclick="nextCard()">Следующая</button><button class="btn btn-stop" onclick="renderScreen(\'topics\',{mode:\'learn\'})">Прервать</button>';
     } else if (screenName === 'quiz') {
-        var qcard = currentCards[quizIndex];
-        currentQuizDirection = (Math.random() < 0.5) ? 'term-to-def' : 'def-to-term';
-        var questionText, correctAnswer, optionsPool;
-        if (currentQuizDirection === 'term-to-def') {
-            questionText = qcard.word; correctAnswer = qcard.trans;
-            optionsPool = currentCards.map(function(c){ return c.trans; });
-        } else {
-            questionText = qcard.trans; correctAnswer = qcard.word;
-            optionsPool = currentCards.map(function(c){ return c.word; });
-        }
-        var options = [correctAnswer];
-        while (options.length < 3) {
-            var rnd = optionsPool[Math.floor(Math.random() * optionsPool.length)];
-            if (options.indexOf(rnd) === -1) options.push(rnd);
-        }
-        options.sort(function(){ return Math.random() - 0.5; });
-        var optsHTML = '';
-        for (var i = 0; i < options.length; i++) {
-            var o = options[i].replace(/'/g, "\\'");
-            var ca = correctAnswer.replace(/'/g, "\\'");
-            var disp = options[i].substring(0, 100) + (options[i].length > 100 ? '...' : '');
-            optsHTML += '<div class="quiz-opt" onclick="checkAnswer(this,\'' + o + '\',\'' + ca + '\')">' + disp + '</div>';
-        }
-        var hint = (currentQuizDirection === 'term-to-def') ? 'Выберите перевод:' : 'Выберите слово/фразу:';
-        app.innerHTML = '<h1>Контроль ' + (quizIndex + 1) + ' / ' + currentCards.length + '</h1><div class="flashcard" id="quiz-card"><div class="fc-word" style="font-size:20px">' + questionText + '</div><div class="fc-trans" style="font-size:14px;color:var(--text-muted)">' + hint + '</div></div><div class="quiz-options">' + optsHTML + '</div><button class="btn btn-stop" onclick="renderScreen(\'topics\',{mode:\'quiz\'})">Прервать</button>';
+        englishQuizRender();
     } else if (screenName === 'result') {
         var isWin = (mistakes === 0);
         var msg = isWin ? '🎉 Отличная работа!' : 'Нужно заниматься усерднее, Данечка!';
@@ -110,7 +87,7 @@ function startTopic(scope) {
         setTimeout(function(){ renderScreen('flashcard'); }, 400);
     } else {
         quizIndex = 0; mistakes = 0;
-        setTimeout(function(){ renderScreen('quiz'); }, 400);
+        setTimeout(function(){ englishQuizStart(scope); }, 400);
     }
 }
 
