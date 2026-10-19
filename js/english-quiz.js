@@ -3,7 +3,7 @@ var englishQuizState = null;
 var englishQuizGroups = {
  topic1:[[0,1,2,3,4],[5,6,7],[8,9,10,11,12],[13,14,15,16,17],[18,19,20],[21,22,23]],
  topic2:[[0,1,2,3,4,5,6],[7,8,9,10,11,12,13],[14,15,16,17,18,19]],
- topic3:[[0,6,24,25,35,36],[1,2,3,4,5],[7,8,9,10,11,12],[13,14,15,16,17,18,19,20,21,22,23],[26,27,28,29,30,31,32,33,34,37],[38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63]],
+ topic3:[[0,6,24,25,35,36],[1,2,3,4,5,24,35,36],[7,8,9,10,11,12],[13,14,15,16,17,18,19,20,21,22,23],[26,27,28,29,30,31,32,33,34,37],[38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63]],
  topic4:[[0,1,2,3,4,5,6,7,8],[26,27,28,29,30,31,32,33,34,35,36],[37]]
 };
 var englishQuizCloze = {
@@ -40,11 +40,14 @@ function englishQuizMakePlan(scope){
  var entries=[],topics=scope==='all'?Object.keys(englishDB.topicTitles):[scope];
  topics.forEach(function(key){englishDB[key].forEach(function(card,index){entries.push({key:key,index:index,card:card});});});
  entries=englishQuizShuffle(entries);
- // Сбалансированный порядок направлений с точностью до одного задания.
+ // Для упражнений с пропусками направление всегда контекстное.
+ // Остальные задания чередуют языки строго поровну (±1 при нечётном числе).
+ var reversible=entries.filter(function(e){return !(e.key==='topic4'&&Object.prototype.hasOwnProperty.call(englishQuizCloze,e.index));});
  var directions=[];
- for(var j=0;j<entries.length;j++) directions.push(j%2?'def-to-term':'term-to-def');
+ for(var j=0;j<reversible.length;j++)directions.push(j%2?'def-to-term':'term-to-def');
  directions=englishQuizShuffle(directions);
- return entries.map(function(entry,i){entry.direction=directions[i];return entry;});
+ var pos=0;
+ return entries.map(function(entry){entry.direction=(entry.key==='topic4'&&Object.prototype.hasOwnProperty.call(englishQuizCloze,entry.index))?'context':directions[pos++];return entry;});
 }
 function englishQuizStart(scope){
  englishQuizState={plan:englishQuizMakePlan(scope),position:0,mistakes:0,locked:false,feedback:null};
