@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Английский язык — АкадемиУм!</title>
     <link rel="stylesheet" href="../../../css/style.css">
+    <link rel="stylesheet" href="../../../css/english.css?v=6.2.0">
 </head>
 <body>
 
@@ -47,7 +48,8 @@ function renderScreen(screenName, data) {
         app.innerHTML = '<h1>' + title + '</h1><div class="subtitle">Выберите тему</div><div class="grid single-col" style="margin-top:20px">' + topicsHTML + '</div><button class="btn btn-back" onclick="renderScreen(\'modes\')">Назад</button>';
     } else if (screenName === 'flashcard') {
         var card = currentCards[cardIndex];
-        app.innerHTML = '<h1>Карточка ' + (cardIndex + 1) + ' / ' + currentCards.length + '</h1><div class="flashcard"><div class="fc-word">' + card.word + '</div><div class="fc-trans">' + card.trans + '</div></div><button class="btn btn-orange" onclick="nextCard()">Следующая</button><button class="btn btn-stop" onclick="renderScreen(\'topics\',{mode:\'learn\'})">Прервать</button>';
+        var extra = (card.note ? '<div class="english-teacher-note"><strong>💡 Пояснение</strong><p>' + card.note + '</p></div>' : '') + (card.example ? '<div class="english-teacher-example"><strong>Пример:</strong> ' + card.example + '</div>' : '');
+        app.innerHTML = '<h1>Карточка ' + (cardIndex + 1) + ' / ' + currentCards.length + '</h1><div class="flashcard"><div class="fc-word">' + card.word + '</div><div class="fc-trans">' + card.trans + '</div>' + extra + '</div><button class="btn btn-orange" onclick="nextCard()">Следующая</button><button class="btn btn-stop" onclick="renderScreen(\'topics\',{mode:\'learn\'})">Прервать</button>';
     } else if (screenName === 'quiz') {
         var qcard = currentCards[quizIndex];
         currentQuizDirection = (Math.random() < 0.5) ? 'term-to-def' : 'def-to-term';
