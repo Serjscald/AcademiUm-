@@ -1,4 +1,4 @@
-/* English learning cards — v6.3.0. Scoped to the English page only. */
+/* English learning cards — v6.4.0. Scoped to the English page only. */
 .english-teacher-note,
 .english-teacher-example {
     width: 100%;
@@ -36,3 +36,9 @@
     .fc-trans { font-size: 16px; overflow-wrap: anywhere; }
     .english-teacher-note,.english-teacher-example { font-size: 14px; padding: 12px; }
 }
+
+.english-quiz-question{font-size:clamp(19px,5vw,25px);overflow-wrap:anywhere;}
+.english-quiz-choice{text-align:left;min-height:54px;line-height:1.4;overflow-wrap:anywhere;}
+.english-quiz-choice:disabled{cursor:default;opacity:1;}
+.english-quiz-feedback{margin-top:14px;text-align:left;line-height:1.55;overflow-wrap:anywhere;}
+.english-quiz-feedback p{margin:9px 0;}
