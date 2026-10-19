@@ -38,7 +38,7 @@
 }
 
 .english-quiz-question{font-size:clamp(19px,5vw,25px);overflow-wrap:anywhere;}
-.english-quiz-choice{text-align:left;min-height:54px;line-height:1.4;overflow-wrap:anywhere;}
+.english-quiz-choice{display:flex;justify-content:center;align-items:center;text-align:center;width:100%;min-height:54px;line-height:1.4;overflow-wrap:anywhere;}
 .english-quiz-choice:disabled{cursor:default;opacity:1;}
 .english-quiz-feedback{margin-top:14px;text-align:left;line-height:1.55;overflow-wrap:anywhere;}
 .english-quiz-feedback p{margin:9px 0;}
