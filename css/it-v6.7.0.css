@@ -1,4 +1,4 @@
-/* Информационные технологии v6.6.0: адаптивный интерфейс занятий */
+/* Информационные технологии v6.7.0: адаптивный интерфейс занятий */
 body.psy-page{padding:16px 12px;align-items:flex-start;min-height:100vh}
 .psy-page .app-container{max-width:760px;min-height:0;margin:18px auto;padding:clamp(16px,4vw,32px);display:block;text-align:center}
 .psy-page h1{font-size:clamp(24px,5vw,32px);line-height:1.2}
