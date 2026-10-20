@@ -1,14 +1,14 @@
 /* АкадемиУм! Психология v6.6.0 · испытательный модуль */
 (function(){
 'use strict';
-const db=window.psychologyDB;
+const db=window.psychologyDB||null;
 const app=document.getElementById('app');
 let scenarioItems=[],scenarioIndex=0,scenarioCorrect=0,scenarioChosen=-1,scenarioLocked=false;
 let mode='learn',topic='topic1',items=[],index=0,errors=0,correctCount=0,locked=false,picked=-1,currentOptions=[],rightIndex=0,direction='word';
 const esc=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const shuffle=a=>{let x=a.slice();for(let i=x.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[x[i],x[j]]=[x[j],x[i]];}return x};
 const btn=(label,action,cls='')=>'<button type="button" class="psy-btn '+cls+'" data-action="'+action+'">'+label+'</button>';
-function set(html){app.innerHTML=html;window.scrollTo({top:0,behavior:'instant'});bind();}
+function set(html){app.innerHTML=html;window.scrollTo(0,0);bind();}
 const allKeys=()=>Object.keys(db.topicTitles).filter(k=>Array.isArray(db[k])&&db[k].length>0);
 const name=k=>db.topicTitles[k]||k;
 const sound=ok=>{try{initAudio();playSound(ok?'success':'error')}catch(e){}};
@@ -28,9 +28,9 @@ const pool=db[key].filter(x=>x!==q);
 direction=index%2===0?'word':'trans';
 const get=x=>direction==='word'?x.trans:x.word;
 const used=new Set([get(q)]),alts=[];
-for(const a of shuffle(pool)){if(!used.has(get(a))){used.add(get(a));alts.push(a);}if(alts.length===3)break;}
+for(const a of shuffle(pool)){if(!used.has(get(a))){used.add(get(a));alts.push(a);}if(alts.length===3)break;} if(alts.length<3){for(const k of allKeys()){for(const a of shuffle(db[k])){if(!used.has(get(a))){used.add(get(a));alts.push(a);}if(alts.length===3)break;}if(alts.length===3)break;}}
 currentOptions=shuffle([q,...alts]);rightIndex=currentOptions.indexOf(q);
-const ask=direction==='word'?q.word:q.trans;
+if(currentOptions.length<4){set('<h1>Недостаточно ответов</h1>'+btn('Назад','topics'));return;}const ask=direction==='word'?q.word:q.trans;
 const prompt=direction==='word'?'Какое определение подходит?':'Какой термин соответствует определению?';
 let options=currentOptions.map((x,i)=>'<button type="button" class="psy-choice" data-choice="'+i+'" aria-pressed="false"><span>'+String.fromCharCode(1040+i)+'</span><span>'+esc(get(x))+'</span></button>').join('');
 set(progress()+'<p class="psy-kicker">'+esc(name(key))+'</p><section class="psy-card"><div class="psy-description">'+esc(ask)+'</div></section><p class="psy-hint">'+prompt+'</p>'+options+'<div id="psy-feedback" aria-live="polite"></div>'+btn('Проверить ответ','check','primary')+btn('← К темам','topics'));
