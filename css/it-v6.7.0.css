@@ -1,0 +1,38 @@
+/* Информационные технологии v6.6.0: адаптивный интерфейс занятий */
+body.psy-page{padding:16px 12px;align-items:flex-start;min-height:100vh}
+.psy-page .app-container{max-width:760px;min-height:0;margin:18px auto;padding:clamp(16px,4vw,32px);display:block;text-align:center}
+.psy-page h1{font-size:clamp(24px,5vw,32px);line-height:1.2}
+.psy-page button{font:inherit;cursor:pointer}
+.psy-kicker{color:#fbbf24;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.psy-muted{color:#b1bfce;line-height:1.6}
+.psy-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:22px 0}
+.psy-btn{background:#334155;border:1px solid #516079;border-radius:12px;color:#fff;padding:15px 14px;font-weight:750;min-height:52px;width:100%;margin:6px 0}
+.psy-btn.primary{background:#dd7830;border-color:#ffae67;color:#101827}
+.psy-btn:focus-visible,.psy-topic:focus-visible,.psy-choice:focus-visible{outline:3px solid #fbbf24;outline-offset:3px}
+.psy-topic{display:flex;width:100%;align-items:center;gap:12px;text-align:left;background:#111d33;border:1px solid #465979;border-radius:12px;color:#f8fafc;min-height:58px;padding:14px;margin:8px 0;font-weight:650}
+.psy-count{margin-left:auto;flex-shrink:0;font-size:12px;color:#fbbf24}
+.psy-progress{display:flex;justify-content:space-between;font-size:12px;color:#b1bfce;margin:16px 0 8px}
+.psy-meter{height:8px;border-radius:12px;background:#334155;overflow:hidden;margin-bottom:18px}
+.psy-meter>div{height:100%;background:#22c55e;transition:width .25s}
+.psy-card{padding:20px 16px;background:#111c30;border:1px solid #45607d;border-radius:16px;margin:14px 0;text-align:center}
+.psy-term{font-weight:800;color:#fbbf24;font-size:clamp(19px,4vw,25px);line-height:1.4;overflow-wrap:anywhere}
+.psy-description{font-size:clamp(16px,3.8vw,19px);line-height:1.58;overflow-wrap:anywhere}
+.psy-choice{display:flex;gap:9px;width:100%;text-align:left;align-items:center;padding:14px 12px;margin:9px 0;border-radius:12px;background:#1b2b44;border:1px solid #496078;color:#e2e8f0;line-height:1.5;min-height:54px;overflow-wrap:anywhere}
+.psy-choice span:first-child{flex:0 0 28px;color:#fbbf24;font-weight:800}
+.psy-choice.selected{background:#2b466d;border-color:#fbbf24}
+.psy-choice.right{border-color:#22c55e;background:#14392c}
+.psy-choice.wrong{border-color:#f87171;background:#492127}
+.psy-choice:disabled{cursor:default;opacity:1}
+.psy-feedback{padding:16px;border:1px solid #64748b;border-radius:13px;text-align:left;line-height:1.65;margin:12px 0;background:#111c30;overflow-wrap:anywhere}
+.psy-feedback.good{border-color:#22c55e}.psy-feedback.bad{border-color:#f87171}
+.psy-feedback strong{color:#fbbf24}
+.psy-hint{font-size:13px;color:#b9c9dc}
+.psy-example{margin-top:14px;padding:13px;border-left:3px solid #fbbf24;background:#233249;border-radius:5px;text-align:left;line-height:1.5}
+.psy-lesson{padding:12px;border:1px solid #455875;border-radius:12px;text-align:left;margin:14px 0;line-height:1.55}
+.psy-lesson summary{cursor:pointer;color:#fbbf24;font-weight:750}
+.psy-footer{margin-top:20px}
+.psy-score{font-size:42px;color:#fbbf24;font-weight:900}
+#fireworks-canvas{pointer-events:none}
+@media(max-width:430px){.psy-page{padding:8px}.psy-page .app-container{margin:5px auto}.psy-grid{grid-template-columns:1fr}.psy-card{padding:16px 12px}.psy-topic{font-size:14px}}
+
+@media(min-width:431px){.psy-grid>.psy-btn:nth-child(3){grid-column:1/-1;max-width:380px;justify-self:center}}
