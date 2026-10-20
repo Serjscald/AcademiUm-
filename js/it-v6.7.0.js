@@ -2,7 +2,7 @@
 (function(){
 'use strict';
 const db=window.itDB||null;
-if(window.itPractice && !window.itPractice.groups){const labels={};for(const q of window.itPractice.cases){labels[q.group]=q.group;q.reason=q.explanation;q.optionReasons=q.options.map((a,i)=>i===q.answer?q.explanation:'Этот вариант не решает поставленную задачу так точно, как правильный ответ.');}window.itPractice.groups=labels;}
+if(window.itPractice && !window.itPractice.groups){const labels={};for(const q of window.itPractice.cases){labels[q.group]=q.group;q.reason=q.reason||q.explanation;if(!Array.isArray(q.optionReasons))q.optionReasons=q.options.map((a,i)=>i===q.answer?q.explanation:'Этот вариант не соответствует условию задачи.');}window.itPractice.groups=labels;}
 const app=document.getElementById('app');
 let scenarioItems=[],scenarioIndex=0,scenarioCorrect=0,scenarioChosen=-1,scenarioLocked=false;
 let mode='learn',topic='topic1',items=[],index=0,errors=0,correctCount=0,locked=false,picked=-1,currentOptions=[],rightIndex=0,direction='word';
@@ -39,7 +39,7 @@ app.querySelectorAll('[data-choice]').forEach(b=>b.addEventListener('click',()=>
 function check(){if(locked)return;const {q}=items[index];const feedback=document.getElementById('psy-feedback');if(picked<0){feedback.innerHTML='<p class="psy-hint">Сначала выберите вариант ответа.</p>';return;}
 locked=true;let ok=picked===rightIndex;if(ok)correctCount++;else errors++;sound(ok);
 app.querySelectorAll('[data-choice]').forEach(b=>{let i=Number(b.dataset.choice);b.disabled=true;if(i===rightIndex)b.classList.add('right');else if(i===picked)b.classList.add('wrong');});
-feedback.innerHTML='<section class="psy-feedback '+(ok?'good':'bad')+'"><h2>'+(ok?'✓ Верно!':'✕ Есть ошибка')+'</h2><p><strong>Правильный ответ:</strong> '+esc(q.word)+'</p><p>'+esc(q.trans)+'</p><p><strong>Почему:</strong> '+esc(q.explain||'Это определение передаёт характерный признак понятия. Сравните его с остальными предложенными терминами.')+'</p></section>';
+feedback.innerHTML='<section class="psy-feedback '+(ok?'good':'bad')+'"><h2>'+(ok?'✓ Верно!':'✕ Есть ошибка')+'</h2><p><strong>Правильный ответ:</strong> '+esc(q.word)+'</p><p>'+esc(q.trans)+'</p>'+(ok?'':'<p><strong>Ваш выбор:</strong> '+esc(direction==='word'?currentOptions[picked].trans:currentOptions[picked].word)+'</p>')+'<p><strong>Как рассуждать:</strong> '+esc(q.explain||'Сверьте назначение технологии с определением и сравните его с другими цифровыми инструментами.')+'</p></section>';
 const b=app.querySelector('[data-action="check"]');b.dataset.action='next';b.textContent=index===items.length-1?'Посмотреть результат':'Следующее задание →';}
 function finish(){const full=mode==='quiz'&&errors===0;set('<div class="psy-kicker">АкадемиУм! · Информационные технологии</div><h1>Завершено</h1><div class="psy-card">'+(mode==='quiz'?'<div class="psy-score">'+correctCount+' / '+items.length+'</div><p class="psy-muted">Ошибок: '+errors+'</p>':'<div class="psy-score">'+items.length+'</div><p>Карточек изучено</p>')+'<p>'+(full?'🎉 Отличная работа!':mode==='quiz'?'Надо больше заниматься, Данечка!':'Продолжайте закреплять знания в режиме «Контроль»!')+'</p></div>'+btn('Выбрать тему','topics','primary')+btn('В меню','menu'));if(full){try{resizeFireworks();startFireworks()}catch(e){}}}
 
