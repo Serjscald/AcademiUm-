@@ -54,7 +54,7 @@ function renderScreen(screenName, data) {
     } else if (screenName === 'flashcard') {
         var card = currentCards[cardIndex];
         var extra = (card.note ? '<div class="english-teacher-note"><strong>💡 Пояснение</strong><p>' + card.note + '</p></div>' : '') + (card.example ? '<div class="english-teacher-example"><strong>Пример:</strong> ' + card.example + '</div>' : '');
-        app.innerHTML = '<div class="psy-progress"><span>Обучение</span><span>'+(cardIndex+1)+' / '+currentCards.length+'</span></div><div class="psy-meter"><div style="width:'+((cardIndex+1)/currentCards.length*100).toFixed(1)+'%"></div></div><section class="flashcard psy-card"><div class="fc-word">' + card.word + '</div><div class="fc-trans">' + card.trans + '</div>' + extra + '</div><button class="psy-btn primary" onclick="nextCard()">Следующая</button><button class="psy-btn" onclick="renderScreen(\'topics\',{mode:\'learn\'})">Прервать</button>';
+        app.innerHTML = '<div class="psy-progress"><span>Обучение</span><span>'+(cardIndex+1)+' / '+currentCards.length+'</span></div><div class="psy-meter"><div style="width:'+((cardIndex+1)/currentCards.length*100).toFixed(1)+'%"></div></div><section class="flashcard psy-card"><div class="fc-word">' + card.word + '</div><div class="fc-trans">' + card.trans + '</div>' + extra + '</section><button class="psy-btn primary" onclick="nextCard()">Следующая карточка →</button><button class="psy-btn" onclick="englishRestartLearning()">Начать заново</button><button class="psy-btn" onclick="renderScreen(\'topics\',{mode:\'learn\'})">Прервать</button>';
     } else if (screenName === 'quiz') {
         englishQuizRender();
     } else if (screenName === 'result') {
