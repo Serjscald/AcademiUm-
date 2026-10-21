@@ -1,0 +1,61 @@
+/* АкадемиУм! Технологии СКД v6.10.0 · испытательный модуль */
+(function(){
+'use strict';
+const db=window.skdDB||null;
+if(window.skdPractice && !window.skdPractice.groups){const labels={};for(const q of window.skdPractice.cases){labels[q.group]=q.group;q.reason=q.reason||q.explanation;if(!Array.isArray(q.optionReasons))q.optionReasons=q.options.map((a,i)=>i===q.answer?q.explanation:'Этот вариант не соответствует условию задачи.');}window.skdPractice.groups=labels;}
+const app=document.getElementById('app');
+let scenarioItems=[],scenarioIndex=0,scenarioCorrect=0,scenarioChosen=-1,scenarioLocked=false;
+let mode='learn',topic='topic1',items=[],index=0,errors=0,correctCount=0,locked=false,picked=-1,currentOptions=[],rightIndex=0,direction='word';
+const esc=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const shuffle=a=>{let x=a.slice();for(let i=x.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[x[i],x[j]]=[x[j],x[i]];}return x};
+const btn=(label,action,cls='')=>'<button type="button" class="psy-btn '+cls+'" data-action="'+action+'">'+label+'</button>';
+function set(html){app.innerHTML=html;window.scrollTo(0,0);bind();}
+const allKeys=()=>Object.keys(db.topicTitles).filter(k=>Array.isArray(db[k])&&db[k].length>0);
+const name=k=>db.topicTitles[k]||k;
+const sound=ok=>{try{initAudio();playSound(ok?'success':'error')}catch(e){}};
+function bind(){app.querySelectorAll('[data-action]').forEach(e=>e.addEventListener('click',()=>{const fn=actions[e.dataset.action];if(fn)fn()}));}
+function menu(){set('<div class="psy-kicker">АкадемиУм! · Технологии СКД · v6.10.0</div><h1>Технологии СКД</h1><p class="psy-muted">Учимся проектировать культурные события, вовлекать участников, оценивать результаты и принимать решения для учреждений культуры.</p><div class="psy-grid">'+btn('📖 Обучение','learn','primary')+btn('🎯 Контроль','quiz')+btn('🧩 Практикум: философские задачи','scenario')+'</div>'+btn('← К предметам','home'));}
+function topics(next){mode=next;let content=allKeys().map((k,i)=>'<button type="button" class="psy-topic" data-topic="'+k+'"><span>'+String(i+1).padStart(2,'0')+'</span><span>'+esc(name(k))+'</span><span class="psy-count">'+db[k].length+'</span></button>').join('');
+if(mode==='quiz')content='<button type="button" class="psy-topic" data-topic="all"><span>∞</span><span>За всё время</span><span class="psy-count">'+allKeys().reduce((n,k)=>n+db[k].length,0)+'</span></button>'+content;
+set('<div class="psy-kicker">'+(mode==='learn'?'Обучение':'Контроль')+'</div><h1>Выберите тему</h1><p class="psy-muted">Все задания сгруппированы по содержанию; режим контроля включает пояснения после ответа.</p>'+content+btn('← В меню','menu'));
+app.querySelectorAll('[data-topic]').forEach(el=>el.addEventListener('click',()=>start(el.dataset.topic)));}
+function start(k){topic=k;let keys=k==='all'?allKeys():[k];items=[];for(const key of keys)for(const q of db[key])items.push({key,q});if(mode==='quiz')items=shuffle(items);index=0;errors=0;correctCount=0;render();}
+function lesson(q){const explanation=q.explain||'Сопоставьте ключевые признаки понятия с определением, затем приведите собственный пример.';
+return '<details class="psy-lesson"><summary>💡 Как рассуждать?</summary><p>'+esc(explanation)+'</p><p>Сначала найдите главный вопрос, затем сопоставьте позиции и возможные возражения.</p></details>';}
+function progress(){return '<div class="psy-progress"><span>'+(mode==='learn'?'Обучение':'Контроль')+'</span><span>'+(index+1)+' / '+items.length+'</span></div><div class="psy-meter"><div style="width:'+((index+1)/items.length*100).toFixed(1)+'%"></div></div>';}
+function render(){locked=false;picked=-1;if(index>=items.length){finish();return;}const {key,q}=items[index];
+if(mode==='learn'){set(progress()+'<p class="psy-kicker">'+esc(name(key))+'</p><section class="psy-card"><div class="psy-term">'+esc(q.word)+'</div><p class="psy-description">'+esc(q.trans)+'</p></section><div class="psy-example"><strong>Смысл и нюансы:</strong> '+esc(q.explain||'Обратите внимание на точный смысл термина и его отличие от сходных понятий.')+'</div>'+lesson(q)+btn(index===items.length-1?'Завершить':'Следующая карточка →','next','primary')+btn('← К темам','topics'));return;}
+const pool=db[key].filter(x=>x!==q);
+direction=index%2===0?'word':'trans';
+const get=x=>direction==='word'?x.trans:x.word;
+const used=new Set([get(q)]),alts=[];
+for(const a of shuffle(pool)){if(!used.has(get(a))){used.add(get(a));alts.push(a);}if(alts.length===3)break;} if(alts.length<3){for(const k of allKeys()){for(const a of shuffle(db[k])){if(!used.has(get(a))){used.add(get(a));alts.push(a);}if(alts.length===3)break;}if(alts.length===3)break;}}
+currentOptions=shuffle([q,...alts]);rightIndex=currentOptions.indexOf(q);
+if(currentOptions.length<4){set('<h1>Недостаточно ответов</h1>'+btn('Назад','topics'));return;}const ask=direction==='word'?q.word:q.trans;
+const prompt=direction==='word'?'Какое определение подходит?':'Какой термин соответствует определению?';
+let options=currentOptions.map((x,i)=>'<button type="button" class="psy-choice" data-choice="'+i+'" aria-pressed="false"><span>'+String.fromCharCode(1040+i)+'</span><span>'+esc(get(x))+'</span></button>').join('');
+set(progress()+'<p class="psy-kicker">'+esc(name(key))+'</p><section class="psy-card"><div class="psy-description">'+esc(ask)+'</div></section><p class="psy-hint">'+prompt+'</p>'+options+'<div id="psy-feedback" aria-live="polite"></div>'+btn('Проверить ответ','check','primary')+btn('← К темам','topics'));
+app.querySelectorAll('[data-choice]').forEach(b=>b.addEventListener('click',()=>{if(locked)return;picked=Number(b.dataset.choice);app.querySelectorAll('[data-choice]').forEach(c=>{const s=c===b;c.classList.toggle('selected',s);c.setAttribute('aria-pressed',String(s));});}));}
+function check(){if(locked)return;const {q}=items[index];const feedback=document.getElementById('psy-feedback');if(picked<0){feedback.innerHTML='<p class="psy-hint">Сначала выберите вариант ответа.</p>';return;}
+locked=true;let ok=picked===rightIndex;if(ok)correctCount++;else errors++;sound(ok);
+app.querySelectorAll('[data-choice]').forEach(b=>{let i=Number(b.dataset.choice);b.disabled=true;if(i===rightIndex)b.classList.add('right');else if(i===picked)b.classList.add('wrong');});
+feedback.innerHTML='<section class="psy-feedback '+(ok?'good':'bad')+'"><h2>'+(ok?'✓ Верно!':'✕ Есть ошибка')+'</h2><p><strong>Правильный ответ:</strong> '+esc(q.word)+'</p><p>'+esc(q.trans)+'</p>'+(ok?'':'<p><strong>Ваш выбор:</strong> '+esc(direction==='word'?currentOptions[picked].trans:currentOptions[picked].word)+'</p><p><strong>Чем отличается выбранный вариант:</strong> '+esc(direction==='word'?currentOptions[picked].word+': '+currentOptions[picked].trans:currentOptions[picked].word+' означает: '+currentOptions[picked].trans)+'</p>')+'<p><strong>Как рассуждать:</strong> '+esc(q.explain||'Определите центральную проблему понятия, проверьте основания и сравните его с соседними идеями.')+'</p></section>';
+const b=app.querySelector('[data-action="check"]');b.dataset.action='next';b.textContent=index===items.length-1?'Посмотреть результат':'Следующее задание →';}
+function finish(){const full=mode==='quiz'&&errors===0;set('<div class="psy-kicker">АкадемиУм! · Технологии СКД</div><h1>Завершено</h1><div class="psy-card">'+(mode==='quiz'?'<div class="psy-score">'+correctCount+' / '+items.length+'</div><p class="psy-muted">Ошибок: '+errors+'</p>':'<div class="psy-score">'+items.length+'</div><p>Карточек изучено</p>')+'<p>'+(full?'🎉 Отличная работа!':mode==='quiz'?'Надо больше заниматься, Данечка!':'Продолжайте закреплять знания в режиме «Контроль»!')+'</p></div>'+btn('Выбрать тему','topics','primary')+btn('В меню','menu'));if(full){try{resizeFireworks();startFireworks()}catch(e){}}}
+
+function scenariosMenu(){const data=window.skdPractice;if(!data){set('<h1>Практикум не загрузился</h1>'+btn('Назад','menu'));return;}let out='<div class="psy-kicker">Практика ИТ</div><h1>Ситуационные задания</h1><p class="psy-muted">Выберите раздел. После ответа объясним каждый вариант, а не только правильный.</p><button class="psy-topic" data-group="all">Все задания <span class="psy-count">'+data.cases.length+'</span></button>';for(const [k,t] of Object.entries(data.groups)){let n=data.cases.filter(q=>q.group===k).length;out+='<button class="psy-topic" data-group="'+esc(k)+'">'+esc(t)+' <span class="psy-count">'+n+'</span></button>';}set(out+btn('← В меню','menu'));app.querySelectorAll('[data-group]').forEach(el=>el.addEventListener('click',()=>scenarioStart(el.dataset.group)));}
+function scenarioStart(group){scenarioItems=shuffle(window.skdPractice.cases.filter(c=>group==='all'||c.group===group));scenarioIndex=0;scenarioCorrect=0;scenarioRender();}
+function scenarioRender(){scenarioLocked=false;scenarioChosen=-1;if(scenarioIndex>=scenarioItems.length){let full=scenarioCorrect===scenarioItems.length;set('<div class="psy-kicker">Практикум · результат</div><h1>Завершено!</h1><div class="psy-score">'+scenarioCorrect+' / '+scenarioItems.length+'</div><p class="psy-muted">'+(full?'🎉 Отличная работа!':'Продолжайте тренироваться: разборы помогут разобраться.')+'</p>'+btn('Выбрать раздел','scenario','primary')+btn('В меню','menu'));if(full){try{startFireworks()}catch(e){}}return;}
+const q=scenarioItems[scenarioIndex];const perm=shuffle([0,1,2,3]);let html='<div class="psy-kicker">'+esc(window.skdPractice.groups[q.group])+'</div><div class="psy-progress"><span>Практикум</span><span>'+(scenarioIndex+1)+' / '+scenarioItems.length+'</span></div><div class="psy-meter"><div style="width:'+((scenarioIndex+1)*100/scenarioItems.length)+'%"></div></div><section class="psy-card"><p class="psy-description">'+esc(q.question)+'</p></section><p class="psy-hint">Выберите один ответ и проверьте себя.</p>';
+html+=perm.map((orig,pos)=>'<button type="button" class="psy-choice" data-scenario-choice="'+orig+'" aria-pressed="false"><span>'+String.fromCharCode(1040+pos)+'</span><span>'+esc(q.options[orig])+'</span></button>').join('');
+set(html+'<div id="psy-feedback" aria-live="polite"></div>'+btn('Проверить ответ','scenarioCheck','primary')+btn('← К разделам','scenario'));
+app.querySelectorAll('[data-scenario-choice]').forEach(b=>b.addEventListener('click',()=>{if(scenarioLocked)return;scenarioChosen=Number(b.dataset.scenarioChoice);app.querySelectorAll('[data-scenario-choice]').forEach(el=>{let yes=el===b;el.classList.toggle('selected',yes);el.setAttribute('aria-pressed',String(yes));});}));}
+function scenarioCheck(){if(scenarioLocked)return;const out=document.getElementById('psy-feedback');if(scenarioChosen<0){out.innerHTML='<p class="psy-hint">Выберите вариант ответа.</p>';return;}scenarioLocked=true;const q=scenarioItems[scenarioIndex],ok=scenarioChosen===q.answer;if(ok)scenarioCorrect++;sound(ok);app.querySelectorAll('[data-scenario-choice]').forEach(b=>{const n=Number(b.dataset.scenarioChoice);b.disabled=true;if(n===q.answer)b.classList.add('right');else if(n===scenarioChosen)b.classList.add('wrong');});let parts='<h2>'+(ok?'✓ Верно!':'✕ Разберём ошибку')+'</h2><p><strong>Правильный ответ:</strong> '+esc(q.options[q.answer])+'</p><p>'+esc(q.reason)+'</p><details class="psy-lesson" open><summary>Объяснение всех вариантов</summary>';for(let n=0;n<q.options.length;n++)parts+='<p><strong>'+esc(q.options[n])+':</strong> '+esc(q.optionReasons[n])+'</p>';parts+='</details>';
+out.innerHTML='<div class="psy-feedback '+(ok?'good':'bad')+'">'+parts+'</div>';
+const b=app.querySelector('[data-action="scenarioCheck"]');b.dataset.action='scenarioNext';b.textContent=scenarioIndex===scenarioItems.length-1?'Результат →':'Следующая задача →';}
+
+const actions={scenario:scenariosMenu,scenarioCheck,scenarioNext:()=>{scenarioIndex++;scenarioRender()},menu,home:()=>location.assign('index.html'),learn:()=>topics('learn'),quiz:()=>topics('quiz'),topics:()=>topics(mode),next:()=>{index++;render()},check};
+document.addEventListener('pointerdown',()=>{try{initAudio()}catch(e){}},{once:true});
+if(!db||!db.topicTitles){set('<h1>Ошибка загрузки данных</h1><p>Пожалуйста, обновите страницу.</p>');return;}
+menu();
+})();
