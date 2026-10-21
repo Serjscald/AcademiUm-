@@ -9,11 +9,6 @@
 </head>
 <body class="psy-page english-page">
 
-<div id="start-screen">
-    <h2>🇬 Английский язык</h2>
-    <p>Нажмите, чтобы начать обучение</p>
-</div>
-
 <canvas id="fireworks-canvas"></canvas>
 
 <main class="app-container" id="app"></main>
@@ -123,13 +118,7 @@ function checkAnswer(el, selected, correct) {
     }, 600);
 }
 
-var startScreen = document.getElementById('start-screen');
-startScreen.addEventListener('click', function(){
-    initAudio();
-    startScreen.style.opacity = '0';
-    setTimeout(function(){ startScreen.style.display = 'none'; }, 500);
-    renderScreen('modes');
-});
+renderScreen('modes');
 </script>
 </body>
 </html>
