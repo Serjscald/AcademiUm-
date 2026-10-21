@@ -95,7 +95,9 @@ function emitTone(ctx, type) {
     };
 }
 
+function statisticsAudioAllowed(){try{return window.localStorage.getItem('academium:sound')!=='off';}catch(e){return true;}}
 function playSound(type) {
+    if(!statisticsAudioAllowed())return;
     if (type !== 'success' && type !== 'error') return;
 
     var resumePromise = initAudio();
@@ -180,6 +182,7 @@ if (document.readyState === 'loading') {
 var lastFireworksSoundAt = -100000;
 
 function playFireworksSound() {
+    if(!statisticsAudioAllowed())return;
     var resumePromise = initAudio();
     var ctx = audioCtx;
     if (!ctx) return;
