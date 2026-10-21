@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Английский язык — АкадемиУм!</title>
     <link rel="stylesheet" href="../../../css/style.css?v=6.14.2">
-    <link rel="stylesheet" href="../../../css/english.css?v=6.4.2">
+    <link rel="stylesheet" href="../../../css/management-v6.11.0.css?v=6.16.0"><link rel="stylesheet" href="../../../css/english.css?v=6.16.0">
 </head>
-<body>
+<body class="psy-page english-page">
 
 <div id="start-screen">
     <h2>🇬 Английский язык</h2>
@@ -16,7 +16,7 @@
 
 <canvas id="fireworks-canvas"></canvas>
 
-<div class="app-container" id="app"></div>
+<main class="app-container" id="app"></main>
 
 <script src="../../../js/core.js?v=6.14.0"></script><script src="../../../js/learning-progress-v6.15.0.js?v=6.15.0"></script>
 <script src="../../../js/data-english.js"></script>
@@ -38,30 +38,30 @@ function renderScreen(screenName, data) {
     app.innerHTML = '';
     
     if (screenName === 'modes') {
-        app.innerHTML = '<h1>Английский язык</h1><div class="subtitle">Выберите режим</div><div class="grid" style="margin-top:40px"><div class="tile" onclick="handleMode(\'learn\',this)">Обучение</div><div class="tile" onclick="handleMode(\'quiz\',this)">Контроль</div></div><button class="btn btn-back" onclick="navigateTo(\'index.html\')">Назад</button>';
+        app.innerHTML = '<div class="psy-kicker">АкадемиУм! · Английский язык</div><h1>Английский язык</h1><p class="psy-muted">Изучаем слова, грамматику и устойчивые выражения.</p><div class="psy-grid"><div class="psy-btn" onclick="handleMode(\'learn\',this)">Обучение</div><div class="psy-btn" onclick="handleMode(\'quiz\',this)">Контроль</div></div><button class="psy-btn" onclick="navigateTo(\'index.html\')">Назад</button>';
     } else if (screenName === 'topics') {
         var mode = (data && data.mode) ? data.mode : 'learn';
         currentMode = mode;
         var title = (mode === 'learn') ? 'Обучение' : 'Контроль';
         var topicsHTML = '';
         if (mode === 'quiz') {
-            topicsHTML += '<div class="tile" onclick="startTopic(\'all\',this)">За все время</div>';
+            topicsHTML += '<div class="psy-topic" onclick="startTopic(\'all\',this)">За все время</div>';
         }
         for (var key in englishDB.topicTitles) {
-            topicsHTML += '<div class="tile" onclick="startTopic(\'' + key + '\',this)">' + englishDB.topicTitles[key] + '</div>';
+            topicsHTML += '<div class="psy-topic" onclick="startTopic(\'' + key + '\',this)">' + englishDB.topicTitles[key] + '</div>';
         }
-        app.innerHTML = '<h1>' + title + '</h1><div class="subtitle">Выберите тему</div><div class="grid single-col" style="margin-top:20px">' + topicsHTML + '</div><button class="btn btn-back" onclick="renderScreen(\'modes\')">Назад</button>';
+        app.innerHTML = '<div class="psy-kicker">'+title+'</div><h1>Выберите тему</h1><div class="psy-topics">' + topicsHTML + '</div><button class="psy-btn" onclick="renderScreen(\'modes\')">Назад</button>';
     } else if (screenName === 'flashcard') {
         var card = currentCards[cardIndex];
         var extra = (card.note ? '<div class="english-teacher-note"><strong>💡 Пояснение</strong><p>' + card.note + '</p></div>' : '') + (card.example ? '<div class="english-teacher-example"><strong>Пример:</strong> ' + card.example + '</div>' : '');
-        app.innerHTML = '<h1>Карточка ' + (cardIndex + 1) + ' / ' + currentCards.length + '</h1><div class="flashcard"><div class="fc-word">' + card.word + '</div><div class="fc-trans">' + card.trans + '</div>' + extra + '</div><button class="btn btn-orange" onclick="nextCard()">Следующая</button><button class="btn btn-stop" onclick="renderScreen(\'topics\',{mode:\'learn\'})">Прервать</button>';
+        app.innerHTML = '<div class="psy-progress"><span>Обучение</span><span>'+(cardIndex+1)+' / '+currentCards.length+'</span></div><div class="psy-meter"><div style="width:'+((cardIndex+1)/currentCards.length*100).toFixed(1)+'%"></div></div><section class="flashcard psy-card"><div class="fc-word">' + card.word + '</div><div class="fc-trans">' + card.trans + '</div>' + extra + '</div><button class="psy-btn primary" onclick="nextCard()">Следующая</button><button class="psy-btn" onclick="renderScreen(\'topics\',{mode:\'learn\'})">Прервать</button>';
     } else if (screenName === 'quiz') {
         englishQuizRender();
     } else if (screenName === 'result') {
         var isWin = (mistakes === 0);
         var msg = isWin ? '🎉 Отличная работа!' : 'Нужно заниматься усерднее, Данечка!';
         var cls = isWin ? 'result-win' : 'result-lose';
-        app.innerHTML = '<h1>Результат</h1><div class="result-msg ' + cls + '">' + msg + '</div><button class="btn btn-orange" onclick="renderScreen(\'modes\')">В меню</button><button class="btn btn-back" onclick="navigateTo(\'../../../index.html\')">На главную</button>';
+        app.innerHTML = '<div class="psy-kicker">Контроль</div><h1>Результат</h1><div class="psy-card result-msg ' + cls + '">' + msg + '</div><button class="psy-btn primary" onclick="renderScreen(\'modes\')">В меню</button><button class="psy-btn" onclick="navigateTo(\'../../../index.html\')">На главную</button>';
         if (isWin) startFireworks();
     }
 }
