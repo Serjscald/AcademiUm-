@@ -8,6 +8,31 @@ var isAudioInit = false;
 
 // В Safari/iOS Web Audio иногда возвращается в suspended/interrupted
 // после блокировки экрана или переключения вкладки.
+var academiumSoundEnabled = true;
+try { academiumSoundEnabled = window.localStorage.getItem('academium:sound') !== 'off'; } catch(e) {}
+function academiumSetSound(enabled) {
+ academiumSoundEnabled=!!enabled;
+ try { window.localStorage.setItem('academium:sound',academiumSoundEnabled?'on':'off'); } catch(e) {}
+ academiumSyncSoundButtons();
+ if(academiumSoundEnabled)initAudio();
+}
+function academiumSyncSoundButtons(){
+ document.querySelectorAll('[data-academium-sound]').forEach(function(b){
+  b.textContent=academiumSoundEnabled?'🔊 Звук: вкл':'🔇 Звук: выкл';
+  b.setAttribute('aria-pressed',String(academiumSoundEnabled));
+ });
+}
+function academiumMountSoundButton(){
+ if(!document.body||document.querySelector('[data-academium-sound]'))return;
+ var b=document.createElement('button');b.type='button';b.className='academium-sound-toggle';
+ b.setAttribute('data-academium-sound','');b.setAttribute('aria-label','Включить или выключить звуки');
+ b.addEventListener('click',function(){academiumSetSound(!academiumSoundEnabled);});
+ document.body.appendChild(b);
+ academiumSyncSoundButtons();
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',academiumMountSoundButton);
+else academiumMountSoundButton();
+
 function initAudio() {
     try {
         if (!audioCtx) {
@@ -96,6 +121,7 @@ function emitTone(ctx, type) {
 }
 
 function playSound(type) {
+ if(!academiumSoundEnabled)return;
     if (type !== 'success' && type !== 'error') return;
 
     var resumePromise = initAudio();
@@ -120,6 +146,7 @@ function playSound(type) {
 var lastFireworksSoundAt = -100000;
 
 function playFireworksSound() {
+ if(!academiumSoundEnabled)return;
     var resumePromise = initAudio();
     var ctx = audioCtx;
     if (!ctx) return;
