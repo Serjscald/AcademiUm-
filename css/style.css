@@ -200,3 +200,28 @@ h1 {
 }
 
 .hidden { display: none !important; }
+
+/* Mobile accessibility & resilient narrow layouts (v6.14.2). */
+html { -webkit-text-size-adjust: 100%; }
+.app-container, .flashcard, .grid, .tile { min-width: 0; }
+.app-container, .flashcard, .tile, .quiz-opt, .btn {
+    overflow-wrap: anywhere;
+}
+button, .tile { touch-action: manipulation; }
+button:focus-visible, .tile:focus-visible, summary:focus-visible {
+    outline: 3px solid var(--gold);
+    outline-offset: 3px;
+}
+@media (max-width: 480px) {
+    body { padding: 10px 8px; align-items: flex-start; }
+    .app-container { padding: 18px 14px; min-height: 0; border-radius: 18px; margin: 8px auto; }
+    .grid { grid-template-columns: minmax(0,1fr); gap: 10px; }
+    .tile { min-height: 54px; padding: 14px 12px; }
+    h1 { font-size: clamp(21px, 6.5vw, 28px); }
+    #start-screen { padding: 20px; text-align: center; }
+    #start-screen h2 { font-size: clamp(25px, 7vw, 36px); }
+    #start-screen p { font-size: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .tile, .btn, .flashcard, .quiz-opt, #start-screen { transition: none; animation: none; }
+}
