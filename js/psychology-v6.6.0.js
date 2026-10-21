@@ -53,7 +53,7 @@ function scenarioCheck(){if(scenarioLocked)return;const out=document.getElementB
 out.innerHTML='<div class="psy-feedback '+(ok?'good':'bad')+'">'+parts+'</div>';
 const b=app.querySelector('[data-action="scenarioCheck"]');b.dataset.action='scenarioNext';b.textContent=scenarioIndex===scenarioItems.length-1?'Результат →':'Следующая задача →';}
 
-const actions={scenario:scenariosMenu,scenarioCheck,scenarioNext:()=>{scenarioIndex++;scenarioRender()},menu,home:()=>location.assign('index.html'),learn:()=>topics('learn'),quiz:()=>topics('quiz'),topics:()=>topics(mode),next:()=>{index++;render()},check};
+const actions={scenario:scenariosMenu,scenarioCheck,scenarioNext:()=>{scenarioIndex++;scenarioRender()},menu,home:()=>location.assign('index.html'),learn:()=>topics('learn'),quiz:()=>topics('quiz'),topics:()=>topics(mode),next:()=>{if(mode==='learn')sound(true);index++;render()},check};
 document.addEventListener('pointerdown',()=>{try{initAudio()}catch(e){}},{once:true});
 if(!db||!db.topicTitles){set('<h1>Ошибка загрузки данных</h1><p>Пожалуйста, обновите страницу.</p>');return;}
 menu();
