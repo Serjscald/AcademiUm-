@@ -29,7 +29,12 @@ const pool=db[key].filter(x=>x!==q);
 direction=index%2===0?'word':'trans';
 const get=x=>direction==='word'?x.trans:x.word;
 const used=new Set([get(q)]),alts=[];
-for(const a of shuffle(pool)){if(!used.has(get(a))){used.add(get(a));alts.push(a);}if(alts.length===3)break;} if(alts.length<3){for(const k of allKeys()){for(const a of shuffle(db[k])){if(!used.has(get(a))){used.add(get(a));alts.push(a);}if(alts.length===3)break;}if(alts.length===3)break;}}
+const tokenize=x=>String(x||'').toLowerCase().replace(/ё/g,'е').match(/[а-яa-z0-9]{3,}/g)||[];
+const stem=x=>x.replace(/(иями|ениями|скими|ского|ской|ость|ости|ными|ного|ение|ания|ный|ная|ные|ное|ией|иею|ировать|ация|ации|ыми|ого|ему|ая|ые|ое|ие|ой|их|ам|ах|ов|ий|ый|ая|ий|ей|ия|иям|ияx|ы|и|а|е|у|я)$/,'');
+const targetTerms=new Set(tokenize(q.word).concat(tokenize(q.trans)).map(stem).filter(t=>t.length>=3));
+const related=x=>{const terms=new Set(tokenize(x.word).concat(tokenize(x.trans)).map(stem).filter(t=>t.length>=3));let score=0;for(const t of targetTerms)if(terms.has(t))score++;return score};
+const ranked=shuffle(pool).sort((a,b)=>related(b)-related(a));
+for(const a of ranked){if(!used.has(get(a))){used.add(get(a));alts.push(a);}if(alts.length===3)break;} if(alts.length<3){for(const k of allKeys()){for(const a of shuffle(db[k])){if(!used.has(get(a))){used.add(get(a));alts.push(a);}if(alts.length===3)break;}if(alts.length===3)break;}}
 currentOptions=shuffle([q,...alts]);rightIndex=currentOptions.indexOf(q);
 if(currentOptions.length<4){set('<h1>Недостаточно ответов</h1>'+btn('Назад','topics'));return;}const ask=direction==='word'?q.word:q.trans;
 const prompt=direction==='word'?'Какое определение подходит?':'Какой термин соответствует определению?';
