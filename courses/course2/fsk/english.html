@@ -81,7 +81,7 @@ function startTopic(scope) {
     } else {
         currentCards = englishDB[scope].slice();
     }
-    currentCards.sort(function(){ return Math.random() - 0.5; });
+    if (currentMode === 'learn') currentCards = englishQuizShuffle(currentCards);
     if (currentMode === 'learn') {
         cardIndex = 0;
         setTimeout(function(){ renderScreen('flashcard'); }, 400);
