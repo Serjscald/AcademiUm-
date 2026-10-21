@@ -19,7 +19,7 @@ function topics(next){mode=next;let content=allKeys().map((k,i)=>'<button type="
 if(mode==='quiz')content='<button type="button" class="psy-topic" data-topic="all"><span>∞</span><span>За всё время</span><span class="psy-count">'+allKeys().reduce((n,k)=>n+db[k].length,0)+'</span></button>'+content;
 set('<div class="psy-kicker">'+(mode==='learn'?'Обучение':'Контроль')+'</div><h1>Выберите тему</h1><p class="psy-muted">Все задания сгруппированы по содержанию; режим контроля включает пояснения после ответа.</p>'+content+btn('← В меню','menu'));
 app.querySelectorAll('[data-topic]').forEach(el=>el.addEventListener('click',()=>start(el.dataset.topic)));}
-function start(k){topic=k;let keys=k==='all'?allKeys():[k];items=[];for(const key of keys)for(const q of db[key])items.push({key,q});if(mode==='quiz')items=shuffle(items);index=0;errors=0;correctCount=0;render();}
+function start(k){topic=k;let keys=k==='all'?allKeys():[k];items=[];for(const key of keys)for(const q of db[key])items.push({key,q});items=shuffle(items);index=0;errors=0;correctCount=0;render();}
 function lesson(q){const explanation=q.explain||'Сопоставьте ключевые признаки понятия с определением, затем приведите собственный пример.';
 return '<details class="psy-lesson"><summary>💡 Как рассуждать?</summary><p>'+esc(explanation)+'</p><p>Сначала определите назначение инструмента, затем проверьте, чем он отличается от похожих технологий.</p></details>';}
 function progress(){return '<div class="psy-progress"><span>'+(mode==='learn'?'Обучение':'Контроль')+'</span><span>'+(index+1)+' / '+items.length+'</span></div><div class="psy-meter"><div style="width:'+((index+1)/items.length*100).toFixed(1)+'%"></div></div>';}
