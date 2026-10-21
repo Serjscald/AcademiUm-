@@ -58,7 +58,7 @@ function finish(){let total=queue.length,score=total-mistakes;let full=mode==='q
  set('<div class="ru-tag">АкадемиУм! · v'+db.version+'</div>'+title('Завершено',mode==='learn'?'Вы прошли все карточки':'Результат контроля')+'<div class="ru-result">'+(mode==='learn'?'<strong>'+total+' заданий</strong><p>Материал изучен!</p>':'<strong>'+score+' / '+total+'</strong><p>Ошибок: '+mistakes+'</p><p>'+(full?'🎉 Отличная работа!':'Надо больше заниматься, Данечка!')+'</p>')+'</div>'+button('Выбрать другую тему','topics','primary')+button('В меню','welcome','secondary'));
  if(full){let canvas=document.getElementById('fireworks-canvas');if(canvas){canvas.style.display='block';canvas.style.opacity='1';try{if(typeof resizeFireworks==='function')resizeFireworks();if(typeof startFireworks==='function')startFireworks();}catch(e){}window.setTimeout(()=>{canvas.style.opacity='0';},2800);}}
  bind();}
-const actions={welcome:showWelcome,home:()=>location.assign('../../../index.html'),learn:()=>chooseTopic('learn'),quiz:()=>chooseTopic('quiz'),topics:()=>chooseTopic(mode),check:check,next:()=>{index++;showQuestion();}};
+const actions={welcome:showWelcome,home:()=>location.assign('../../../index.html'),learn:()=>chooseTopic('learn'),quiz:()=>chooseTopic('quiz'),topics:()=>chooseTopic(mode),check:check,next:()=>{if(mode==='learn')notifySound(true);index++;showQuestion();}};
 function init(){showWelcome();document.addEventListener('pointerdown',()=>{try{if(typeof initAudio==='function')initAudio();}catch(e){}},{once:true});}
 init();
 })();
