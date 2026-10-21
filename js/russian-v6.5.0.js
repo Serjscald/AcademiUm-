@@ -5,6 +5,9 @@ const db=window.RUSSIAN_650, course=Number(document.body.dataset.course)||2;
 const keys=course===1?db.course1Topics:db.course2Topics;
 const app=document.getElementById('app');
 let mode='learn',topic=null,queue=[],index=0,mistakes=0,locked=false,chosen=new Set(),seenResults=[];
+let learnStore=null;
+function saveLearning(){if(mode==='learn'&&learnStore)learnStore.save(queue.map(e=>db.questions[e.key].indexOf(e.q)),index);}
+function restartLearning(){if(learnStore)learnStore.clear();start(topic,true);}
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 const safe=(s)=>esc(s).replace(/\n/g,' ');
 function shuffle(a){let b=a.slice();for(let i=b.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
@@ -21,8 +24,8 @@ function chooseTopic(m){mode=m;let items=keys.map((key,i)=>'<button type="button
  app.querySelectorAll('[data-topic]').forEach(el=>el.addEventListener('click',()=>start(el.dataset.topic)));bind();}
 function lessonBox(key,open){let guide=db.theory[key];if(!guide)return '';
  return '<details class="ru-lesson"'+(open?' open':'')+'><summary>💡 Как рассуждать? · правило</summary><p class="ru-lesson-intro">'+esc(guide.intro)+'</p><div class="ru-lesson-grid"><div class="ru-lesson-heading">Ключевые правила</div><ul>'+guide.rules.map(s=>'<li>'+esc(s)+'</li>').join('')+'</ul><div class="ru-lesson-heading">Путь к решению</div><ol>'+guide.steps.map(s=>'<li>'+esc(s)+'</li>').join('')+'</ol></div></details>';}
-function start(k){topic=k;let topics=k==='all'?keys:[k];queue=[];topics.forEach(x=>db.questions[x].forEach(q=>queue.push({key:x,q})));
- queue=shuffle(queue);index=0;mistakes=0;seenResults=[];showQuestion();}
+function start(k,reset){topic=k;let topics=k==='all'?keys:[k];queue=[];topics.forEach(x=>db.questions[x].forEach(q=>queue.push({key:x,q})));
+ queue=shuffle(queue);index=0;mistakes=0;seenResults=[];if(mode==='learn'&&k!=='all'&&window.AcademiumProgress){learnStore=window.AcademiumProgress.create('russian-course'+course,k,db.questions[k]);if(!reset){let prev=learnStore.load();if(prev){queue=prev.order.map(i=>({key:k,q:db.questions[k][i]}));index=prev.index;}}saveLearning();}else learnStore=null;showQuestion();}
 function isSingle(q){return q.kind==='single';}
 function correctSet(q){return (q.answer||[]).slice().sort((a,b)=>a-b);}
 function formatKey(q,key){const letters=['А','Б','В','Г','Д'];return q.kind==='text'?q.answerText.join(' / '):correctSet(q).map(n=>key==='suffixy'?letters[n-1]:n).join(', ');}
@@ -34,7 +37,7 @@ function showQuestion(){locked=false;chosen=new Set();if(index>=queue.length){fi
  let hint=q.kind==='multi'?'Выберите все правильные варианты. Их может быть несколько.':q.kind==='single'?'Выберите один правильный вариант.':'Напишите слово или выражение, затем проверьте ответ.';
  let options=q.kind==='text'?'<label class="ru-input-label" for="ru-input">Ваш ответ</label><input class="ru-input" id="ru-input" autocomplete="off" spellcheck="false" placeholder="Введите ответ">':'<div class="ru-options">'+q.options.map((s,i)=>renderOption(s,i,key)).join('')+'</div>';
  let explain=lessonBox(key,false);
- set(intro+prompt+'<p class="ru-hint">'+hint+'</p>'+options+explain+'<div id="ru-feedback" aria-live="polite"></div>'+button(mode==='learn'?'Показать ответ и объяснение':'Проверить ответ','check','primary')+button('← К темам','topics','secondary'));
+ set(intro+prompt+'<p class="ru-hint">'+hint+'</p>'+options+explain+'<div id="ru-feedback" aria-live="polite"></div>'+button(mode==='learn'?'Показать ответ и объяснение':'Проверить ответ','check','primary')+ (mode==='learn'?button('Начать заново','restart','secondary'):'')+button('← К темам','topics','secondary'));
  app.querySelectorAll('[data-choice]').forEach(el=>el.addEventListener('click',()=>selectChoice(el,q)));
  let inp=document.getElementById('ru-input');if(inp)inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&!locked){e.preventDefault();check();}});bind();}
 function selectChoice(el,q){if(locked)return;const n=Number(el.dataset.choice);if(isSingle(q)){chosen.clear();app.querySelectorAll('.ru-option').forEach(b=>{b.classList.remove('selected');b.setAttribute('aria-pressed','false');});}if(chosen.has(n)){chosen.delete(n);el.classList.remove('selected');el.setAttribute('aria-pressed','false');}else{chosen.add(n);el.classList.add('selected');el.setAttribute('aria-pressed','true');}}
@@ -54,11 +57,11 @@ function check(){if(locked)return;let {key,q}=queue[index];let inp=document.getE
  const status=mode==='learn'?'Разбор задания':isRight?'✓ Верно!':'✕ Есть ошибка';const cls=mode==='learn'?'learn':isRight?'right':'wrong';
  document.getElementById('ru-feedback').innerHTML='<section class="ru-feedback '+cls+'"><h2>'+status+'</h2><p><strong>Правильный ответ:</strong> '+esc(formatKey(q,key))+'</p>'+showAnalysis(q,key)+'</section>';
  let b=app.querySelector('[data-action="check"]');b.textContent=index===queue.length-1?'Завершить':'Следующее задание →';b.dataset.action='next'; /* Второй onclick пропустил бы карточку; bind() уже слушает data-action. */}
-function finish(){let total=queue.length,score=total-mistakes;let full=mode==='quiz'&&mistakes===0;
+function finish(){if(mode==='learn'&&learnStore){learnStore.clear();learnStore=null;}let total=queue.length,score=total-mistakes;let full=mode==='quiz'&&mistakes===0;
  set('<div class="ru-tag">АкадемиУм! · v'+db.version+'</div>'+title('Завершено',mode==='learn'?'Вы прошли все карточки':'Результат контроля')+'<div class="ru-result">'+(mode==='learn'?'<strong>'+total+' заданий</strong><p>Материал изучен!</p>':'<strong>'+score+' / '+total+'</strong><p>Ошибок: '+mistakes+'</p><p>'+(full?'🎉 Отличная работа!':'Надо больше заниматься, Данечка!')+'</p>')+'</div>'+button('Выбрать другую тему','topics','primary')+button('В меню','welcome','secondary'));
  if(full){let canvas=document.getElementById('fireworks-canvas');if(canvas){canvas.style.display='block';canvas.style.opacity='1';try{if(typeof resizeFireworks==='function')resizeFireworks();if(typeof startFireworks==='function')startFireworks();}catch(e){}window.setTimeout(()=>{canvas.style.opacity='0';},2800);}}
  bind();}
-const actions={welcome:showWelcome,home:()=>location.assign('../../../index.html'),learn:()=>chooseTopic('learn'),quiz:()=>chooseTopic('quiz'),topics:()=>chooseTopic(mode),check:check,next:()=>{if(mode==='learn')notifySound(true);index++;showQuestion();}};
+const actions={welcome:showWelcome,home:()=>location.assign('../../../index.html'),learn:()=>chooseTopic('learn'),quiz:()=>chooseTopic('quiz'),topics:()=>chooseTopic(mode),check:check,next:()=>{if(mode==='learn')notifySound(true);index++;saveLearning();showQuestion();},restart:restartLearning};
 function init(){showWelcome();document.addEventListener('pointerdown',()=>{try{if(typeof initAudio==='function')initAudio();}catch(e){}},{once:true});}
 init();
 })();

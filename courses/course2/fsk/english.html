@@ -18,7 +18,7 @@
 
 <div class="app-container" id="app"></div>
 
-<script src="../../../js/core.js?v=6.14.0"></script>
+<script src="../../../js/core.js?v=6.14.0"></script><script src="../../../js/learning-progress-v6.15.0.js?v=6.15.0"></script>
 <script src="../../../js/data-english.js"></script>
 <script src="../../../js/english-quiz.js?v=6.13.0"></script>
 <script>
@@ -29,6 +29,10 @@ var quizIndex = 0;
 var mistakes = 0;
 var currentMode = 'learn';
 var currentQuizDirection = 'term-to-def';
+var englishLearningScope = null;
+var englishLearningStore = null;
+function englishSaveLearning(){if(currentMode==='learn'&&englishLearningStore)englishLearningStore.save(currentCards.map(function(c){return englishDB[englishLearningScope].indexOf(c);}),cardIndex);}
+function englishRestartLearning(){if(englishLearningStore)englishLearningStore.clear();startTopic(englishLearningScope,null,true);}
 
 function renderScreen(screenName, data) {
     app.innerHTML = '';
@@ -68,8 +72,8 @@ function handleMode(mode, el) {
     setTimeout(function(){ renderScreen('topics', {mode: mode}); }, 400);
 }
 
-function startTopic(scope, el) {
-    el.classList.add('success');
+function startTopic(scope, el, reset) {
+    if(el)el.classList.add('success');
     playSound('success');
     if (scope === 'all') {
         currentCards = [];
@@ -79,9 +83,16 @@ function startTopic(scope, el) {
     } else {
         currentCards = englishDB[scope].slice();
     }
-    if (currentMode === 'learn') currentCards = englishQuizShuffle(currentCards);
     if (currentMode === 'learn') {
-        cardIndex = 0;
+        englishLearningScope=scope;
+        currentCards=englishQuizShuffle(currentCards);
+        englishLearningStore=window.AcademiumProgress&&scope!=='all'?window.AcademiumProgress.create('english',scope,englishDB[scope]):null;
+        var prev=englishLearningStore&&!reset?englishLearningStore.load():null;
+        if(prev){currentCards=prev.order.map(function(i){return englishDB[scope][i];});cardIndex=prev.index;}
+        else cardIndex=0;
+        englishSaveLearning();
+    }
+    if (currentMode === 'learn') {
         setTimeout(function(){ renderScreen('flashcard'); }, 400);
     } else {
         quizIndex = 0; mistakes = 0;
@@ -92,6 +103,8 @@ function startTopic(scope, el) {
 function nextCard() {
     playSound('success');
     cardIndex++;
+    if (cardIndex >= currentCards.length && englishLearningStore){englishLearningStore.clear();englishLearningStore=null;}
+    else englishSaveLearning();
     if (cardIndex < currentCards.length) renderScreen('flashcard');
     else renderScreen('topics', {mode: 'learn'});
 }
