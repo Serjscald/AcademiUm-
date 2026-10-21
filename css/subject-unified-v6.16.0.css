@@ -1,0 +1,41 @@
+/* АкадемиУм! — единый визуальный каркас дисциплин v6.16.0 */
+.psy-page .app-container,.ru-page .app-container,.english-page .app-container{
+  max-width:760px;min-width:0;width:100%;text-align:center;
+  border:1px solid #34445b;background:#1e293b;color:#f8fafc;
+}
+.psy-page h1,.ru-page h1,.english-page h1{
+  font-size:clamp(21px,5.6vw,32px);line-height:1.24;
+  overflow-wrap:anywhere;hyphens:auto;letter-spacing:.015em;
+}
+.psy-page .psy-kicker,.ru-page .ru-tag,.english-page .psy-kicker{
+  color:#fbbf24;font-size:12px;font-weight:800;letter-spacing:.04em;
+}
+.ru-page .ru-mode-grid,.english-page .psy-grid{gap:10px}
+.ru-page .ru-button,.ru-page .ru-option,.ru-page .ru-topic,
+.english-page .psy-btn,.english-page .psy-topic,.english-page .english-quiz-choice{
+  border-radius:12px;min-height:52px;overflow-wrap:anywhere;
+}
+.english-page .flashcard{margin:14px 0;min-height:130px;flex-grow:0;
+  padding:20px 14px;background:#111c30;border:1px solid #45607d;
+  box-shadow:none;display:flex;gap:8px;}
+.english-page .fc-word{font-size:clamp(20px,5vw,27px);line-height:1.4}
+.english-page .fc-trans{font-size:clamp(15px,3.8vw,19px);line-height:1.58;
+  letter-spacing:0;text-transform:none;}
+.english-page .quiz-options{margin-top:10px}
+.english-page .english-quiz-choice{background:#1b2b44;border:1px solid #496078;
+  color:#e2e8f0;padding:14px 12px;}
+.english-page .english-quiz-choice.correct{background:#14392c;border-color:#22c55e}
+.english-page .english-quiz-choice.wrong{background:#492127;border-color:#f87171}
+.english-page .english-quiz-feedback{padding:8px 0;line-height:1.65}
+.english-page .english-teacher-note,.english-page .english-teacher-example{
+  max-width:100%;text-align:center;text-transform:none}
+.ru-page .ru-question,.ru-page .ru-feedback,.ru-page .ru-lesson,
+.psy-page .psy-card,.english-page .psy-card{box-shadow:none}
+@media(max-width:430px){
+  .psy-page .app-container,.ru-page .app-container,.english-page .app-container{
+    margin:8px auto;padding:16px 12px;border-radius:16px;
+  }
+  .psy-page .psy-topic,.ru-page .ru-topic,.english-page .psy-topic{
+    font-size:14px;line-height:1.5;
+  }
+}
