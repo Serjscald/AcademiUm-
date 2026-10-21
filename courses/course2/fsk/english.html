@@ -38,17 +38,17 @@ function renderScreen(screenName, data) {
     app.innerHTML = '';
     
     if (screenName === 'modes') {
-        app.innerHTML = '<div class="psy-kicker">АкадемиУм! · Английский язык</div><h1>Английский язык</h1><p class="psy-muted">Изучаем слова, грамматику и устойчивые выражения.</p><div class="psy-grid"><div class="psy-btn" onclick="handleMode(\'learn\',this)">Обучение</div><div class="psy-btn" onclick="handleMode(\'quiz\',this)">Контроль</div></div><button class="psy-btn" onclick="navigateTo(\'index.html\')">Назад</button>';
+        app.innerHTML = '<div class="psy-kicker">АкадемиУм! · Английский язык</div><h1>Английский язык</h1><p class="psy-muted">Изучаем слова, грамматику и устойчивые выражения.</p><div class="psy-grid"><button type="button" class="psy-btn" onclick="handleMode(\'learn\',this)">Обучение</button><button type="button" class="psy-btn" onclick="handleMode(\'quiz\',this)">Контроль</button></div><button class="psy-btn" onclick="navigateTo(\'index.html\')">Назад</button>';
     } else if (screenName === 'topics') {
         var mode = (data && data.mode) ? data.mode : 'learn';
         currentMode = mode;
         var title = (mode === 'learn') ? 'Обучение' : 'Контроль';
         var topicsHTML = '';
         if (mode === 'quiz') {
-            topicsHTML += '<div class="psy-topic" onclick="startTopic(\'all\',this)">За все время</div>';
+            topicsHTML += '<button type="button" class="psy-topic" onclick="startTopic(\'all\',this)">За все время</button>';
         }
         for (var key in englishDB.topicTitles) {
-            topicsHTML += '<div class="psy-topic" onclick="startTopic(\'' + key + '\',this)">' + englishDB.topicTitles[key] + '</div>';
+            topicsHTML += '<button type="button" class="psy-topic" onclick="startTopic(\'' + key + '\',this)">' + englishDB.topicTitles[key] + '</button>';
         }
         app.innerHTML = '<div class="psy-kicker">'+title+'</div><h1>Выберите тему</h1><div class="psy-topics">' + topicsHTML + '</div><button class="psy-btn" onclick="renderScreen(\'modes\')">Назад</button>';
     } else if (screenName === 'flashcard') {
