@@ -113,7 +113,7 @@ check('Unified UI / sound controls and version visibility',()=>{
  assert.match(core,/academiumSoundEnabled = true/);
  assert.match(core,/localStorage\.setItem\('academium:sound'/);
  const first=fs.readFileSync(path.join(root,'index.html'),'utf8');
- assert.match(first,/Версия 6\.16\.0/);
+ assert.match(first,/Версия 6\.16\.1/);
  for(const subj of ['skd','management','philosophy','business','statistics','psychology','it','english','russian']){
    const p=fs.readFileSync(path.join(root,'courses/course2/fsk',subj+'.html'),'utf8');
    assert.match(p,/subject-unified-v6\.16\.0\.css/,subj+' missing common style');
