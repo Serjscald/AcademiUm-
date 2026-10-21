@@ -22,7 +22,7 @@ function chooseTopic(m){mode=m;let items=keys.map((key,i)=>'<button type="button
 function lessonBox(key,open){let guide=db.theory[key];if(!guide)return '';
  return '<details class="ru-lesson"'+(open?' open':'')+'><summary>💡 Как рассуждать? · правило</summary><p class="ru-lesson-intro">'+esc(guide.intro)+'</p><div class="ru-lesson-grid"><div class="ru-lesson-heading">Ключевые правила</div><ul>'+guide.rules.map(s=>'<li>'+esc(s)+'</li>').join('')+'</ul><div class="ru-lesson-heading">Путь к решению</div><ol>'+guide.steps.map(s=>'<li>'+esc(s)+'</li>').join('')+'</ol></div></details>';}
 function start(k){topic=k;let topics=k==='all'?keys:[k];queue=[];topics.forEach(x=>db.questions[x].forEach(q=>queue.push({key:x,q})));
- if(mode==='quiz')queue=shuffle(queue);index=0;mistakes=0;seenResults=[];showQuestion();}
+ queue=shuffle(queue);index=0;mistakes=0;seenResults=[];showQuestion();}
 function isSingle(q){return q.kind==='single';}
 function correctSet(q){return (q.answer||[]).slice().sort((a,b)=>a-b);}
 function formatKey(q,key){const letters=['А','Б','В','Г','Д'];return q.kind==='text'?q.answerText.join(' / '):correctSet(q).map(n=>key==='suffixy'?letters[n-1]:n).join(', ');}
