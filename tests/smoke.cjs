@@ -106,5 +106,27 @@ check('Shared core has audio recovery and visible fireworks',()=>{
   assert.match(src,/fireworksCanvas\.style\.display\s*=\s*'block'/);
   assert.match(src,/playFireworksSound\(\)/);
 });
+
+check('Unified UI / sound controls and version visibility',()=>{
+ const core=fs.readFileSync(path.join(root,'js/core.js'),'utf8');
+ assert.match(core,/academiumSetSound/);
+ assert.match(core,/academiumSoundEnabled = true/);
+ assert.match(core,/localStorage\.setItem\('academium:sound'/);
+ const first=fs.readFileSync(path.join(root,'index.html'),'utf8');
+ assert.match(first,/Версия 6\.16\.0/);
+ for(const subj of ['skd','management','philosophy','business','statistics','psychology','it','english','russian']){
+   const p=fs.readFileSync(path.join(root,'courses/course2/fsk',subj+'.html'),'utf8');
+   assert.match(p,/subject-unified-v6\.16\.0\.css/,subj+' missing common style');
+   assert.doesNotMatch(p,/Версия [0-9]+\.[0-9]+\.[0-9]+/,subj+' has visible version');
+ }
+ const eng=fs.readFileSync(path.join(root,'courses/course2/fsk/english.html'),'utf8');
+ assert.match(eng,/class="psy-page english-page"/);
+ assert.match(eng,/class="psy-progress"/);
+ const ru=fs.readFileSync(path.join(root,'js/russian-v6.5.0.js'),'utf8');
+ assert.doesNotMatch(ru,/АкадемиУм! · v'\+db\.version/);
+ const business=fs.readFileSync(path.join(root,'js/business-v6.12.0.js'),'utf8');
+ assert.match(business,/Предприн-во/);
+});
+
 console.log('Completed '+checked+' smoke checks over '+pages.length+' HTML pages and '+scripts.length+' JS files');
 if(process.exitCode) process.exit(process.exitCode);
