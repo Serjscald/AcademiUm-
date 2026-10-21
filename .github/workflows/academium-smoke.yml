@@ -17,4 +17,4 @@ jobs:
         with:
           node-version: '22'
       - name: Проверить исходники и учебные модули
-        run: node tests/smoke.cjs
+        run: node tests/smoke.cjs && node tests/progress.cjs
