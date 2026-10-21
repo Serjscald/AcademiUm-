@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Английский язык — АкадемиУм!</title>
     <link rel="stylesheet" href="../../../css/style.css?v=6.16.0">
-    <link rel="stylesheet" href="../../../css/management-v6.11.0.css?v=6.16.0"><link rel="stylesheet" href="../../../css/english.css?v=6.16.0">
+    <link rel="stylesheet" href="../../../css/management-v6.11.0.css?v=6.16.0"><link rel="stylesheet" href="../../../css/english.css?v=6.16.1">
 <link rel="stylesheet" href="../../../css/subject-unified-v6.16.0.css?v=6.16.0"></head>
 <body class="psy-page english-page">
 
@@ -33,7 +33,7 @@ function renderScreen(screenName, data) {
     app.innerHTML = '';
     
     if (screenName === 'modes') {
-        app.innerHTML = '<div class="psy-kicker">АкадемиУм! · Английский язык</div><h1>Английский язык</h1><p class="psy-muted">Изучаем слова, грамматику и устойчивые выражения.</p><div class="psy-grid"><button type="button" class="psy-btn" onclick="handleMode(\'learn\',this)">Обучение</button><button type="button" class="psy-btn" onclick="handleMode(\'quiz\',this)">Контроль</button></div><button class="psy-btn" onclick="navigateTo(\'index.html\')">Назад</button>';
+        app.innerHTML = '<div class="psy-kicker">АкадемиУм! · Дисциплина</div><h1>Английский язык</h1><p class="psy-muted">Изучаем слова, грамматику и устойчивые выражения.</p><div class="psy-grid"><button type="button" class="psy-btn primary" onclick="handleMode(\'learn\',this)">📖 Обучение</button><button type="button" class="psy-btn" onclick="handleMode(\'quiz\',this)">🎯 Контроль</button></div><button class="psy-btn" onclick="navigateTo(\'index.html\')">← К предметам</button>';
     } else if (screenName === 'topics') {
         var mode = (data && data.mode) ? data.mode : 'learn';
         currentMode = mode;
