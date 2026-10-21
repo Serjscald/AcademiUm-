@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Английский язык — АкадемиУм!</title>
     <link rel="stylesheet" href="../../../css/style.css">
     <link rel="stylesheet" href="../../../css/english.css?v=6.4.2">
@@ -34,17 +34,17 @@ function renderScreen(screenName, data) {
     app.innerHTML = '';
     
     if (screenName === 'modes') {
-        app.innerHTML = '<h1>Английский язык</h1><div class="subtitle">Выберите режим</div><div class="grid" style="margin-top:40px"><div class="tile" onclick="handleMode(\'learn\')">Обучение</div><div class="tile" onclick="handleMode(\'quiz\')">Контроль</div></div><button class="btn btn-back" onclick="navigateTo(\'index.html\')">Назад</button>';
+        app.innerHTML = '<h1>Английский язык</h1><div class="subtitle">Выберите режим</div><div class="grid" style="margin-top:40px"><div class="tile" onclick="handleMode(\'learn\',this)">Обучение</div><div class="tile" onclick="handleMode(\'quiz\',this)">Контроль</div></div><button class="btn btn-back" onclick="navigateTo(\'index.html\')">Назад</button>';
     } else if (screenName === 'topics') {
         var mode = (data && data.mode) ? data.mode : 'learn';
         currentMode = mode;
         var title = (mode === 'learn') ? 'Обучение' : 'Контроль';
         var topicsHTML = '';
         if (mode === 'quiz') {
-            topicsHTML += '<div class="tile" onclick="startTopic(\'all\')">За все время</div>';
+            topicsHTML += '<div class="tile" onclick="startTopic(\'all\',this)">За все время</div>';
         }
         for (var key in englishDB.topicTitles) {
-            topicsHTML += '<div class="tile" onclick="startTopic(\'' + key + '\')">' + englishDB.topicTitles[key] + '</div>';
+            topicsHTML += '<div class="tile" onclick="startTopic(\'' + key + '\',this)">' + englishDB.topicTitles[key] + '</div>';
         }
         app.innerHTML = '<h1>' + title + '</h1><div class="subtitle">Выберите тему</div><div class="grid single-col" style="margin-top:20px">' + topicsHTML + '</div><button class="btn btn-back" onclick="renderScreen(\'modes\')">Назад</button>';
     } else if (screenName === 'flashcard') {
@@ -62,15 +62,13 @@ function renderScreen(screenName, data) {
     }
 }
 
-function handleMode(mode) {
-    var el = event.target;
+function handleMode(mode, el) {
     el.classList.add('success');
     playSound('success');
     setTimeout(function(){ renderScreen('topics', {mode: mode}); }, 400);
 }
 
-function startTopic(scope) {
-    var el = event.target;
+function startTopic(scope, el) {
     el.classList.add('success');
     playSound('success');
     if (scope === 'all') {
