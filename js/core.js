@@ -27,7 +27,7 @@ function academiumMountSoundButton(){
  var b=document.createElement('button');b.type='button';b.className='academium-sound-toggle';
  b.setAttribute('data-academium-sound','');b.setAttribute('aria-label','Включить или выключить звуки');
  b.addEventListener('click',function(){academiumSetSound(!academiumSoundEnabled);});
- var app=document.getElementById('app');if(app)app.insertBefore(b,app.firstChild);else document.body.appendChild(b);
+ document.body.appendChild(b);
  academiumSyncSoundButtons();
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',academiumMountSoundButton);
