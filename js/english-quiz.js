@@ -46,7 +46,9 @@ function englishQuizMakePlan(scope){
  var reversible=entries.filter(function(e){return !(e.key==='topic4'&&Object.prototype.hasOwnProperty.call(englishQuizCloze,e.index));});
  var directions=[];
  for(var j=0;j<reversible.length;j++)directions.push(j%2?'def-to-term':'term-to-def');
- directions=englishQuizShuffle(directions);
+ // Balanced alternating directions, with a random starting language for each run.
+ var firstDirection=Math.random()<0.5?'term-to-def':'def-to-term';
+ directions=directions.map(function(_,i){return i%2===0?firstDirection:(firstDirection==='term-to-def'?'def-to-term':'term-to-def');});
  var pos=0;
  return entries.map(function(entry){entry.direction=(entry.key==='topic4'&&Object.prototype.hasOwnProperty.call(englishQuizCloze,entry.index))?'context':directions[pos++];return entry;});
 }
