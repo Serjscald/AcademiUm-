@@ -3,7 +3,8 @@ var englishDB = {
         topic1: "Topic 1: Greetings & Basics",
         topic2: "Topic 2: To Be & Present Simple",
         topic3: "Topic 3: Countable & Uncountable Words",
-        topic4: "Topic 4: Quantifiers & Practice"
+        topic4: "Topic 4: Quantifiers & Practice",
+        topic5: "Topic 5: Cooking & Measurements"
     },
 
     topic1: [
@@ -162,5 +163,247 @@ var englishDB = {
         {"word":"Как много у тебя друзей?","trans":"How many friends do you have?","note":"How many для исчисляемых friends.","example":"How many friends do you have? — Сколько у тебя друзей?"},
         {"word":"Сколько сахара у тебя есть?","trans":"How much sugar do you have?","note":"How much для неисчисляемого sugar.","example":"How much sugar do you have? — Сколько у тебя сахара?"},
         {"word":"If two witches were watching two watches, which witch would watch which watch?","trans":"Если две ведьмы смотрели бы на двое часов, то какая ведьма смотрела бы на какие часы?","note":"Скороговорка тренирует различение звуков /w/ и /tʃ/ и слова witch / watch.","example":"Which witch would watch which watch? — Какая ведьма смотрела бы на какие часы?"}
+    ],
+    topic5: [
+        {
+            "word": "gram",
+            "trans": "грамм",
+            "note": "Единица массы, сокращение g.",
+            "example": "Add 100 grams of flour. — Добавьте 100 граммов муки."
+        },
+        {
+            "word": "kilogram",
+            "trans": "килограмм",
+            "note": "Тысяча граммов; сокращение kg.",
+            "example": "We need one kilogram of potatoes. — Нам нужен килограмм картофеля."
+        },
+        {
+            "word": "milligram",
+            "trans": "миллиграмм",
+            "note": "Одна тысячная грамма; сокращение mg.",
+            "example": "The tablet contains 500 milligrams. — Таблетка содержит 500 миллиграммов."
+        },
+        {
+            "word": "milliliter",
+            "trans": "миллилитр",
+            "note": "Одна тысячная литра; британское написание millilitre.",
+            "example": "Add 50 milliliters of milk. — Добавьте 50 миллилитров молока."
+        },
+        {
+            "word": "liter",
+            "trans": "литр",
+            "note": "Единица объёма; британское написание litre.",
+            "example": "Pour one liter of water into the pot. — Налейте литр воды в кастрюлю."
+        },
+        {
+            "word": "teaspoon",
+            "trans": "чайная ложка",
+            "note": "Мера объёма в рецептах, часто tsp; обычно 5 мл.",
+            "example": "Add a teaspoon of sugar. — Добавьте чайную ложку сахара."
+        },
+        {
+            "word": "tablespoon",
+            "trans": "столовая ложка",
+            "note": "Мера объёма в рецептах, tbsp; часто 15 мл (зависит от страны).",
+            "example": "Use a tablespoon of oil. — Возьмите столовую ложку масла."
+        },
+        {
+            "word": "cup",
+            "trans": "чашка; мерный стакан",
+            "note": "В рецептах cup — мера объёма; её значение зависит от страны.",
+            "example": "Add a cup of flour. — Добавьте чашку муки."
+        },
+        {
+            "word": "pinch",
+            "trans": "щепотка",
+            "note": "Небольшое количество, которое можно захватить пальцами.",
+            "example": "Add a pinch of salt. — Добавьте щепотку соли."
+        },
+        {
+            "word": "dash",
+            "trans": "капля; чуть-чуть",
+            "note": "Очень небольшое количество приправы или жидкости; мера приблизительная.",
+            "example": "Add a dash of pepper. — Добавьте немного перца."
+        },
+        {
+            "word": "drop",
+            "trans": "капля",
+            "note": "Отдельная маленькая капля жидкости.",
+            "example": "Add a drop of vanilla extract. — Добавьте каплю ванильного экстракта."
+        },
+        {
+            "word": "handful",
+            "trans": "горсть",
+            "note": "Столько, сколько помещается в ладони.",
+            "example": "Add a handful of nuts. — Добавьте горсть орехов."
+        },
+        {
+            "word": "clove",
+            "trans": "зубчик (чеснока)",
+            "note": "В кулинарии a clove of garlic — один зубчик чеснока.",
+            "example": "Peel a clove of garlic. — Очистите зубчик чеснока."
+        },
+        {
+            "word": "bunch",
+            "trans": "пучок; гроздь",
+            "note": "О растениях: пучок зелени; о винограде: гроздь.",
+            "example": "Chop a bunch of parsley. — Нарежьте пучок петрушки."
+        },
+        {
+            "word": "sprig",
+            "trans": "веточка",
+            "note": "Небольшой побег пряной зелени.",
+            "example": "Add a sprig of thyme. — Добавьте веточку тимьяна."
+        },
+        {
+            "word": "cube",
+            "trans": "кубик",
+            "note": "Небольшой предмет кубической формы.",
+            "example": "Put a cube of ice in the glass. — Положите кубик льда в стакан."
+        },
+        {
+            "word": "scoop",
+            "trans": "совок; шарик (мороженого)",
+            "note": "Scoop — порция, взятая специальной ложкой или совком.",
+            "example": "I want a scoop of ice cream. — Я хочу шарик мороженого."
+        },
+        {
+            "word": "dollop",
+            "trans": "ложка (густого продукта)",
+            "note": "Небольшая порция густой массы, например сливок или сметаны.",
+            "example": "Add a dollop of cream. — Добавьте ложку густых сливок."
+        },
+        {
+            "word": "pour",
+            "trans": "наливать",
+            "note": "Переливать жидкость из одной ёмкости в другую.",
+            "example": "Pour the milk into the bowl. — Налейте молоко в миску."
+        },
+        {
+            "word": "sprinkle",
+            "trans": "посыпать",
+            "note": "Рассыпать немного ингредиента по поверхности.",
+            "example": "Sprinkle cheese on top. — Посыпьте сверху сыром."
+        },
+        {
+            "word": "chop",
+            "trans": "нарезать; рубить",
+            "note": "Резать продукт на кусочки, обычно ножом; размер может различаться.",
+            "example": "Chop the onions. — Нарежьте лук."
+        },
+        {
+            "word": "slice",
+            "trans": "нарезать ломтиками",
+            "note": "Разрезать на тонкие плоские кусочки.",
+            "example": "Slice the cucumber. — Нарежьте огурец ломтиками."
+        },
+        {
+            "word": "dice",
+            "trans": "нарезать мелкими кубиками",
+            "note": "Резать на небольшие кубики, обычно более ровные, чем при chop.",
+            "example": "Dice the carrots. — Нарежьте морковь мелкими кубиками."
+        },
+        {
+            "word": "grate",
+            "trans": "натереть",
+            "note": "Измельчить продукт на тёрке.",
+            "example": "Grate the cheese. — Натрите сыр."
+        },
+        {
+            "word": "peel",
+            "trans": "очистить (от кожуры)",
+            "note": "Снять кожуру или внешнюю оболочку продукта.",
+            "example": "Peel the potatoes. — Очистите картофель."
+        },
+        {
+            "word": "crush",
+            "trans": "раздавить; растолочь",
+            "note": "Раздавить продукт, например чеснок или специи.",
+            "example": "Crush the garlic. — Раздавите чеснок."
+        },
+        {
+            "word": "beat",
+            "trans": "взбить",
+            "note": "Энергично перемешивать ингредиент до нужной консистенции.",
+            "example": "Beat the eggs with a fork. — Взбейте яйца вилкой."
+        },
+        {
+            "word": "whisk",
+            "trans": "взбить венчиком",
+            "note": "Взбивать венчиком, часто вводя воздух в смесь.",
+            "example": "Whisk the cream. — Взбейте сливки венчиком."
+        },
+        {
+            "word": "knead",
+            "trans": "замесить (тесто)",
+            "note": "Разминать и складывать тесто руками или миксером.",
+            "example": "Knead the dough for five minutes. — Месите тесто пять минут."
+        },
+        {
+            "word": "roll out",
+            "trans": "раскатать",
+            "note": "Сделать тесто тонким и плоским с помощью скалки.",
+            "example": "Roll out the dough. — Раскатайте тесто."
+        },
+        {
+            "word": "bake",
+            "trans": "выпекать; запекать",
+            "note": "Готовить в духовке, особенно хлеб, пироги и другие изделия.",
+            "example": "Bake the bread for 30 minutes. — Выпекайте хлеб 30 минут."
+        },
+        {
+            "word": "fry",
+            "trans": "жарить",
+            "note": "Готовить на сковороде или в масле.",
+            "example": "Fry the onions in oil. — Обжарьте лук в масле."
+        },
+        {
+            "word": "boil",
+            "trans": "варить; кипятить",
+            "note": "Готовить в кипящей воде или доводить жидкость до кипения.",
+            "example": "Boil the potatoes. — Сварите картофель."
+        },
+        {
+            "word": "simmer",
+            "trans": "тушить на слабом огне; томить",
+            "note": "Готовить жидкое блюдо при слабом кипении, ниже интенсивного boil.",
+            "example": "Simmer the soup for 20 minutes. — Томите суп 20 минут на слабом огне."
+        },
+        {
+            "word": "roast",
+            "trans": "запекать в духовке",
+            "note": "Готовить мясо или овощи сухим жаром, часто до румяной корочки.",
+            "example": "Roast the chicken in the oven. — Запеките курицу в духовке."
+        },
+        {
+            "word": "season",
+            "trans": "приправлять",
+            "note": "Добавлять соль, перец, травы и другие приправы.",
+            "example": "Season the soup with salt. — Приправьте суп солью."
+        },
+        {
+            "word": "garnish",
+            "trans": "украшать (блюдо)",
+            "note": "Добавлять съедобное украшение перед подачей.",
+            "example": "Garnish with fresh herbs. — Украсьте блюдо свежей зеленью."
+        },
+        {
+            "word": "add",
+            "trans": "добавить",
+            "note": "Положить дополнительный ингредиент в смесь или блюдо.",
+            "example": "Add two eggs. — Добавьте два яйца."
+        },
+        {
+            "word": "mix",
+            "trans": "смешать",
+            "note": "Соединить несколько ингредиентов.",
+            "example": "Mix flour and water. — Смешайте муку и воду."
+        },
+        {
+            "word": "stir",
+            "trans": "размешать; помешивать",
+            "note": "Перемешивать круговыми движениями, обычно ложкой.",
+            "example": "Stir the soup gently. — Осторожно помешивайте суп."
+        }
     ]
 };
