@@ -43,14 +43,14 @@ function englishQuizMakePlan(scope){
  entries=englishQuizShuffle(entries);
  // Для упражнений с пропусками направление всегда контекстное.
  // Остальные задания чередуют языки строго поровну (±1 при нечётном числе).
- var reversible=entries.filter(function(e){return !(e.key==='topic4'&&Object.prototype.hasOwnProperty.call(englishQuizCloze,e.index));});
+ var reversible=entries.filter(function(e){return !(e.key==='topic4'&&(Object.prototype.hasOwnProperty.call(englishQuizCloze,e.index)||e.index===37));});
  var directions=[];
  for(var j=0;j<reversible.length;j++)directions.push(j%2?'def-to-term':'term-to-def');
  // Balanced alternating directions, with a random starting language for each run.
  var firstDirection=Math.random()<0.5?'term-to-def':'def-to-term';
  directions=directions.map(function(_,i){return i%2===0?firstDirection:(firstDirection==='term-to-def'?'def-to-term':'term-to-def');});
  var pos=0;
- return entries.map(function(entry){entry.direction=(entry.key==='topic4'&&Object.prototype.hasOwnProperty.call(englishQuizCloze,entry.index))?'context':directions[pos++];return entry;});
+ return entries.map(function(entry){entry.direction=(entry.key==='topic4'&&Object.prototype.hasOwnProperty.call(englishQuizCloze,entry.index))?'context':(entry.key==='topic4'&&entry.index===37?'term-to-def':directions[pos++]);return entry;});
 }
 function englishQuizStart(scope){
  englishQuizState={plan:englishQuizMakePlan(scope),position:0,mistakes:0,locked:false,feedback:null};
