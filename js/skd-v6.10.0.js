@@ -5,7 +5,7 @@ const db=window.skdDB||null;
 if(window.skdPractice && !window.skdPractice.groups){const labels={};for(const q of window.skdPractice.cases){labels[q.group]=q.group;q.reason=q.reason||q.explanation;if(!Array.isArray(q.optionReasons))q.optionReasons=q.options.map((a,i)=>i===q.answer?q.explanation:'Этот вариант не соответствует условию задачи.');}window.skdPractice.groups=labels;}
 const app=document.getElementById('app');
 let scenarioItems=[],scenarioIndex=0,scenarioCorrect=0,scenarioChosen=-1,scenarioLocked=false;
-let mode='learn',topic='topic1',items=[],index=0,errors=0,correctCount=0,locked=false,picked=-1,currentOptions=[],rightIndex=0,direction='word';
+let mode='learn',topic='topic1',items=[],index=0,errors=0,correctCount=0,locked=false,picked=-1,currentOptions=[],rightIndex=0,direction='word',quizDirectionOffset=0;
 
 let learnStore=null;
 function saveLearning(){if(mode!=='learn'||!learnStore)return;learnStore.save(items.map(e=>db[e.key].indexOf(e.q)),index);}
@@ -23,14 +23,14 @@ function topics(next){mode=next;let content=allKeys().map((k,i)=>'<button type="
 if(mode==='quiz')content='<button type="button" class="psy-topic" data-topic="all"><span>∞</span><span>За всё время</span><span class="psy-count">'+allKeys().reduce((n,k)=>n+db[k].length,0)+'</span></button>'+content;
 set('<div class="psy-kicker">'+(mode==='learn'?'Обучение':'Контроль')+'</div><h1>Выберите тему</h1><p class="psy-muted">Все задания сгруппированы по содержанию; режим контроля включает пояснения после ответа.</p>'+content+btn('← В меню','menu'));
 app.querySelectorAll('[data-topic]').forEach(el=>el.addEventListener('click',()=>start(el.dataset.topic)));}
-function start(k){topic=k;let keys=k==='all'?allKeys():[k];items=[];for(const key of keys)for(const q of db[key])items.push({key,q});items=shuffle(items);index=0;errors=0;correctCount=0;if(mode==='learn'&&k!=='all'&&window.AcademiumProgress){learnStore=window.AcademiumProgress.create('skd',k,db[k]);if(!arguments[1]){const previous=learnStore.load();if(previous){items=previous.order.map(i=>({key:k,q:db[k][i]}));index=previous.index;}}saveLearning();}else learnStore=null;render();}
+function start(k){topic=k;let keys=k==='all'?allKeys():[k];items=[];for(const key of keys)for(const q of db[key])items.push({key,q});items=shuffle(items);quizDirectionOffset=Math.random()<0.5?0:1;index=0;errors=0;correctCount=0;if(mode==='learn'&&k!=='all'&&window.AcademiumProgress){learnStore=window.AcademiumProgress.create('skd',k,db[k]);if(!arguments[1]){const previous=learnStore.load();if(previous){items=previous.order.map(i=>({key:k,q:db[k][i]}));index=previous.index;}}saveLearning();}else learnStore=null;render();}
 function lesson(q){const explanation=q.explain||'Сопоставьте ключевые признаки понятия с определением, затем приведите собственный пример.';
 return '<details class="psy-lesson"><summary>💡 Как рассуждать?</summary><p>'+esc(explanation)+'</p><p>Сначала определите цель и аудиторию, затем отличите форму события от метода и средства; оцените результат и ограничения.</p></details>';}
 function progress(){return '<div class="psy-progress"><span>'+(mode==='learn'?'Обучение':'Контроль')+'</span><span>'+(index+1)+' / '+items.length+'</span></div><div class="psy-meter"><div style="width:'+((index+1)/items.length*100).toFixed(1)+'%"></div></div>';}
 function render(){locked=false;picked=-1;if(index>=items.length){finish();return;}const {key,q}=items[index];
 if(mode==='learn'){set(progress()+'<p class="psy-kicker">'+esc(name(key))+'</p><section class="psy-card"><div class="psy-term">'+esc(q.word)+'</div><p class="psy-description">'+esc(q.trans)+'</p></section><div class="psy-example"><strong>Смысл и нюансы:</strong> '+esc(q.explain||'Обратите внимание на точный смысл термина и его отличие от сходных понятий.')+'</div>'+lesson(q)+btn(index===items.length-1?'Завершить':'Следующая карточка →','next','primary')+btn('Начать заново','restart')+btn('← К темам','topics'));return;}
 const pool=db[key].filter(x=>x!==q);
-direction=index%2===0?'word':'trans';
+direction=(index+quizDirectionOffset)%2===0?'word':'trans';
 const get=x=>direction==='word'?x.trans:x.word;
 const used=new Set([get(q)]),alts=[];
 for(const a of shuffle(pool)){if(!used.has(get(a))){used.add(get(a));alts.push(a);}if(alts.length===3)break;} if(alts.length<3){for(const k of allKeys()){for(const a of shuffle(db[k])){if(!used.has(get(a))){used.add(get(a));alts.push(a);}if(alts.length===3)break;}if(alts.length===3)break;}}
