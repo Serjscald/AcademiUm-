@@ -94,6 +94,17 @@ check('Standard learning engines shuffle without touching quiz evaluation',()=>{
     assert.match(source,/startFireworks\(\)/,engine+' celebration missing');
   }
 });
+check('Quiz directions alternate with a randomized starting side',()=>{
+ const english=fs.readFileSync(path.join(root,'js/english-quiz.js'),'utf8');
+ assert.match(english,/firstDirection=Math\.random\(\)<0\.5/);
+ assert.match(english,/i%2===0\?firstDirection/);
+ assert.match(english,/directions\[pos\+\+\]/);
+ for(const engine of engines){
+  const source=fs.readFileSync(path.join(root,'js',engine+'.js'),'utf8');
+  assert.match(source,/quizDirectionOffset=Math\.random\(\)<0\.5\?0:1/,engine+' needs random start');
+  assert.match(source,/\(index\+quizDirectionOffset\)%2/,engine+' needs alternating quiz direction');
+ }
+});
 check('Russian and English maintain topic-level shuffling',()=>{
   const ru=fs.readFileSync(path.join(root,'js/russian-v6.5.0.js'),'utf8');
   const en=fs.readFileSync(path.join(root,'courses/course2/fsk/english.html'),'utf8');
