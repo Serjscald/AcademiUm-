@@ -1,0 +1,6 @@
+/* Коммуникативная культура · мобильный интерфейс v7.0.0 */
+.com-textarea{display:block;width:100%;min-height:110px;resize:vertical;padding:14px;border-radius:12px;border:1px solid #64748b;background:#111c30;color:#fff;line-height:1.6;font:inherit;margin:12px 0 16px}
+.com-textarea:focus-visible{outline:3px solid #fbbf24;outline-offset:2px}
+.psy-page .psy-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.psy-page .psy-grid .psy-btn:nth-child(3),.psy-page .psy-grid .psy-btn:nth-child(4){grid-column:auto;max-width:none}
+@media(max-width:480px){.psy-page .psy-grid{grid-template-columns:1fr}.psy-page .psy-grid .psy-btn{margin:3px 0}.com-textarea{font-size:16px}}
