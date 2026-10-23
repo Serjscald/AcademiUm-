@@ -37,7 +37,7 @@ check('All local script/style links exist (including nested pages)', () => {
 const flashcards = [
   ['skd','skdDB'], ['management','managementDB'], ['philosophy','philosophyDB'],
   ['business','businessDB'], ['statistics','statisticsDB'], ['psychology','psychologyDB'],
-  ['it','itDB'], ['english','englishDB']
+  ['it','itDB'], ['english','englishDB'], ['communication','communicationDB']
 ];
 const dataFiles = new Map(flashcards.map(([name])=>[name,path.join(root,'js','data-'+name+'.js')]));
 for (const [name,key] of flashcards) {
@@ -60,6 +60,22 @@ for (const [name,key] of flashcards) {
     console.log('  '+topics.length+' topics, '+count+' cards');
   });
 }
+check('Communication culture v7.0.0: three topics, cases and rewrite game',()=>{
+ const dbCtx={window:{}};vm.runInNewContext(fs.readFileSync(path.join(root,'js/data-communication.js'),'utf8'),dbCtx);
+ const db=dbCtx.window.communicationDB;
+ assert.equal(Object.keys(db.topicTitles).length,3);
+ assert.equal(['topic1','topic2','topic3'].reduce((n,k)=>n+db[k].length,0),80);
+ for(const key of Object.keys(db.topicTitles)){
+  const cards=db[key];assert.ok(cards.every(x=>x.word&&x.trans&&x.explain&&x.example));
+  assert.equal(new Set(cards.map(x=>x.word)).size,cards.length);
+ }
+ const pCtx={window:{}};vm.runInNewContext(fs.readFileSync(path.join(root,'js/data-communication-practice.js'),'utf8'),pCtx);
+ const p=pCtx.window.communicationPractice;assert.equal(p.cases.length,15);assert.equal(p.rewrites.length,6);
+ for(const q of p.cases){assert.ok(q.options.length===4&&q.answer>=0&&q.answer<4);assert.ok(q.optionReasons.length===4);}
+ const engine=fs.readFileSync(path.join(root,'js/communication-v7.0.0.js'),'utf8');
+ assert.match(engine,/items=shuffle\(items\)/);assert.match(engine,/quizDirectionOffset=Math\.random\(\)<0\.5\?0:1/);
+ assert.match(engine,/rewriteReveal/);
+});
 check('Russian: both courses have complete question sets', () => {
   const context={window:{}};
   vm.runInNewContext(fs.readFileSync(path.join(root,'js/data-russian-v6.5.0.js'),'utf8'),context,{timeout:10000});
